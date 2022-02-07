@@ -22,10 +22,10 @@ export class Walks extends CoreEntity {
   @IsNumber()
   finishTime: number;
 
-  @Field((type) => Int)
+  @Field((type) => String)
   @Column()
   @IsString()
-  walkRecordKey: string;
+  walkRecord: string;
 
   @ManyToOne(() => User, (user) => user.walks, { onDelete: 'CASCADE' })
   user: User;
