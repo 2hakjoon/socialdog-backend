@@ -5,6 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { WalksModule } from './walks/walks.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -36,6 +37,7 @@ import * as Joi from 'joi';
       entities: [],
     }),
     UsersModule,
+    WalksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
