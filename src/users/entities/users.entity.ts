@@ -1,9 +1,10 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsEmail, IsString } from 'class-validator';
-import { type } from 'os';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
-import { Column } from 'typeorm';
+import { Walks } from 'src/walks/entities/walks.entity';
+import { Column, Entity, OneToMany, RelationId } from 'typeorm';
 
+@Entity()
 @ObjectType()
 export class User extends CoreEntity {
   @Field((type) => String)
@@ -25,4 +26,8 @@ export class User extends CoreEntity {
   @Column()
   @IsString()
   dogname: string;
+
+  @Field((type) => [Walks])
+  @OneToMany(() => Walks, (walk) => walk.user)
+  walks: Walks[];
 }

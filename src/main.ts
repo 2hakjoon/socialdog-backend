@@ -8,7 +8,6 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      
     }),
   );
   await app.listen(+process.env.PORT || 3000);

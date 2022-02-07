@@ -7,6 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WalksModule } from './walks/walks.module';
 import * as Joi from 'joi';
+import { User } from './users/entities/users.entity';
+import { Walks } from './walks/entities/walks.entity';
 
 @Module({
   imports: [
@@ -34,7 +36,7 @@ import * as Joi from 'joi';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV === 'dev',
       logging: true,
-      entities: [],
+      entities: [User, Walks],
     }),
     UsersModule,
     WalksModule,
