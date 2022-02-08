@@ -21,13 +21,17 @@ export class AuthService {
 
   async login({ email, password }: LoginInputDto) {
     try {
-      const user = await this.usersRepository.findOne({ email });
+      const user = await this.usersRepository.findOne(
+        { email },
+        { select: ['id', 'password'] },
+      );
       if (!user) {
         return {
           ok: false,
           error: '로그인 정보가 잘못되었습니다.',
         };
       }
+      console.log(user);
       const isPasswordCorrect = await bcrypt.compare(password, user.password);
       if (!isPasswordCorrect) {
         return {
@@ -47,7 +51,7 @@ export class AuthService {
         token: access_token,
       };
     } catch (e) {
-      //console.log(e)
+      console.log(e);
       return {
         ok: false,
         error: '로그인에 실패하였습니다.',

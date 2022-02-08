@@ -5,7 +5,7 @@ import { Walks } from 'src/walks/entities/walks.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity()
-@InputType()
+@InputType({ isAbstract: true })
 @ObjectType()
 export class User extends CoreEntity {
   @Field((type) => String)
@@ -19,7 +19,7 @@ export class User extends CoreEntity {
   email: string;
 
   @Field((type) => String)
-  @Column()
+  @Column({ select: false })
   @IsString()
   password: string;
 

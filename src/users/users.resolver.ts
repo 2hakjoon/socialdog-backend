@@ -10,6 +10,9 @@ import { UsersService } from './users.service';
 import { LocalStrategy } from 'src/auth/strategy/auth.local';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
+import { EditProfileInputDto, EditProfileOutputDto } from './dtos/edit-profile.dto';
+import { GetProfileInputDto, GetProfileOutputDto } from './dtos/get-profile.dto';
+import { args } from 'src/common/constants';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -18,18 +21,31 @@ export class UsersResolver {
     private localStrategy : LocalStrategy,
     ) {}
 
-  @Mutation((returns) => CreateAccountOutputDto)
-  createAccount(@Args('input') createAccountInputDto: CreateAccountInputDto) {
-    return this.usersService.createAccount(createAccountInputDto);
+  @Mutation(() => CreateAccountOutputDto)
+  createAccount(@Args(args) args: CreateAccountInputDto):Promise<CreateAccountOutputDto> {
+    return this.usersService.createAccount(args);
   }
 
-  @Query((returns) => LoginOutputDto)
-  login(@Args('input') LoginInputDto:LoginInputDto){
-    return this.localStrategy.login(LoginInputDto);
+  @Mutation(() => LoginOutputDto)
+  login(@Args(args) args:LoginInputDto):Promise<LoginOutputDto>{
+    console.log(args)
+    return this.localStrategy.login(args);
   }
 
   @UseGuards(GqlAuthGuard)
-  @Query(returns=>Boolean)
+  @Mutation(()=> EditProfileOutputDto)
+  editProfile(@AuthUser() user:User, @Args(args) args: EditProfileInputDto):Promise<EditProfileOutputDto>{
+    return this.usersService.editProfile(user, args)
+  }
+
+  @Query(()=>GetProfileOutputDto)
+  getProfile(@Args(args) args:GetProfileInputDto):Promise<GetProfileOutputDto>{
+    console.log(args)
+    return this.usersService.getProfile(args)
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(()=>Boolean)
   test(@AuthUser() user: User){
     console.log(user)
     return true
