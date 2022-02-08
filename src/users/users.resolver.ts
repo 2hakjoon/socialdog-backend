@@ -7,8 +7,9 @@ import {
 import { LoginInputDto, LoginOutputDto } from '../auth/dtos/login.dto';
 import { User } from './entities/users.entity';
 import { UsersService } from './users.service';
-import { AuthService } from 'src/auth/auth.service';
 import { LocalStrategy } from 'src/auth/strategy/auth.local';
+import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -25,5 +26,12 @@ export class UsersResolver {
   @Query((returns) => LoginOutputDto)
   login(@Args('input') LoginInputDto:LoginInputDto){
     return this.localStrategy.login(LoginInputDto);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(returns=>Boolean)
+  test(@AuthUser() user: User){
+    console.log(user)
+    return true
   }
 }

@@ -25,6 +25,11 @@ export class User extends CoreEntity {
 
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
+  @IsString()
+  refreshToken: string;
+
+  @Field((type) => String, { nullable: true })
+  @Column({ nullable: true })
   dogname?: string;
 
   @Field((type) => [Walks], { nullable: true })

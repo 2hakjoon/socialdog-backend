@@ -10,6 +10,8 @@ import * as Joi from 'joi';
 import { User } from './users/entities/users.entity';
 import { Walks } from './walks/entities/walks.entity';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { GqlAuthGuard } from './auth/auth.guard';
 
 @Module({
   imports: [
