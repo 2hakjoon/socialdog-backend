@@ -1,8 +1,8 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsEmail, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Walks } from 'src/walks/entities/walks.entity';
-import { Column, Entity, OneToMany, RelationId } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity()
 @InputType()
@@ -14,7 +14,7 @@ export class User extends CoreEntity {
   username: string;
 
   @Field((type) => String)
-  @Column()
+  @Column({ unique: true })
   @IsEmail()
   email: string;
 

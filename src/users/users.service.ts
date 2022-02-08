@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -6,6 +6,7 @@ import {
   CreateAccountOutputDto,
 } from './dtos/craete-account.dto';
 import { User } from './entities/users.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -19,12 +20,31 @@ export class UsersService {
     email,
     password,
   }: CreateAccountInputDto): Promise<CreateAccountOutputDto> {
-    console.log(username, email, password);
-    await this.usersRepository.save(
-      await this.usersRepository.create({ username, email, password }),
-    );
-    return {
-      ok: true,
-    };
+    //console.log(username, email, password);
+    try {
+      const isUserExists = await this.usersRepository.findOne({ email });
+      if (isUserExists) {
+        return {
+          ok: false,
+          error: '이미 존재하는 이메일입니다.',
+        };
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await this.usersRepository.save(
+        await this.usersRepository.create({
+          username,
+          email,
+          password: hashedPassword,
+        }),
+      );
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '회원가입에 실패하였습니다.',
+      };
+    }
   }
 }
