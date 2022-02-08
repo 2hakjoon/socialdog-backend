@@ -1,18 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
+import * as bcrypt from 'bcrypt';
+import { LoginInputDto } from './dtos/login.dto';
+import { Repository } from 'typeorm';
+import { User } from 'src/users/entities/users.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+    private jwtService: JwtService,
+  ) {}
 
-  //Todos
-  //비밀번호 암호화 작업 후 진행예정
-  // async validateUser(username: string, password: string): Promise<any> {
-  //   const user = await this.usersService.findOne(username);
-  //   if (user && user.password === password) {
-  //     const { password, ...result } = user;
-  //     return result;
-  //   }
-  //   return null;
-  // }
+  async login({ email, password }: LoginInputDto) {
+    try {
+      const user = await this.usersRepository.findOne({ email });
+      if (!user) {
+        return {
+          ok: false,
+          error: '로그인 정보가 잘못되었습니다.',
+        };
+      }
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) {
+        return {
+          ok: false,
+          error: '로그인 정보가 잘못되었습니다.',
+        };
+      }
+      const token = this.jwtService.sign({ id: user.id });
+      return {
+        ok: true,
+        token: token,
+      };
+    } catch (e) {
+      //console.log(e)
+      return {
+        ok: false,
+        error: '로그인에 실패하였습니다.',
+      };
+    }
+  }
 }

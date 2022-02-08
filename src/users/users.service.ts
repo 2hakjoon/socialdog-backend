@@ -7,7 +7,6 @@ import {
 } from './dtos/craete-account.dto';
 import { User } from './entities/users.entity';
 import * as bcrypt from 'bcrypt';
-import { LoginInputDto } from './dtos/login.dto';
 
 @Injectable()
 export class UsersService {
@@ -45,34 +44,6 @@ export class UsersService {
       return {
         ok: false,
         error: '회원가입에 실패하였습니다.',
-      };
-    }
-  }
-  async login({ email, password }: LoginInputDto) {
-    try {
-      const user = await this.usersRepository.findOne({ email });
-      if (!user) {
-        return {
-          ok: false,
-          error: '로그인 정보가 잘못되었습니다.',
-        };
-      }
-      const isPasswordCorrect = await bcrypt.compare(password, user.password);
-      console.log(password, isPasswordCorrect);
-      if (!isPasswordCorrect) {
-        return {
-          ok: false,
-          error: '로그인 정보가 잘못되었습니다.',
-        };
-      }
-      return {
-        ok: true,
-        token: 'token',
-      };
-    } catch (e) {
-      return {
-        ok: false,
-        error: '로그인에 실패하였습니다.',
       };
     }
   }

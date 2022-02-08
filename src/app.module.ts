@@ -21,6 +21,7 @@ import { AuthModule } from './auth/auth.module';
         DB_PASSWORD: Joi.string().required(),
         DB_PORT: Joi.number().required(),
       }),
+      isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.dev.env' : '.prod.env',
     }),
     GraphQLModule.forRoot({
