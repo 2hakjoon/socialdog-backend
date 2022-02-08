@@ -24,8 +24,7 @@ export class User extends CoreEntity {
   password: string;
 
   @Field((type) => String, { nullable: true })
-  @Column()
-  @IsString()
+  @Column({ nullable: true })
   dogname?: string;
 
   @Field((type) => [Walks], { nullable: true })
