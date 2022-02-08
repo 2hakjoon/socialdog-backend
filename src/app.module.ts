@@ -9,6 +9,7 @@ import { WalksModule } from './walks/walks.module';
 import * as Joi from 'joi';
 import { User } from './users/entities/users.entity';
 import { Walks } from './walks/entities/walks.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { Walks } from './walks/entities/walks.entity';
     }),
     UsersModule,
     WalksModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
