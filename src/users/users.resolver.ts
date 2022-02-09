@@ -11,7 +11,7 @@ import { LocalStrategy } from 'src/auth/strategy/auth.local';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { EditProfileInputDto, EditProfileOutputDto } from './dtos/edit-profile.dto';
-import { GetProfileInputDto, GetProfileOutputDto } from './dtos/get-profile.dto';
+import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 import { args } from 'src/common/constants';
 
 @Resolver((of) => User)
@@ -38,8 +38,8 @@ export class UsersResolver {
     return this.usersService.editProfile(user, args)
   }
 
-  @Query(()=>GetProfileOutputDto)
-  getProfile(@Args(args) args:GetProfileInputDto):Promise<GetProfileOutputDto>{
+  @Query(()=>GetUserOutputDto)
+  getProfile(@Args(args) args:GetUserInputDto):Promise<GetUserOutputDto>{
     console.log(args)
     return this.usersService.getProfile(args)
   }

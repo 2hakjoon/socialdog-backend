@@ -4,14 +4,14 @@ import { CoreOutputDto } from 'src/common/dtos/core-output-dto.dto';
 import { User } from '../entities/users.entity';
 
 @InputType()
-export class GetProfileInputDto {
+export class GetUserInputDto {
   @Field(() => Number)
   @IsNumber()
   userId: number;
 }
 
 @ObjectType()
-export class GetProfileOutputDto extends CoreOutputDto {
+export class GetUserOutputDto extends CoreOutputDto {
   @Field(() => User, { nullable: true })
   data?: User;
 }

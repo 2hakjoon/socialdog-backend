@@ -11,10 +11,7 @@ import {
   EditProfileInputDto,
   EditProfileOutputDto,
 } from './dtos/edit-profile.dto';
-import {
-  GetProfileInputDto,
-  GetProfileOutputDto,
-} from './dtos/get-profile.dto';
+import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -56,9 +53,7 @@ export class UsersService {
     }
   }
 
-  async getProfile({
-    userId,
-  }: GetProfileInputDto): Promise<GetProfileOutputDto> {
+  async getProfile({ userId }: GetUserInputDto): Promise<GetUserOutputDto> {
     console.log(userId);
     try {
       const userInfo = await this.usersRepository.findOne({ id: userId });
