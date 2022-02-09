@@ -1,4 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { CoreWalksOutputDto } from 'src/common/dtos/core-output.dto';
 import { User } from 'src/users/entities/users.entity';
 import { Repository } from 'typeorm';
 import {
@@ -28,6 +29,22 @@ export class WalksService {
       return {
         ok: false,
         error: '산책정보 저장에 실패했습니다.',
+      };
+    }
+  }
+
+  async getWalks(user: User): Promise<CoreWalksOutputDto> {
+    try {
+      const walks = await this.walksRepository.find({ userId: user.id });
+      return {
+        ok: true,
+        data: walks,
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        ok: false,
+        error: '산책정보 조회에 실패했습니다.',
       };
     }
   }

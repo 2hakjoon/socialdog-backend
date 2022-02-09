@@ -19,6 +19,6 @@ export class CoreUserOutputDto extends CoreOutputDto {
 
 @ObjectType()
 export class CoreWalksOutputDto extends CoreOutputDto {
-  @Field(() => Walks, { nullable: true })
-  data?: Walks;
+  @Field(() => [Walks], { nullable: true })
+  data?: Walks[];
 }

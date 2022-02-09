@@ -34,5 +34,6 @@ export class Walks extends CoreEntity {
 
   @Field((type) => Number, { nullable: true })
   @RelationId((walks: Walks) => walks.user)
+  @Column()
   userId: number;
 }
