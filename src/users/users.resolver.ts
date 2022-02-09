@@ -13,12 +13,16 @@ import { UseGuards } from '@nestjs/common';
 import { EditProfileInputDto, EditProfileOutputDto } from './dtos/edit-profile.dto';
 import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 import { args } from 'src/common/constants';
+import { MailService } from 'src/mail/mail.service';
+import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
+import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
 
 @Resolver((of) => User)
 export class UsersResolver {
   constructor(
     private usersService: UsersService,
     private localStrategy : LocalStrategy,
+    private mailService: MailService
     ) {}
 
   @Mutation(() => CreateAccountOutputDto)
@@ -44,9 +48,19 @@ export class UsersResolver {
     return this.usersService.getProfile(args)
   }
 
+  @Mutation(()=>CoreOutputDto)
+  createVerification(@Args(args) args:CreateVerificationInputDto):Promise<CoreOutputDto>{
+    return this.mailService.createMailVerification(args);
+  }
+  @Mutation(()=>CoreOutputDto)
+  verifiyEmailAndCode(@Args(args) args:VerifyEmailAndCodeInputDto): Promise<CoreOutputDto>{
+    return this.mailService.verifyEmailAndCode(args)
+  }
+
   @UseGuards(GqlAuthGuard)
   @Query(()=>Boolean)
   test(@AuthUser() user: User){
+    this.mailService.sendMail('2hakjoon@gmail.com', 123456)
     console.log(user)
     return true
   }

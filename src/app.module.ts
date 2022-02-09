@@ -12,6 +12,8 @@ import { Walks } from './walks/entities/walks.entity';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { GqlAuthGuard } from './auth/auth.guard';
+import { MailModule } from './mail/mail.module';
+import { Verifies } from './mail/entities/verifies.entity';
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { GqlAuthGuard } from './auth/auth.guard';
         DB_NAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_PORT: Joi.number().required(),
+        SENDGRID_KEY: Joi.string().required(),
       }),
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.dev.env' : '.prod.env',
@@ -40,11 +43,12 @@ import { GqlAuthGuard } from './auth/auth.guard';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV === 'dev',
       logging: true,
-      entities: [User, Walks],
+      entities: [User, Walks, Verifies],
     }),
     UsersModule,
     WalksModule,
     AuthModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

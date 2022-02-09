@@ -12,18 +12,21 @@ import {
   EditProfileOutputDto,
 } from './dtos/edit-profile.dto';
 import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private mailService: MailService,
   ) {}
 
   async createAccount({
     username,
     email,
     password,
+    code,
   }: CreateAccountInputDto): Promise<CreateAccountOutputDto> {
     //console.log(username, email, password);
     try {
@@ -33,6 +36,13 @@ export class UsersService {
           ok: false,
           error: '이미 존재하는 이메일입니다.',
         };
+      }
+      const isCodeValid = await this.mailService.verifyEmailAndCode({
+        email,
+        code,
+      });
+      if (!isCodeValid.ok) {
+        return isCodeValid;
       }
       const hashedPassword = await bcrypt.hash(password, 10);
       await this.usersRepository.save(
