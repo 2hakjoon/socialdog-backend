@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { CoreOutputDto } from 'src/common/dtos/core-output-dto.dto';
+import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 
 @InputType()
 export class CreateRefreshTokenInputDto {

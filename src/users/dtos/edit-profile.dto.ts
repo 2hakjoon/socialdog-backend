@@ -5,7 +5,7 @@ import {
   PartialType,
   PickType,
 } from '@nestjs/graphql';
-import { CoreOutputDto } from 'src/common/dtos/core-output-dto.dto';
+import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import { User } from '../entities/users.entity';
 
 @InputType()
