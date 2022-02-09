@@ -8,7 +8,7 @@ import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 @InputType({ isAbstract: true })
 @ObjectType()
 export class Walks extends CoreEntity {
-  @Field((type) => String)
+  @Field((type) => Number)
   @Column()
   @IsNumber()
   walkingTime: number;
