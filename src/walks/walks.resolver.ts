@@ -2,12 +2,16 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
 import { args } from 'src/common/constants';
-import { CoreWalksOutputDto } from 'src/common/dtos/core-output.dto';
+import {
+  CoreOutputDto,
+  CoreWalksOutputDto,
+} from 'src/common/dtos/core-output.dto';
 import { User } from 'src/users/entities/users.entity';
 import {
   CreateWalkInputDto,
   CreateWalkOutputDto,
 } from './dtos/create-walk.dto';
+import { DeleteWalkInputDto } from './dtos/delete-walk.dto';
 import { Walks } from './entities/walks.entity';
 import { WalksService } from './walks.service';
 
@@ -28,5 +32,11 @@ export class WalksResolver {
   @UseGuards(GqlAuthGuard)
   getWalks(@AuthUser() user: User): Promise<CoreWalksOutputDto> {
     return this.walksService.getWalks(user);
+  }
+
+  @Mutation(() => CoreOutputDto)
+  @UseGuards(GqlAuthGuard)
+  deleteWalk(@AuthUser() user: User, @Args(args) args: DeleteWalkInputDto) {
+    return this.walksService.deleteWalks(user, args);
   }
 }
