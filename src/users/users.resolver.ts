@@ -16,6 +16,7 @@ import { args } from 'src/common/constants';
 import { MailService } from 'src/mail/mail.service';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
+import { ReissueRefreshTokenInputDto, ReissueRefreshTokenOutputDto } from 'src/auth/dtos/create-refresh-token.dto';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -57,11 +58,10 @@ export class UsersResolver {
     return this.mailService.verifyEmailAndCode(args)
   }
 
-  @UseGuards(GqlAuthGuard)
+
+  //@UseGuards(GqlAuthGuard)
   @Query(()=>Boolean)
-  test(@AuthUser() user: User){
-    this.mailService.sendMail('2hakjoon@gmail.com', 123456)
-    console.log(user)
+  test(){
     return true
   }
 }

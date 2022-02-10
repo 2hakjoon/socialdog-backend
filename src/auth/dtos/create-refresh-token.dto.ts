@@ -1,20 +1,20 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { IsString } from 'class-validator';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 
 @InputType()
-export class CreateRefreshTokenInputDto {
+export class ReissueRefreshTokenInputDto {
   @Field(() => String)
+  @IsString()
   accessToken: string;
 
   @Field(() => String)
+  @IsString()
   refreshToken: string;
 }
 
 @ObjectType()
-export class CreateRefreshTokenOutputDto extends CoreOutputDto {
+export class ReissueRefreshTokenOutputDto extends CoreOutputDto {
   @Field(() => String, { nullable: true })
   accessToken?: string;
-
-  @Field(() => String, { nullable: true })
-  refreshToken?: string;
 }
