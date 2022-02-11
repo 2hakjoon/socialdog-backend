@@ -7,7 +7,7 @@ export class CreateVerificationInputDto extends PickType(User, ['email']) {}
 
 @InputType()
 export class VerifyEmailAndCodeInputDto extends PickType(User, ['email']) {
-  @Field(() => Int)
+  @Field(() => String)
   @IsNumber()
-  code: number;
+  code: string;
 }

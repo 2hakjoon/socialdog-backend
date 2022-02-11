@@ -7,7 +7,7 @@ export class Verifies {
   @Column()
   email: string;
   @Column()
-  code: number;
+  code: string;
   @Column()
   expiryDate: number;
 }

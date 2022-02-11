@@ -9,9 +9,9 @@ export class CreateAccountInputDto extends PickType(User, [
   'email',
   'password',
 ]) {
-  @Field(() => Int)
+  @Field(() => String)
   @IsNumber()
-  code: number;
+  code: string;
 }
 
 @ObjectType()

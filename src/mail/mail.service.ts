@@ -29,7 +29,7 @@ export class MailService {
     return Math.floor(number / 1000);
   }
 
-  async sendMail(email: string, code: number): Promise<boolean> {
+  async sendMail(email: string, code: string): Promise<boolean> {
     sgMail.setApiKey(this.configService.get<string>('SENDGRID_KEY'));
     const msg = {
       to: `${email}`, // Change to your recipient
@@ -61,7 +61,7 @@ export class MailService {
       }
 
       const verify = await this.mailRepository.findOne({ email });
-      const code = this.getRandom6Digit();
+      const code = String(this.getRandom6Digit());
       const expiryDate = this.trimMilSec(Date.now()) + 3600;
       if (verify) {
         this.mailRepository.update(verify.id, { ...verify, code, expiryDate });
