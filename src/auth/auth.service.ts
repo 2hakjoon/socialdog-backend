@@ -7,8 +7,8 @@ import { User } from 'src/users/entities/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import {
-  ReissueRefreshTokenInputDto,
-  ReissueRefreshTokenOutputDto,
+  ReissueAccessTokenInputDto,
+  ReissueAccessTokenOutputDto,
 } from './dtos/create-refresh-token.dto';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class AuthService {
         };
       }
       const access_token = this.jwtService.sign({ id: user.id });
-      const refresh_token = this.jwtService.sign({}, { expiresIn: '14d' });
+      const refresh_token = this.jwtService.sign({}, { expiresIn: '182d' });
       await this.usersRepository.update(user.id, {
         ...user,
         refreshToken: refresh_token,
@@ -62,7 +62,7 @@ export class AuthService {
   async reissuanceAccessToken({
     accessToken,
     refreshToken,
-  }: ReissueRefreshTokenInputDto): Promise<ReissueRefreshTokenOutputDto> {
+  }: ReissueAccessTokenInputDto): Promise<ReissueAccessTokenOutputDto> {
     try {
       const decodedToken = this.jwtService.decode(accessToken);
       console.log(decodedToken);

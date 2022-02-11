@@ -13,6 +13,7 @@ import {
 } from './dtos/edit-profile.dto';
 import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 import { MailService } from 'src/mail/mail.service';
+import { CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 
 @Injectable()
 export class UsersService {
@@ -115,5 +116,12 @@ export class UsersService {
         error: '프로필 정보 수정에 실패했습니다.',
       };
     }
+  }
+
+  async me(user: User): Promise<CoreUserOutputDto> {
+    return {
+      ok: true,
+      data: user,
+    };
   }
 }

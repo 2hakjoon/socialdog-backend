@@ -8,7 +8,7 @@ import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 @InputType({ isAbstract: true })
 @ObjectType()
 export class Walks extends CoreEntity {
-  @Field((type) => Number)
+  @Field((type) => Int)
   @Column()
   @IsNumber()
   walkingTime: number;
@@ -32,7 +32,7 @@ export class Walks extends CoreEntity {
   @ManyToOne(() => User, (user) => user.walks, { onDelete: 'CASCADE' })
   user: User;
 
-  @Field((type) => Number, { nullable: true })
+  @Field((type) => Int, { nullable: true })
   @RelationId((walks: Walks) => walks.user)
   @Column()
   userId: number;

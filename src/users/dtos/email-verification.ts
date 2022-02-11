@@ -1,4 +1,4 @@
-import { Field, InputType, PickType } from '@nestjs/graphql';
+import { Field, InputType, Int, PickType } from '@nestjs/graphql';
 import { IsNumber } from 'class-validator';
 import { User } from '../entities/users.entity';
 
@@ -7,7 +7,7 @@ export class CreateVerificationInputDto extends PickType(User, ['email']) {}
 
 @InputType()
 export class VerifyEmailAndCodeInputDto extends PickType(User, ['email']) {
-  @Field(() => Number)
+  @Field(() => Int)
   @IsNumber()
   code: number;
 }

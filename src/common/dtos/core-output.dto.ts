@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, PickType } from '@nestjs/graphql';
 import { User } from 'src/users/entities/users.entity';
 import { Walks } from 'src/walks/entities/walks.entity';
 
@@ -12,9 +12,24 @@ export class CoreOutputDto {
 }
 
 @ObjectType()
+class UserDto {
+  @Field((type) => Int)
+  id: number;
+
+  @Field((type) => String)
+  username: string;
+
+  @Field((type) => String)
+  email: string;
+
+  @Field((type) => String, { nullable: true })
+  dogname?: string;
+}
+
+@ObjectType()
 export class CoreUserOutputDto extends CoreOutputDto {
-  @Field(() => User, { nullable: true })
-  data?: User;
+  @Field(() => UserDto, { nullable: true })
+  data?: UserDto;
 }
 
 @ObjectType()

@@ -1,8 +1,8 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import {
-  ReissueRefreshTokenInputDto,
-  ReissueRefreshTokenOutputDto,
+  ReissueAccessTokenInputDto,
+  ReissueAccessTokenOutputDto,
 } from './dtos/create-refresh-token.dto';
 import { args } from '../common/constants';
 
@@ -10,10 +10,10 @@ import { args } from '../common/constants';
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @Mutation(() => ReissueRefreshTokenOutputDto)
-  reissuanceAccessToken(
-    @Args(args) args: ReissueRefreshTokenInputDto,
-  ): Promise<ReissueRefreshTokenOutputDto> {
+  @Mutation(() => ReissueAccessTokenOutputDto)
+  reissueAccessToken(
+    @Args(args) args: ReissueAccessTokenInputDto,
+  ): Promise<ReissueAccessTokenOutputDto> {
     return this.authService.reissuanceAccessToken(args);
   }
 }

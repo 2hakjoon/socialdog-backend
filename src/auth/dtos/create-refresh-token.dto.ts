@@ -3,7 +3,7 @@ import { IsString } from 'class-validator';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 
 @InputType()
-export class ReissueRefreshTokenInputDto {
+export class ReissueAccessTokenInputDto {
   @Field(() => String)
   @IsString()
   accessToken: string;
@@ -14,7 +14,7 @@ export class ReissueRefreshTokenInputDto {
 }
 
 @ObjectType()
-export class ReissueRefreshTokenOutputDto extends CoreOutputDto {
+export class ReissueAccessTokenOutputDto extends CoreOutputDto {
   @Field(() => String, { nullable: true })
   accessToken?: string;
 }

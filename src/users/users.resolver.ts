@@ -14,9 +14,8 @@ import { EditProfileInputDto, EditProfileOutputDto } from './dtos/edit-profile.d
 import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 import { args } from 'src/common/constants';
 import { MailService } from 'src/mail/mail.service';
-import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
+import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
-import { ReissueRefreshTokenInputDto, ReissueRefreshTokenOutputDto } from 'src/auth/dtos/create-refresh-token.dto';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -58,6 +57,11 @@ export class UsersResolver {
     return this.mailService.verifyEmailAndCode(args)
   }
 
+  @Query(()=>CoreUserOutputDto)
+  @UseGuards(GqlAuthGuard)
+  me(@AuthUser() user:User):Promise<CoreUserOutputDto>{
+    return this.usersService.me(user)
+  }
 
   //@UseGuards(GqlAuthGuard)
   @Query(()=>Boolean)
