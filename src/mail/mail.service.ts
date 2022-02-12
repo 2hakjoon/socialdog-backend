@@ -62,7 +62,7 @@ export class MailService {
 
       const verify = await this.mailRepository.findOne({ email });
       const code = String(this.getRandom6Digit());
-      const expiryDate = this.trimMilSec(Date.now()) + 3600;
+      const expiryDate = this.trimMilSec(Date.now()) + 300;
       if (verify) {
         this.mailRepository.update(verify.id, { ...verify, code, expiryDate });
       } else {
@@ -109,7 +109,10 @@ export class MailService {
         ok: true,
       };
     } catch (e) {
-      throw new Error(e);
+      return {
+        ok: false,
+        error: '인증번호 검증중에 오류가 발생했습니다.',
+      };
     }
   }
 }

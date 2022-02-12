@@ -52,8 +52,8 @@ export class UsersResolver {
   createVerification(@Args(args) args:CreateVerificationInputDto):Promise<CoreOutputDto>{
     return this.mailService.createMailVerification(args);
   }
-  @Mutation(()=>CoreOutputDto)
-  verifiyEmailAndCode(@Args(args) args:VerifyEmailAndCodeInputDto): Promise<CoreOutputDto>{
+  @Query(()=>CoreOutputDto)
+  verifyEmailAndCode(@Args(args) args:VerifyEmailAndCodeInputDto): Promise<CoreOutputDto>{
     return this.mailService.verifyEmailAndCode(args)
   }
 
