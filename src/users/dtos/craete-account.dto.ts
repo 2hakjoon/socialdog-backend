@@ -1,5 +1,5 @@
-import { Field, InputType, Int, ObjectType, PickType } from '@nestjs/graphql';
-import { IsNumber } from 'class-validator';
+import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
+import { IsString } from 'class-validator';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import { User } from '../entities/users.entity';
 
@@ -10,7 +10,7 @@ export class CreateAccountInputDto extends PickType(User, [
   'password',
 ]) {
   @Field(() => String)
-  @IsNumber()
+  @IsString()
   code: string;
 }
 
