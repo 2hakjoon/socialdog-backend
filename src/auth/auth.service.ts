@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { LoginInputDto, LoginOutputDto } from './dtos/login.dto';
 import { Repository } from 'typeorm';
@@ -10,6 +9,8 @@ import {
   ReissueAccessTokenInputDto,
   ReissueAccessTokenOutputDto,
 } from './dtos/create-refresh-token.dto';
+import { KakaoLoginInputDto } from './dtos/kakao-login-dto';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -88,6 +89,24 @@ export class AuthService {
       return {
         ok: false,
         error: '엑세스 재발급에 실패하였습니다.',
+      };
+    }
+  }
+  async kakaoLogin({
+    kakaoAccessToken,
+  }: KakaoLoginInputDto): Promise<LoginOutputDto> {
+    try {
+      const res = await axios(
+        'https://kapi.kakao.com/v1/user/access_token_info',
+        { headers: { Authorization: `Bearer ${kakaoAccessToken}` } },
+      );
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '카카오 로그인 도중 에러가 발생했습니다.',
       };
     }
   }
