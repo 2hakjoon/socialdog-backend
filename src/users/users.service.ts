@@ -21,7 +21,6 @@ export class UsersService {
   ) {}
 
   async createAccount({
-    username,
     email,
     password,
   }: CreateAccountInputDto): Promise<CreateAccountOutputDto> {
@@ -37,7 +36,6 @@ export class UsersService {
       const hashedPassword = await bcrypt.hash(password, 10);
       await this.usersRepository.save(
         await this.usersRepository.create({
-          username,
           email,
           password: hashedPassword,
         }),
