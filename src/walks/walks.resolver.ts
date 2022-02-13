@@ -12,6 +12,7 @@ import {
   CreateWalkOutputDto,
 } from './dtos/create-walk.dto';
 import { DeleteWalkInputDto } from './dtos/delete-walk.dto';
+import { GetWalkInputDto, GetWalkOutputDto } from './dtos/get-walk.dto';
 import { Walks } from './entities/walks.entity';
 import { WalksService } from './walks.service';
 
@@ -26,6 +27,15 @@ export class WalksResolver {
     @Args(args) args: CreateWalkInputDto,
   ): Promise<CreateWalkOutputDto> {
     return this.walksService.createWalk(user, args);
+  }
+
+  @Query(() => GetWalkOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getWalk(
+    @AuthUser() user: User,
+    @Args(args) args: GetWalkInputDto,
+  ): Promise<GetWalkOutputDto> {
+    return this.walksService.getWalk(user, args);
   }
 
   @Query(() => CoreWalksOutputDto)

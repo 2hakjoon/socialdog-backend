@@ -1,4 +1,5 @@
-import { InputType, ObjectType, PickType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
+import { IsString } from 'class-validator';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import { User } from '../entities/users.entity';
 
@@ -6,7 +7,11 @@ import { User } from '../entities/users.entity';
 export class CreateAccountInputDto extends PickType(User, [
   'email',
   'password',
-]) {}
+]) {
+  @Field(() => String)
+  @IsString()
+  code: string;
+}
 
 @ObjectType()
 export class CreateAccountOutputDto extends CoreOutputDto {}

@@ -13,12 +13,16 @@ import { UseGuards } from '@nestjs/common';
 import { EditProfileInputDto, EditProfileOutputDto } from './dtos/edit-profile.dto';
 import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 import { args } from 'src/common/constants';
+import { MailService } from 'src/mail/mail.service';
+import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
+import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
 
 @Resolver((of) => User)
 export class UsersResolver {
   constructor(
     private usersService: UsersService,
     private localStrategy : LocalStrategy,
+    private mailService: MailService
     ) {}
 
   @Mutation(() => CreateAccountOutputDto)
@@ -44,10 +48,24 @@ export class UsersResolver {
     return this.usersService.getProfile(args)
   }
 
+  @Mutation(()=>CoreOutputDto)
+  createVerification(@Args(args) args:CreateVerificationInputDto):Promise<CoreOutputDto>{
+    return this.mailService.createMailVerification(args);
+  }
+  @Query(()=>CoreOutputDto)
+  verifyEmailAndCode(@Args(args) args:VerifyEmailAndCodeInputDto): Promise<CoreOutputDto>{
+    return this.mailService.verifyEmailAndCode(args)
+  }
+
+  @Query(()=>CoreUserOutputDto)
   @UseGuards(GqlAuthGuard)
+  me(@AuthUser() user:User):Promise<CoreUserOutputDto>{
+    return this.usersService.me(user)
+  }
+
+  //@UseGuards(GqlAuthGuard)
   @Query(()=>Boolean)
-  test(@AuthUser() user: User){
-    console.log(user)
+  test(){
     return true
   }
 }
