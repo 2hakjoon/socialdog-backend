@@ -12,12 +12,9 @@ export class CoreOutputDto {
 }
 
 @ObjectType()
-class UserDto {
+class UserProfileDto {
   @Field((type) => Int)
   id: number;
-
-  @Field((type) => String)
-  email: string;
 
   @Field((type) => String, { nullable: true })
   dogname?: string;
@@ -25,8 +22,8 @@ class UserDto {
 
 @ObjectType()
 export class CoreUserOutputDto extends CoreOutputDto {
-  @Field(() => UserDto, { nullable: true })
-  data?: UserDto;
+  @Field(() => UserProfileDto, { nullable: true })
+  data?: UserProfileDto;
 }
 
 @ObjectType()

@@ -151,7 +151,7 @@ export class UsersService {
   async me(user: UserProfile): Promise<CoreUserOutputDto> {
     return {
       ok: true,
-      // data: user,
+      data: user,
     };
   }
 }
