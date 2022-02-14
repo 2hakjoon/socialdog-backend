@@ -4,7 +4,7 @@ import {
   CreateAccountInputDto,
   CreateAccountOutputDto,
 } from './dtos/craete-account.dto';
-import { LoginInputDto, LoginOutputDto } from '../auth/dtos/login.dto';
+import { LoginInputDto, LoginOutputDto } from '../auth/dtos/local-login.dto';
 import { UserProfile } from './entities/users-profile.entity';
 import { UsersService } from './users.service';
 import { LocalStrategy } from 'src/auth/strategy/auth.local';
@@ -31,8 +31,8 @@ export class UsersResolver {
   }
 
   @Mutation(() => LoginOutputDto)
-  login(@Args(args) args:LoginInputDto):Promise<LoginOutputDto>{
-    return this.localStrategy.login(args);
+  localLogin(@Args(args) args:LoginInputDto):Promise<LoginOutputDto>{
+    return this.localStrategy.localLogin(args);
   }
 
   @UseGuards(GqlAuthGuard)

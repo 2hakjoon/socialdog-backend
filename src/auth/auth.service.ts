@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { LoginInputDto, LoginOutputDto } from './dtos/login.dto';
+import { LoginInputDto, LoginOutputDto } from './dtos/local-login.dto';
 import { Repository } from 'typeorm';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,7 +23,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login({ email, password }: LoginInputDto): Promise<LoginOutputDto> {
+  async localLogin({
+    email,
+    password,
+  }: LoginInputDto): Promise<LoginOutputDto> {
     try {
       const user = await this.usersAuthLoalRepository.findOne(
         { email },
@@ -49,7 +52,6 @@ export class AuthService {
         ...user,
         refreshToken: refresh_token,
       });
-      console.log(refresh_token);
       return {
         ok: true,
         accessToken: access_token,
