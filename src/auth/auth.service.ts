@@ -9,7 +9,7 @@ import {
   ReissueAccessTokenInputDto,
   ReissueAccessTokenOutputDto,
 } from './dtos/create-refresh-token.dto';
-import { KakaoLoginInputDto } from './dtos/kakao-login-dto';
+import { KakaoLoginInputDto } from './dtos/kakao-login.dto';
 import axios from 'axios';
 
 @Injectable()

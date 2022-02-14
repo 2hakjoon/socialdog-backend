@@ -1,12 +1,12 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
+import { args } from '../common/constants';
+import { LoginOutputDto } from './dtos/login.dto';
+import { KakaoLoginInputDto } from './dtos/kakao-login.dto';
 import {
   ReissueAccessTokenInputDto,
   ReissueAccessTokenOutputDto,
 } from './dtos/create-refresh-token.dto';
-import { args } from '../common/constants';
-import { LoginOutputDto } from './dtos/login.dto';
-import { KakaoLoginInputDto } from './dtos/kakao-login-dto';
 
 @Resolver()
 export class AuthResolver {

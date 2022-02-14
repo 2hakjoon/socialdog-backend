@@ -17,9 +17,6 @@ class UserDto {
   id: number;
 
   @Field((type) => String)
-  username: string;
-
-  @Field((type) => String)
   email: string;
 
   @Field((type) => String, { nullable: true })

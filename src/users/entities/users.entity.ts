@@ -8,8 +8,8 @@ import { Column, Entity, OneToMany } from 'typeorm';
 @InputType({ isAbstract: true })
 @ObjectType()
 export class User extends CoreEntity {
-  @Field((type) => String)
-  @Column()
+  @Field((type) => String, { nullable: true })
+  @Column({ nullable: true })
   @IsString()
   username?: string;
 
