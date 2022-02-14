@@ -1,17 +1,15 @@
 import { Field, InputType, PickType } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
-import { UserAuthLocal } from 'src/auth/entities/users-auth-local.dto';
+import { AuthLocal } from 'src/auth/entities/auth-local.dto';
 import { UserProfile } from '../entities/users-profile.entity';
 
 @InputType()
-export class CreateVerificationInputDto extends PickType(UserAuthLocal, [
+export class CreateVerificationInputDto extends PickType(AuthLocal, [
   'email',
 ]) {}
 
 @InputType()
-export class VerifyEmailAndCodeInputDto extends PickType(UserAuthLocal, [
-  'email',
-]) {
+export class VerifyEmailAndCodeInputDto extends PickType(AuthLocal, ['email']) {
   @Field(() => String)
   @IsString()
   code: string;

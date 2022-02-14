@@ -14,14 +14,15 @@ import {
 import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 import { MailService } from 'src/mail/mail.service';
 import { CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
-import { UserAuthLocal } from 'src/auth/entities/users-auth-local.dto';
+import { AuthLocal } from 'src/auth/entities/auth-local.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserProfile)
     private usersProfileRepository: Repository<UserProfile>,
-    private usersAuthLoalRepository: Repository<UserAuthLocal>,
+    @InjectRepository(AuthLocal)
+    private usersAuthLoalRepository: Repository<AuthLocal>,
     private mailService: MailService,
   ) {}
 
@@ -104,15 +105,15 @@ export class UsersService {
           error: '사용자를 찾을 수 없습니다.',
         };
       }
-      let hashedPassword = '';
-      if (editProfileInputDto.password) {
-        hashedPassword = await bcrypt.hash(editProfileInputDto.password, 10);
-      }
-      await this.usersProfileRepository.update(user.id, {
-        ...user,
-        ...editProfileInputDto,
-        password: hashedPassword,
-      });
+      // let hashedPassword = '';
+      // if (editProfileInputDto.password) {
+      //   hashedPassword = await bcrypt.hash(editProfileInputDto.password, 10);
+      // }
+      // await this.usersProfileRepository.update(user.id, {
+      //   ...user,
+      //   ...editProfileInputDto,
+      //   password: hashedPassword,
+      // });
       return {
         ok: true,
       };
@@ -127,7 +128,7 @@ export class UsersService {
   async me(user: UserProfile): Promise<CoreUserOutputDto> {
     return {
       ok: true,
-      data: user,
+      // data: user,
     };
   }
 }

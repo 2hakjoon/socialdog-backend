@@ -29,7 +29,9 @@ export class Walks extends CoreEntity {
   walkRecord: string;
 
   @Field((type) => UserProfile, { nullable: true })
-  @ManyToOne(() => UserProfile, (user) => user.walks, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserProfile, (userprofile) => userprofile.walks, {
+    onDelete: 'CASCADE',
+  })
   user: UserProfile;
 
   @Field((type) => Int, { nullable: true })

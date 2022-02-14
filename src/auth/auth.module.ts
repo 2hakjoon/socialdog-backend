@@ -8,17 +8,18 @@ import { AuthService } from './auth.service';
 import { secret } from './key.secret';
 import { LocalStrategy } from './strategy/auth.local';
 import { AuthResolver } from './auth.resolver';
+import { AuthLocal } from './entities/auth-local.dto';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserProfile]),
+    TypeOrmModule.forFeature([UserProfile, AuthLocal]),
     PassportModule,
     JwtModule.register({
       secret: secret, //랜덤 키 string
       signOptions: { expiresIn: '7d' },
     }),
   ],
-  providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],
-  exports: [LocalStrategy],
+  providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy, AuthLocal],
+  exports: [LocalStrategy, AuthLocal],
 })
 export class AuthModule {}

@@ -12,7 +12,7 @@ import { Walks } from './walks/entities/walks.entity';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { Verifies } from './mail/entities/verifies.entity';
-import { UserAuthLocal } from './auth/entities/users-auth-local.dto';
+import { AuthLocal } from './auth/entities/auth-local.dto';
 
 @Module({
   imports: [
@@ -42,7 +42,7 @@ import { UserAuthLocal } from './auth/entities/users-auth-local.dto';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV === 'dev',
       logging: true,
-      entities: [UserProfile, UserAuthLocal, Walks, Verifies],
+      entities: [UserProfile, AuthLocal, Walks, Verifies],
     }),
     UsersModule,
     WalksModule,

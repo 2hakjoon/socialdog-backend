@@ -11,14 +11,15 @@ import {
 } from './dtos/create-refresh-token.dto';
 import { KakaoLoginInputDto } from './dtos/kakao-login.dto';
 import axios from 'axios';
-import { UserAuthLocal } from './entities/users-auth-local.dto';
+import { AuthLocal } from './entities/auth-local.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserProfile)
     private usersProfileRepository: Repository<UserProfile>,
-    private usersAuthLoalRepository: Repository<UserAuthLocal>,
+    @InjectRepository(AuthLocal)
+    private usersAuthLoalRepository: Repository<AuthLocal>,
     private jwtService: JwtService,
   ) {}
 

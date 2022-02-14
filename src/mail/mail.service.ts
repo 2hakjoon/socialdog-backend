@@ -2,6 +2,7 @@ import { flatten, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as sgMail from '@sendgrid/mail';
+import { AuthLocal } from 'src/auth/entities/auth-local.dto';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import {
   CreateVerificationInputDto,
@@ -19,6 +20,8 @@ export class MailService {
     private mailRepository: Repository<Verifies>,
     @InjectRepository(UserProfile)
     private usersProfileRepository: Repository<UserProfile>,
+    @InjectRepository(UserProfile)
+    private usersLocalAuthRepository: Repository<AuthLocal>,
   ) {}
 
   getRandom6Digit(): number {
@@ -52,7 +55,7 @@ export class MailService {
     email,
   }: CreateVerificationInputDto): Promise<CoreOutputDto> {
     try {
-      const user = await this.usersProfileRepository.findOne({ email });
+      const user = await this.usersLocalAuthRepository.findOne({ email });
       if (user) {
         return {
           ok: false,
