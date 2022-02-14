@@ -1,16 +1,19 @@
 import {
   Field,
   InputType,
+  IntersectionType,
   ObjectType,
   PartialType,
   PickType,
 } from '@nestjs/graphql';
+import { AuthLocal } from 'src/auth/entities/auth-local.entity';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import { UserProfile } from '../entities/users-profile.entity';
 
 @InputType()
-export class EditProfileInputDto extends PartialType(
-  PickType(UserProfile, ['username', 'dogname']),
+export class EditProfileInputDto extends IntersectionType(
+  PartialType(PickType(UserProfile, ['username', 'dogname'])),
+  PartialType(PickType(AuthLocal, ['password'])),
 ) {}
 
 @ObjectType()

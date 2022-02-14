@@ -114,15 +114,29 @@ export class UsersService {
           error: '사용자를 찾을 수 없습니다.',
         };
       }
-      // let hashedPassword = '';
-      // if (editProfileInputDto.password) {
-      //   hashedPassword = await bcrypt.hash(editProfileInputDto.password, 10);
-      // }
-      // await this.usersProfileRepository.update(user.id, {
-      //   ...user,
-      //   ...editProfileInputDto,
-      //   password: hashedPassword,
-      // });
+      if (editProfileInputDto.password) {
+        const authLocal = await this.authLoalRepository.findOne({
+          userId: user.id,
+        });
+        if (!authLocal) {
+          return {
+            ok: false,
+            error: '계정정보가 없습니다.',
+          };
+        }
+        const hashedPassword = await bcrypt.hash(
+          editProfileInputDto.password,
+          10,
+        );
+        await this.authLoalRepository.update(authLocal.id, {
+          password: hashedPassword,
+        });
+      }
+      await this.usersProfileRepository.update(user.id, {
+        ...user,
+        ...editProfileInputDto,
+      });
+
       return {
         ok: true,
       };
