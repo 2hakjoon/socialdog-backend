@@ -18,9 +18,7 @@ export class MailService {
     private configService: ConfigService,
     @InjectRepository(Verifies)
     private mailRepository: Repository<Verifies>,
-    @InjectRepository(UserProfile)
-    private usersProfileRepository: Repository<UserProfile>,
-    @InjectRepository(UserProfile)
+    @InjectRepository(AuthLocal)
     private usersLocalAuthRepository: Repository<AuthLocal>,
   ) {}
 
