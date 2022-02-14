@@ -7,7 +7,7 @@ import {
   CreateVerificationInputDto,
   VerifyEmailAndCodeInputDto,
 } from 'src/users/dtos/email-verification';
-import { User } from 'src/users/entities/users.entity';
+import { User } from 'src/users/entities/users-profile.entity';
 import { Repository } from 'typeorm';
 import { Verifies } from './entities/verifies.entity';
 

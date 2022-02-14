@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/users.entity';
+import { User } from 'src/users/entities/users-profile.entity';
 import { JwtStrategy } from './auth.jwt-strategy';
 import { AuthService } from './auth.service';
 import { secret } from './key.secret';

@@ -5,7 +5,7 @@ import {
   CreateAccountOutputDto,
 } from './dtos/craete-account.dto';
 import { LoginInputDto, LoginOutputDto } from '../auth/dtos/login.dto';
-import { User } from './entities/users.entity';
+import { UserProfile } from './entities/users-profile.entity';
 import { UsersService } from './users.service';
 import { LocalStrategy } from 'src/auth/strategy/auth.local';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
@@ -17,7 +17,7 @@ import { MailService } from 'src/mail/mail.service';
 import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
 
-@Resolver((of) => User)
+@Resolver((of) => UserProfile)
 export class UsersResolver {
   constructor(
     private usersService: UsersService,
@@ -38,7 +38,7 @@ export class UsersResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(()=> EditProfileOutputDto)
-  editProfile(@AuthUser() user:User, @Args(args) args: EditProfileInputDto):Promise<EditProfileOutputDto>{
+  editProfile(@AuthUser() user:UserProfile, @Args(args) args: EditProfileInputDto):Promise<EditProfileOutputDto>{
     return this.usersService.editProfile(user, args)
   }
 
@@ -59,7 +59,7 @@ export class UsersResolver {
 
   @Query(()=>CoreUserOutputDto)
   @UseGuards(GqlAuthGuard)
-  me(@AuthUser() user:User):Promise<CoreUserOutputDto>{
+  me(@AuthUser() user:UserProfile):Promise<CoreUserOutputDto>{
     return this.usersService.me(user)
   }
 

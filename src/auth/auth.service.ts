@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { LoginInputDto, LoginOutputDto } from './dtos/login.dto';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/users.entity';
+import { User } from 'src/users/entities/users-profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import {

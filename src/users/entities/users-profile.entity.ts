@@ -7,7 +7,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 @Entity()
 @InputType({ isAbstract: true })
 @ObjectType()
-export class User extends CoreEntity {
+export class UserProfile extends CoreEntity {
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
   @IsString()

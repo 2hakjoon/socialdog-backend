@@ -6,16 +6,16 @@ import { Column, Entity } from 'typeorm';
 @Entity()
 @InputType({ isAbstract: true })
 @ObjectType()
-export class User extends CoreEntity {
+export class UserAuthLocal extends CoreEntity {
   @Field((type) => String)
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   @IsEmail()
-  email: string;
+  email?: string;
 
   @Field((type) => String)
   @Column({ select: false })
   @IsString()
-  password: string;
+  password?: string;
 
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })

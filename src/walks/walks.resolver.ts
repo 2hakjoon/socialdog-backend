@@ -6,7 +6,7 @@ import {
   CoreOutputDto,
   CoreWalksOutputDto,
 } from 'src/common/dtos/core-output.dto';
-import { User } from 'src/users/entities/users.entity';
+import { User } from 'src/users/entities/users-profile.entity';
 import {
   CreateWalkInputDto,
   CreateWalkOutputDto,

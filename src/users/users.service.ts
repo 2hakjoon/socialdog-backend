@@ -5,7 +5,7 @@ import {
   CreateAccountInputDto,
   CreateAccountOutputDto,
 } from './dtos/craete-account.dto';
-import { User } from './entities/users.entity';
+import { UserProfile } from './entities/users-profile.entity';
 import * as bcrypt from 'bcrypt';
 import {
   EditProfileInputDto,

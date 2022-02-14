@@ -7,13 +7,12 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WalksModule } from './walks/walks.module';
 import * as Joi from 'joi';
-import { User } from './users/entities/users.entity';
+import { UserProfile } from './users/entities/users-profile.entity';
 import { Walks } from './walks/entities/walks.entity';
 import { AuthModule } from './auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { GqlAuthGuard } from './auth/auth.guard';
 import { MailModule } from './mail/mail.module';
 import { Verifies } from './mail/entities/verifies.entity';
+import { UserAuthLocal } from './auth/entities/users-auth-local.dto';
 
 @Module({
   imports: [
@@ -43,7 +42,7 @@ import { Verifies } from './mail/entities/verifies.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV === 'dev',
       logging: true,
-      entities: [User, Walks, Verifies],
+      entities: [UserProfile, UserAuthLocal, Walks, Verifies],
     }),
     UsersModule,
     WalksModule,
