@@ -14,12 +14,14 @@ import {
 import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 import { MailService } from 'src/mail/mail.service';
 import { CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
+import { UserAuthLocal } from 'src/auth/entities/users-auth-local.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(UserProfile)
+    private usersProfileRepository: Repository<UserProfile>,
+    private usersAuthLoalRepository: Repository<UserAuthLocal>,
     private mailService: MailService,
   ) {}
 
@@ -30,7 +32,9 @@ export class UsersService {
   }: CreateAccountInputDto): Promise<CreateAccountOutputDto> {
     //console.log(username, email, password);
     try {
-      const isUserExists = await this.usersRepository.findOne({ email });
+      const isUserExists = await this.usersAuthLoalRepository.findOne({
+        email,
+      });
       if (isUserExists) {
         return {
           ok: false,
@@ -45,8 +49,8 @@ export class UsersService {
         return isCodeValid;
       }
       const hashedPassword = await bcrypt.hash(password, 10);
-      await this.usersRepository.save(
-        await this.usersRepository.create({
+      await this.usersAuthLoalRepository.save(
+        await this.usersAuthLoalRepository.create({
           email,
           password: hashedPassword,
         }),
@@ -65,7 +69,9 @@ export class UsersService {
   async getProfile({ userId }: GetUserInputDto): Promise<GetUserOutputDto> {
     console.log(userId);
     try {
-      const userInfo = await this.usersRepository.findOne({ id: userId });
+      const userInfo = await this.usersProfileRepository.findOne({
+        id: userId,
+      });
       if (!userInfo) {
         return {
           ok: false,
@@ -85,11 +91,13 @@ export class UsersService {
   }
 
   async editProfile(
-    user: User,
+    user: UserProfile,
     editProfileInputDto: EditProfileInputDto,
   ): Promise<EditProfileOutputDto> {
     try {
-      const userInfo = await this.usersRepository.findOne({ id: user.id });
+      const userInfo = await this.usersProfileRepository.findOne({
+        id: user.id,
+      });
       if (!userInfo) {
         return {
           ok: false,
@@ -100,7 +108,7 @@ export class UsersService {
       if (editProfileInputDto.password) {
         hashedPassword = await bcrypt.hash(editProfileInputDto.password, 10);
       }
-      await this.usersRepository.update(user.id, {
+      await this.usersProfileRepository.update(user.id, {
         ...user,
         ...editProfileInputDto,
         password: hashedPassword,
@@ -116,7 +124,7 @@ export class UsersService {
     }
   }
 
-  async me(user: User): Promise<CoreUserOutputDto> {
+  async me(user: UserProfile): Promise<CoreUserOutputDto> {
     return {
       ok: true,
       data: user,

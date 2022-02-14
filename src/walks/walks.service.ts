@@ -3,7 +3,7 @@ import {
   CoreOutputDto,
   CoreWalksOutputDto,
 } from 'src/common/dtos/core-output.dto';
-import { User } from 'src/users/entities/users-profile.entity';
+import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { Repository } from 'typeorm';
 import {
   CreateWalkInputDto,
@@ -20,7 +20,7 @@ export class WalksService {
   ) {}
 
   async createWalk(
-    user: User,
+    user: UserProfile,
     args: CreateWalkInputDto,
   ): Promise<CreateWalkOutputDto> {
     try {
@@ -39,7 +39,7 @@ export class WalksService {
   }
 
   async getWalk(
-    user: User,
+    user: UserProfile,
     { walkId }: GetWalkInputDto,
   ): Promise<GetWalkOutputDto> {
     try {
@@ -74,7 +74,7 @@ export class WalksService {
     }
   }
 
-  async getWalks(user: User): Promise<CoreWalksOutputDto> {
+  async getWalks(user: UserProfile): Promise<CoreWalksOutputDto> {
     try {
       const walks = await this.walksRepository.find({ userId: user.id });
       return {
@@ -91,7 +91,7 @@ export class WalksService {
   }
 
   async deleteWalks(
-    user: User,
+    user: UserProfile,
     { walkId }: DeleteWalkInputDto,
   ): Promise<CoreOutputDto> {
     try {

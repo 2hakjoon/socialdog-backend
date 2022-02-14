@@ -6,7 +6,7 @@ import {
   CoreOutputDto,
   CoreWalksOutputDto,
 } from 'src/common/dtos/core-output.dto';
-import { User } from 'src/users/entities/users-profile.entity';
+import { UserProfile } from 'src/users/entities/users-profile.entity';
 import {
   CreateWalkInputDto,
   CreateWalkOutputDto,
@@ -23,7 +23,7 @@ export class WalksResolver {
   @Mutation((returns) => CreateWalkOutputDto)
   @UseGuards(GqlAuthGuard)
   createWalk(
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
     @Args(args) args: CreateWalkInputDto,
   ): Promise<CreateWalkOutputDto> {
     return this.walksService.createWalk(user, args);
@@ -32,7 +32,7 @@ export class WalksResolver {
   @Query(() => GetWalkOutputDto)
   @UseGuards(GqlAuthGuard)
   getWalk(
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
     @Args(args) args: GetWalkInputDto,
   ): Promise<GetWalkOutputDto> {
     return this.walksService.getWalk(user, args);
@@ -40,13 +40,16 @@ export class WalksResolver {
 
   @Query(() => CoreWalksOutputDto)
   @UseGuards(GqlAuthGuard)
-  getWalks(@AuthUser() user: User): Promise<CoreWalksOutputDto> {
+  getWalks(@AuthUser() user: UserProfile): Promise<CoreWalksOutputDto> {
     return this.walksService.getWalks(user);
   }
 
   @Mutation(() => CoreOutputDto)
   @UseGuards(GqlAuthGuard)
-  deleteWalk(@AuthUser() user: User, @Args(args) args: DeleteWalkInputDto) {
+  deleteWalk(
+    @AuthUser() user: UserProfile,
+    @Args(args) args: DeleteWalkInputDto,
+  ) {
     return this.walksService.deleteWalks(user, args);
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { LoginInputDto, LoginOutputDto } from './dtos/login.dto';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/users-profile.entity';
+import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -11,18 +11,20 @@ import {
 } from './dtos/create-refresh-token.dto';
 import { KakaoLoginInputDto } from './dtos/kakao-login.dto';
 import axios from 'axios';
+import { UserAuthLocal } from './entities/users-auth-local.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(UserProfile)
+    private usersProfileRepository: Repository<UserProfile>,
+    private usersAuthLoalRepository: Repository<UserAuthLocal>,
     private jwtService: JwtService,
   ) {}
 
   async login({ email, password }: LoginInputDto): Promise<LoginOutputDto> {
     try {
-      const user = await this.usersRepository.findOne(
+      const user = await this.usersAuthLoalRepository.findOne(
         { email },
         { select: ['id', 'password'] },
       );
@@ -42,7 +44,7 @@ export class AuthService {
       }
       const access_token = this.jwtService.sign({ id: user.id });
       const refresh_token = this.jwtService.sign({}, { expiresIn: '182d' });
-      await this.usersRepository.update(user.id, {
+      await this.usersAuthLoalRepository.update(user.id, {
         ...user,
         refreshToken: refresh_token,
       });
@@ -67,7 +69,7 @@ export class AuthService {
     try {
       const decodedToken = this.jwtService.decode(accessToken);
       console.log(decodedToken);
-      const user = await this.usersRepository.findOne({ refreshToken });
+      const user = await this.usersAuthLoalRepository.findOne({ refreshToken });
       if (!user) {
         return {
           ok: false,

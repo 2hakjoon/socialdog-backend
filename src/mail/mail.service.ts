@@ -7,7 +7,7 @@ import {
   CreateVerificationInputDto,
   VerifyEmailAndCodeInputDto,
 } from 'src/users/dtos/email-verification';
-import { User } from 'src/users/entities/users-profile.entity';
+import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { Repository } from 'typeorm';
 import { Verifies } from './entities/verifies.entity';
 
@@ -17,8 +17,8 @@ export class MailService {
     private configService: ConfigService,
     @InjectRepository(Verifies)
     private mailRepository: Repository<Verifies>,
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(UserProfile)
+    private usersProfileRepository: Repository<UserProfile>,
   ) {}
 
   getRandom6Digit(): number {
@@ -52,7 +52,7 @@ export class MailService {
     email,
   }: CreateVerificationInputDto): Promise<CoreOutputDto> {
     try {
-      const user = await this.usersRepository.findOne({ email });
+      const user = await this.usersProfileRepository.findOne({ email });
       if (user) {
         return {
           ok: false,
