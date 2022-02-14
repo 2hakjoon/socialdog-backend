@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { Verifies } from './mail/entities/verifies.entity';
 import { AuthLocal } from './auth/entities/auth-local.entity';
+import { AuthKakao } from './auth/entities/auth-kakao.entity';
 
 @Module({
   imports: [
@@ -42,7 +43,7 @@ import { AuthLocal } from './auth/entities/auth-local.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV === 'dev',
       logging: true,
-      entities: [UserProfile, AuthLocal, Walks, Verifies],
+      entities: [UserProfile, AuthLocal, Walks, Verifies, AuthKakao],
     }),
     UsersModule,
     WalksModule,

@@ -4,7 +4,7 @@ import {
   CreateAccountInputDto,
   CreateAccountOutputDto,
 } from './dtos/craete-account.dto';
-import { LoginInputDto, LoginOutputDto } from '../auth/dtos/local-login.dto';
+import { LoginInputDto, LoginOutputDto } from '../auth/dtos/login.dto';
 import { UserProfile } from './entities/users-profile.entity';
 import { UsersService } from './users.service';
 import { LocalStrategy } from 'src/auth/strategy/auth.local';

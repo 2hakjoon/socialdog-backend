@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { LoginInputDto, LoginOutputDto } from './dtos/local-login.dto';
+import { LoginInputDto, LoginOutputDto } from './dtos/login.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -11,12 +11,21 @@ import {
 import { KakaoLoginInputDto } from './dtos/kakao-login.dto';
 import axios from 'axios';
 import { AuthLocal } from './entities/auth-local.entity';
+import { AuthKakao } from './entities/auth-kakao.entity';
+import {
+  LoginStrategy,
+  UserProfile,
+} from 'src/users/entities/users-profile.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(UserProfile)
+    private userProfileRepository: Repository<UserProfile>,
     @InjectRepository(AuthLocal)
-    private usersAuthLoalRepository: Repository<AuthLocal>,
+    private AuthLoalRepository: Repository<AuthLocal>,
+    @InjectRepository(AuthKakao)
+    private AuthKakaoRepository: Repository<AuthKakao>,
     private jwtService: JwtService,
   ) {}
 
@@ -25,7 +34,7 @@ export class AuthService {
     password,
   }: LoginInputDto): Promise<LoginOutputDto> {
     try {
-      const user = await this.usersAuthLoalRepository.findOne(
+      const user = await this.AuthLoalRepository.findOne(
         { email },
         { select: ['id', 'password'] },
       );
@@ -45,7 +54,7 @@ export class AuthService {
       }
       const access_token = this.jwtService.sign({ id: user.id });
       const refresh_token = this.jwtService.sign({}, { expiresIn: '182d' });
-      await this.usersAuthLoalRepository.update(user.id, {
+      await this.AuthLoalRepository.update(user.id, {
         ...user,
         refreshToken: refresh_token,
       });
@@ -69,7 +78,7 @@ export class AuthService {
     try {
       const decodedToken = this.jwtService.decode(accessToken);
       console.log(decodedToken);
-      const user = await this.usersAuthLoalRepository.findOne({ refreshToken });
+      const user = await this.AuthLoalRepository.findOne({ refreshToken });
       if (!user) {
         return {
           ok: false,
@@ -94,18 +103,34 @@ export class AuthService {
       };
     }
   }
-  async kakaoLogin({
-    kakaoAccessToken,
-  }: KakaoLoginInputDto): Promise<LoginOutputDto> {
+  async kakaoLogin(kakaoTokens: KakaoLoginInputDto): Promise<LoginOutputDto> {
+    console.log(kakaoTokens);
     try {
-      const res = await axios(
+      const { data: kakaoResponse } = await axios(
         'https://kapi.kakao.com/v1/user/access_token_info',
-        { headers: { Authorization: `Bearer ${kakaoAccessToken}` } },
+        { headers: { Authorization: `Bearer ${kakaoTokens.accessToken}` } },
+      );
+      const user = await this.userProfileRepository.save(
+        await this.userProfileRepository.create({
+          loginStrategy: LoginStrategy.KAKAO,
+        }),
+      );
+      const access_token = this.jwtService.sign({ id: user.id });
+      const refresh_token = this.jwtService.sign({}, { expiresIn: '182d' });
+      await this.AuthKakaoRepository.save(
+        await this.AuthKakaoRepository.create({
+          kakaoId: kakaoResponse.id,
+          userId: user.id,
+          refreshToken: refresh_token,
+        }),
       );
       return {
         ok: true,
+        accessToken: access_token,
+        refreshToken: refresh_token,
       };
     } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: '카카오 로그인 도중 에러가 발생했습니다.',

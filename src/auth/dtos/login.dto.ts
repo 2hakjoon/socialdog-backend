@@ -9,6 +9,7 @@ export class LoginInputDto extends PickType(AuthLocal, ['email', 'password']) {}
 export class LoginOutputDto extends CoreOutputDto {
   @Field(() => String, { nullable: true })
   accessToken?: string;
+
   @Field(() => String, { nullable: true })
   refreshToken?: string;
 }

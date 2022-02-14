@@ -9,10 +9,11 @@ import { secret } from './key.secret';
 import { LocalStrategy } from './strategy/auth.local';
 import { AuthResolver } from './auth.resolver';
 import { AuthLocal } from './entities/auth-local.entity';
+import { AuthKakao } from './entities/auth-kakao.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserProfile, AuthLocal]),
+    TypeOrmModule.forFeature([UserProfile, AuthLocal, AuthKakao]),
     PassportModule,
     JwtModule.register({
       secret: secret, //랜덤 키 string
