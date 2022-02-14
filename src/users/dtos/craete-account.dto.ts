@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
-import { AuthLocal } from 'src/auth/entities/auth-local.dto';
+import { AuthLocal } from 'src/auth/entities/auth-local.entity';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 
 @InputType()

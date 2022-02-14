@@ -11,7 +11,7 @@ import {
 } from './dtos/create-refresh-token.dto';
 import { KakaoLoginInputDto } from './dtos/kakao-login.dto';
 import axios from 'axios';
-import { AuthLocal } from './entities/auth-local.dto';
+import { AuthLocal } from './entities/auth-local.entity';
 
 @Injectable()
 export class AuthService {

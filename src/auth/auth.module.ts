@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 import { secret } from './key.secret';
 import { LocalStrategy } from './strategy/auth.local';
 import { AuthResolver } from './auth.resolver';
-import { AuthLocal } from './entities/auth-local.dto';
+import { AuthLocal } from './entities/auth-local.entity';
 
 @Module({
   imports: [

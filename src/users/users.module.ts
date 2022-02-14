@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
-import { AuthLocal } from 'src/auth/entities/auth-local.dto';
+import { AuthLocal } from 'src/auth/entities/auth-local.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { UserProfile } from './entities/users-profile.entity';
 import { UsersResolver } from './users.resolver';

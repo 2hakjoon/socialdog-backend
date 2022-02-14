@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { IsEmail, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Column, Entity } from 'typeorm';
@@ -20,5 +20,9 @@ export class AuthLocal extends CoreEntity {
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
   @IsString()
-  refreshToken: string;
+  refreshToken?: string;
+
+  @Field((type) => Int)
+  @Column()
+  userId: number;
 }

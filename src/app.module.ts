@@ -12,7 +12,7 @@ import { Walks } from './walks/entities/walks.entity';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { Verifies } from './mail/entities/verifies.entity';
-import { AuthLocal } from './auth/entities/auth-local.dto';
+import { AuthLocal } from './auth/entities/auth-local.entity';
 
 @Module({
   imports: [

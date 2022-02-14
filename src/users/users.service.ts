@@ -5,7 +5,7 @@ import {
   CreateAccountInputDto,
   CreateAccountOutputDto,
 } from './dtos/craete-account.dto';
-import { UserProfile } from './entities/users-profile.entity';
+import { LoginStrategy, UserProfile } from './entities/users-profile.entity';
 import * as bcrypt from 'bcrypt';
 import {
   EditProfileInputDto,
@@ -14,7 +14,7 @@ import {
 import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 import { MailService } from 'src/mail/mail.service';
 import { CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
-import { AuthLocal } from 'src/auth/entities/auth-local.dto';
+import { AuthLocal } from 'src/auth/entities/auth-local.entity';
 
 @Injectable()
 export class UsersService {
@@ -22,18 +22,17 @@ export class UsersService {
     @InjectRepository(UserProfile)
     private usersProfileRepository: Repository<UserProfile>,
     @InjectRepository(AuthLocal)
-    private usersAuthLoalRepository: Repository<AuthLocal>,
+    private authLoalRepository: Repository<AuthLocal>,
     private mailService: MailService,
   ) {}
 
-  async createAccount({
+  async createLocalAccount({
     email,
     password,
     code,
   }: CreateAccountInputDto): Promise<CreateAccountOutputDto> {
-    //console.log(username, email, password);
     try {
-      const isUserExists = await this.usersAuthLoalRepository.findOne({
+      const isUserExists = await this.authLoalRepository.findOne({
         email,
       });
       if (isUserExists) {
@@ -50,12 +49,22 @@ export class UsersService {
         return isCodeValid;
       }
       const hashedPassword = await bcrypt.hash(password, 10);
-      await this.usersAuthLoalRepository.save(
-        await this.usersAuthLoalRepository.create({
-          email,
-          password: hashedPassword,
+
+      const { id: userId } = await this.usersProfileRepository.save(
+        await this.usersProfileRepository.create({
+          loginStrategy: LoginStrategy.LOCAL,
         }),
       );
+      console.log(userId);
+
+      await this.authLoalRepository.save(
+        await this.authLoalRepository.create({
+          email,
+          password: hashedPassword,
+          userId,
+        }),
+      );
+
       return {
         ok: true,
       };

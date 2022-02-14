@@ -26,13 +26,12 @@ export class UsersResolver {
     ) {}
 
   @Mutation(() => CreateAccountOutputDto)
-  createAccount(@Args(args) args: CreateAccountInputDto):Promise<CreateAccountOutputDto> {
-    return this.usersService.createAccount(args);
+  createLocalAccount(@Args(args) args: CreateAccountInputDto):Promise<CreateAccountOutputDto> {
+    return this.usersService.createLocalAccount(args);
   }
 
   @Mutation(() => LoginOutputDto)
   login(@Args(args) args:LoginInputDto):Promise<LoginOutputDto>{
-    console.log(args)
     return this.localStrategy.login(args);
   }
 

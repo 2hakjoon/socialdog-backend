@@ -2,7 +2,7 @@ import { flatten, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as sgMail from '@sendgrid/mail';
-import { AuthLocal } from 'src/auth/entities/auth-local.dto';
+import { AuthLocal } from 'src/auth/entities/auth-local.entity';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import {
   CreateVerificationInputDto,
