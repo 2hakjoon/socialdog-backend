@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { LoginInputDto, LoginOutputDto } from './dtos/local-login.dto';
 import { Repository } from 'typeorm';
-import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -16,8 +15,6 @@ import { AuthLocal } from './entities/auth-local.entity';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(UserProfile)
-    private usersProfileRepository: Repository<UserProfile>,
     @InjectRepository(AuthLocal)
     private usersAuthLoalRepository: Repository<AuthLocal>,
     private jwtService: JwtService,
