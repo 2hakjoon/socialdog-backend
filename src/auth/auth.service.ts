@@ -17,6 +17,16 @@ import {
   UserProfile,
 } from 'src/users/entities/users-profile.entity';
 
+interface IKakaoLoginResponse {
+  data: {
+    id: string;
+    expiresInMillis: number;
+    expires_in: number;
+    app_id: number;
+    appId: number;
+  };
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -106,24 +116,47 @@ export class AuthService {
   async kakaoLogin(kakaoTokens: KakaoLoginInputDto): Promise<LoginOutputDto> {
     console.log(kakaoTokens);
     try {
-      const { data: kakaoResponse } = await axios(
+      const { data: kakaoResponse }: IKakaoLoginResponse = await axios(
         'https://kapi.kakao.com/v1/user/access_token_info',
         { headers: { Authorization: `Bearer ${kakaoTokens.accessToken}` } },
       );
-      const user = await this.userProfileRepository.save(
-        await this.userProfileRepository.create({
-          loginStrategy: LoginStrategy.KAKAO,
-        }),
-      );
-      const access_token = this.jwtService.sign({ id: user.id });
-      const refresh_token = this.jwtService.sign({}, { expiresIn: '182d' });
-      await this.AuthKakaoRepository.save(
-        await this.AuthKakaoRepository.create({
-          kakaoId: kakaoResponse.id,
-          userId: user.id,
+      console.log(kakaoResponse);
+      if (!kakaoResponse.id) {
+        return {
+          ok: false,
+        };
+      }
+      const authKakaoUser = await this.AuthKakaoRepository.findOne({
+        kakaoId: kakaoResponse.id,
+      });
+      //이미 로그인 한 적이 있을때
+      if (!authKakaoUser) {
+        const user = await this.userProfileRepository.save(
+          await this.userProfileRepository.create({
+            loginStrategy: LoginStrategy.KAKAO,
+          }),
+        );
+        const access_token = this.jwtService.sign({ id: user.id });
+        const refresh_token = this.jwtService.sign({}, { expiresIn: '182d' });
+        await this.AuthKakaoRepository.save(
+          await this.AuthKakaoRepository.create({
+            kakaoId: kakaoResponse.id,
+            userId: user.id,
+            refreshToken: refresh_token,
+          }),
+        );
+        return {
+          ok: true,
+          accessToken: access_token,
           refreshToken: refresh_token,
-        }),
-      );
+        };
+      }
+
+      const access_token = this.jwtService.sign({ id: authKakaoUser.userId });
+      const refresh_token = this.jwtService.sign({}, { expiresIn: '182d' });
+      await this.AuthKakaoRepository.update(authKakaoUser.id, {
+        refreshToken: refresh_token,
+      });
       return {
         ok: true,
         accessToken: access_token,
