@@ -4,10 +4,8 @@ import {
   CreateAccountInputDto,
   CreateAccountOutputDto,
 } from './dtos/craete-account.dto';
-import { LoginInputDto, LoginOutputDto } from '../auth/dtos/login.dto';
 import { UserProfile } from './entities/users-profile.entity';
 import { UsersService } from './users.service';
-import { LocalStrategy } from 'src/auth/strategy/auth.local';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { EditProfileInputDto, EditProfileOutputDto } from './dtos/edit-profile.dto';
@@ -22,18 +20,12 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 export class UsersResolver {
   constructor(
     private usersService: UsersService,
-    private localStrategy : LocalStrategy,
     private mailService: MailService
     ) {}
 
   @Mutation(() => CreateAccountOutputDto)
   createLocalAccount(@Args(args) args: CreateAccountInputDto):Promise<CreateAccountOutputDto> {
     return this.usersService.createLocalAccount(args);
-  }
-
-  @Mutation(() => LoginOutputDto)
-  localLogin(@Args(args) args:LoginInputDto):Promise<LoginOutputDto>{
-    return this.localStrategy.localLogin(args);
   }
 
   @Mutation(()=> EditProfileOutputDto)
@@ -59,6 +51,7 @@ export class UsersResolver {
   @Query(()=>CoreUserOutputDto)
   @UseGuards(GqlAuthGuard)
   me(@AuthUser() user:UserProfile):Promise<CoreUserOutputDto>{
+    console.log(user)
     return this.usersService.me(user)
   }
 

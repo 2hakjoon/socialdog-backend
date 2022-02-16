@@ -16,6 +16,7 @@ import {
   LoginStrategy,
   UserProfile,
 } from 'src/users/entities/users-profile.entity';
+import { secret } from './key.secret';
 
 interface IKakaoLoginResponse {
   data: {
@@ -44,27 +45,27 @@ export class AuthService {
     password,
   }: LoginInputDto): Promise<LoginOutputDto> {
     try {
-      const user = await this.AuthLoalRepository.findOne(
+      const authLocal = await this.AuthLoalRepository.findOne(
         { email },
-        { select: ['id', 'password'] },
+        { select: ['id', 'password','userId'] },
       );
-      if (!user) {
+      if (!authLocal) {
         return {
           ok: false,
           error: '로그인 정보가 잘못되었습니다.',
         };
       }
-      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      const isPasswordCorrect = await bcrypt.compare(password, authLocal.password);
       if (!isPasswordCorrect) {
         return {
           ok: false,
           error: '로그인 정보가 잘못되었습니다.',
         };
       }
-      const access_token = this.jwtService.sign({ id: user.id });
-      const refresh_token = this.jwtService.sign({ id: user.id }, { expiresIn: '182d' });
-      await this.AuthLoalRepository.update(user.id, {
-        ...user,
+      const access_token = this.jwtService.sign({ id: authLocal.userId} );
+      const refresh_token = this.jwtService.sign({ id: authLocal.userId }, { expiresIn: '182d' });
+      await this.AuthLoalRepository.update(authLocal.id, {
+        ...authLocal,
         refreshToken: refresh_token,
       });
       return {
@@ -80,27 +81,27 @@ export class AuthService {
       };
     }
   }
+
   async reissuanceAccessToken({
     accessToken,
     refreshToken,
   }: ReissueAccessTokenInputDto): Promise<ReissueAccessTokenOutputDto> {
     try {
       const decodedToken = this.jwtService.decode(accessToken);
-      console.log(decodedToken);
-      const user = await this.AuthLoalRepository.findOne({ refreshToken });
-      if (!user) {
+      const authLocal = await this.AuthLoalRepository.findOne({ refreshToken });
+      if (!authLocal) {
         return {
           ok: false,
           error: '리프레시 토큰이 일치하지 않습니다.',
         };
       }
-      if (user.id !== decodedToken['id']) {
+      if (authLocal.id !== decodedToken['id']) {
         return {
           ok: false,
           error: '엑세스 토큰이 일치하지 않습니다.',
         };
       }
-      const newAccessToken = this.jwtService.sign({ id: user.id });
+      const newAccessToken = this.jwtService.sign({ id: authLocal.userId });
       return {
         ok: true,
         accessToken: newAccessToken,

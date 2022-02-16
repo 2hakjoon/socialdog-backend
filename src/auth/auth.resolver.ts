@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { args } from '../common/constants';
-import { LoginOutputDto } from './dtos/login.dto';
+import { LoginInputDto, LoginOutputDto } from './dtos/login.dto';
 import { KakaoLoginInputDto } from './dtos/kakao-login.dto';
 import {
   ReissueAccessTokenInputDto,
@@ -13,10 +13,16 @@ export class AuthResolver {
   constructor(private authService: AuthService) {}
 
   @Mutation(() => ReissueAccessTokenOutputDto)
+  
   reissueAccessToken(
     @Args(args) args: ReissueAccessTokenInputDto,
   ): Promise<ReissueAccessTokenOutputDto> {
     return this.authService.reissuanceAccessToken(args);
+  }
+  
+  @Mutation(() => LoginOutputDto)
+  localLogin(@Args(args) args:LoginInputDto):Promise<LoginOutputDto>{
+    return this.authService.localLogin(args);
   }
 
   @Mutation(() => LoginOutputDto)
