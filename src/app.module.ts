@@ -28,6 +28,7 @@ import { UploadModule } from './upload/upload.module';
         DB_PASSWORD: Joi.string().required(),
         DB_PORT: Joi.number().required(),
         SENDGRID_KEY: Joi.string().required(),
+        JWT_SECRET_KEY: Joi.string().required(),
         AWS_S3_ACCESS_ID: Joi.string().required(),
         AWS_S3_SECRET_KEY: Joi.string().required(),
         AWS_S3_BUCKET: Joi.string().required(),
@@ -56,9 +57,12 @@ import { UploadModule } from './upload/upload.module';
       secretAccessKey: process.env.AWS_S3_SECRET_KEY,
       s3Bucket: process.env.AWS_S3_BUCKET
     }),
+    AuthModule.forRoot({
+      secretKey: process.env.JWT_SECRET_KEY,
+      expiresIn : '7d'
+    }),
     UsersModule,
     WalksModule,
-    AuthModule,
     MailModule,
   ],
   controllers: [AppController],

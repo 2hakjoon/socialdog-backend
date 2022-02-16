@@ -62,7 +62,7 @@ export class AuthService {
         };
       }
       const access_token = this.jwtService.sign({ id: user.id });
-      const refresh_token = this.jwtService.sign({}, { expiresIn: '182d' });
+      const refresh_token = this.jwtService.sign({ id: user.id }, { expiresIn: '182d' });
       await this.AuthLoalRepository.update(user.id, {
         ...user,
         refreshToken: refresh_token,
@@ -128,7 +128,7 @@ export class AuthService {
       const authKakaoUser = await this.AuthKakaoRepository.findOne({
         kakaoId: kakaoResponse.id,
       });
-      //이미 로그인 한 적이 있을때
+      //로그인 한 적이 없을때
       if (!authKakaoUser) {
         const user = await this.userProfileRepository.save(
           await this.userProfileRepository.create({
@@ -136,7 +136,7 @@ export class AuthService {
           }),
         );
         const access_token = this.jwtService.sign({ id: user.id });
-        const refresh_token = this.jwtService.sign({}, { expiresIn: '182d' });
+        const refresh_token = this.jwtService.sign({ id: user.id }, { expiresIn: '182d' });
         await this.AuthKakaoRepository.save(
           await this.AuthKakaoRepository.create({
             kakaoId: kakaoResponse.id,
@@ -152,7 +152,7 @@ export class AuthService {
       }
 
       const access_token = this.jwtService.sign({ id: authKakaoUser.userId });
-      const refresh_token = this.jwtService.sign({}, { expiresIn: '182d' });
+      const refresh_token = this.jwtService.sign({ id: authKakaoUser.id }, { expiresIn: '182d' });
       await this.AuthKakaoRepository.update(authKakaoUser.id, {
         refreshToken: refresh_token,
       });
