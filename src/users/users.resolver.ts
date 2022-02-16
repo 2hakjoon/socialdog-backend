@@ -16,6 +16,8 @@ import { args } from 'src/common/constants';
 import { MailService } from 'src/mail/mail.service';
 import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
+import { FileUpload } from 'src/common/dtos/file-upload.dto';
+import { GraphQLUpload } from 'graphql-upload';
 
 @Resolver((of) => UserProfile)
 export class UsersResolver {
@@ -67,4 +69,19 @@ export class UsersResolver {
   test(){
     return true
   }
+
+  @Mutation(() => Boolean)
+async uploadFile(
+  @Args('file', { type: () => GraphQLUpload }) file: FileUpload,
+): Promise<boolean> {
+  console.log(file)
+  // const result = await this._awsService.uploadToS3({
+  //   Key: 'fdjksfljs',
+  //   ContentEncoding: file.encoding,
+  //   Body: file.createReadStream(),
+  //   ContentType: file.mimetype,
+  // });
+  // console.log(result);
+  return true;
+}
 }

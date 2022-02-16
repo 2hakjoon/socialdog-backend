@@ -5,7 +5,7 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
+import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Walks } from 'src/walks/entities/walks.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
@@ -26,11 +26,13 @@ export class UserProfile extends CoreEntity {
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
   @IsString()
+  @Length(0, 20)
   username?: string;
 
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
   @IsString()
+  @Length(0, 20)
   dogname?: string;
 
   @Field((type) => [Walks], { nullable: true })
