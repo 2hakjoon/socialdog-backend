@@ -15,6 +15,8 @@ import { MailModule } from './mail/mail.module';
 import { Verifies } from './mail/entities/verifies.entity';
 import { AuthLocal } from './auth/entities/auth-local.entity';
 import { AuthKakao } from './auth/entities/auth-kakao.entity';
+import { UploadModule } from './upload/upload.module';
+
 
 @Module({
   imports: [
@@ -26,6 +28,9 @@ import { AuthKakao } from './auth/entities/auth-kakao.entity';
         DB_PASSWORD: Joi.string().required(),
         DB_PORT: Joi.number().required(),
         SENDGRID_KEY: Joi.string().required(),
+        AWS_S3_ACCESS_ID: Joi.string().required(),
+        AWS_S3_SECRET_KEY: Joi.string().required(),
+        AWS_S3_BUCKET: Joi.string().required(),
       }),
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.dev.env' : '.prod.env',
@@ -45,6 +50,11 @@ import { AuthKakao } from './auth/entities/auth-kakao.entity';
       synchronize: process.env.NODE_ENV === 'dev',
       logging: true,
       entities: [UserProfile, AuthLocal, Walks, Verifies, AuthKakao],
+    }),
+    UploadModule.forRoot({
+      accessKeyId: process.env.AWS_S3_ACCESS_ID,
+      secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+      s3Bucket: process.env.AWS_S3_BUCKET
     }),
     UsersModule,
     WalksModule,
