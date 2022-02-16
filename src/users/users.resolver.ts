@@ -67,19 +67,4 @@ export class UsersResolver {
   test(){
     return true
   }
-
-  @Mutation(() => Boolean)
-async uploadFile(
-  @Args('file', { type: () => GraphQLUpload }) file: FileUpload,
-): Promise<boolean> {
-  console.log(file)
-  // const result = await this._awsService.uploadToS3({
-  //   Key: 'fdjksfljs',
-  //   ContentEncoding: file.encoding,
-  //   Body: file.createReadStream(),
-  //   ContentType: file.mimetype,
-  // });
-  // console.log(result);
-  return true;
-}
 }
