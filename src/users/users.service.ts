@@ -15,6 +15,7 @@ import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 import { MailService } from 'src/mail/mail.service';
 import { CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { AuthLocal } from 'src/auth/entities/auth-local.entity';
+import { FileUpload } from 'graphql-upload';
 
 @Injectable()
 export class UsersService {
@@ -103,7 +104,10 @@ export class UsersService {
   async editProfile(
     user: UserProfile,
     editProfileInputDto: EditProfileInputDto,
+    file:FileUpload
   ): Promise<EditProfileOutputDto> {
+    console.log(user)
+    console.log(file);
     try {
       const userInfo = await this.usersProfileRepository.findOne({
         id: user.id,
@@ -140,7 +144,8 @@ export class UsersService {
       return {
         ok: true,
       };
-    } catch (E) {
+    } catch (e) {
+      console.log(e)
       return {
         ok: false,
         error: '프로필 정보 수정에 실패했습니다.',

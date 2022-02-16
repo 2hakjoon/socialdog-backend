@@ -54,7 +54,6 @@ export class AuthService {
           error: '로그인 정보가 잘못되었습니다.',
         };
       }
-      console.log(user);
       const isPasswordCorrect = await bcrypt.compare(password, user.password);
       if (!isPasswordCorrect) {
         return {
