@@ -16,6 +16,7 @@ import { MailService } from 'src/mail/mail.service';
 import { CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { AuthLocal } from 'src/auth/entities/auth-local.entity';
 import { FileUpload } from 'graphql-upload';
+import  * as AWS  from 'aws-sdk'
 
 @Injectable()
 export class UsersService {
@@ -106,8 +107,32 @@ export class UsersService {
     editProfileInputDto: EditProfileInputDto,
     file:FileUpload
   ): Promise<EditProfileOutputDto> {
-    console.log(user)
-    console.log(file);
+    console.log(file)
+    if(file){
+      console.log(file);
+    const s3 = new AWS.S3({
+        accessKeyId: process.env.AWS_S3_ACCESS_ID,
+        secretAccessKey: process.env.AWS_S3_SECRET_KEY
+    });
+
+      // Setting up S3 upload parameters
+      const params = {
+          Bucket: 'socialdog',
+          Key: 'cat.jpg', // File name you want to save as in S3
+          Body: file.createReadStream(),
+          ACL:'public-read'
+      };
+
+      // Uploading files to the bucket
+      const res = await s3.upload(params, function(err, data) {
+          if (err) {
+              throw err;
+          }
+          console.log(`File uploaded successfully. ${data.Location}`);
+          return data.Location
+      });
+      console.log(res)
+    }
     try {
       const userInfo = await this.usersProfileRepository.findOne({
         id: user.id,

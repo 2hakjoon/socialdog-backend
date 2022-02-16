@@ -31,6 +31,7 @@
     "@nestjs/typeorm": "^8.0.3",
     "@sendgrid/mail": "^7.6.0",
     "apollo-server-express": "^3.6.2",
+    "aws-sdk": "^2.1074.0",
     "axios": "^0.26.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
