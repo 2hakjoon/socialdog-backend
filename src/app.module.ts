@@ -16,6 +16,7 @@ import { Verifies } from './mail/entities/verifies.entity';
 import { AuthLocal } from './auth/entities/auth-local.entity';
 import { AuthKakao } from './auth/entities/auth-kakao.entity';
 import { UploadModule } from './upload/upload.module';
+import { PostsModule } from './posts/posts.module';
 
 
 @Module({
@@ -64,6 +65,7 @@ import { UploadModule } from './upload/upload.module';
     UsersModule,
     WalksModule,
     MailModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
