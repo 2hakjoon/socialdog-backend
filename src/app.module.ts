@@ -17,6 +17,7 @@ import { AuthLocal } from './auth/entities/auth-local.entity';
 import { AuthKakao } from './auth/entities/auth-kakao.entity';
 import { UploadModule } from './upload/upload.module';
 import { PostsModule } from './posts/posts.module';
+import { Posts } from './posts/entities/posts.entity';
 
 
 @Module({
@@ -51,7 +52,7 @@ import { PostsModule } from './posts/posts.module';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV === 'dev',
       logging: true,
-      entities: [UserProfile, AuthLocal, Walks, Verifies, AuthKakao],
+      entities: [UserProfile, AuthLocal, Walks, Verifies, AuthKakao, Posts],
     }),
     UploadModule.forRoot({
       accessKeyId: process.env.AWS_S3_ACCESS_ID,

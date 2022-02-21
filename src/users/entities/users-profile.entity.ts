@@ -7,6 +7,7 @@ import {
 } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
+import { Posts } from 'src/posts/entities/posts.entity';
 import { Walks } from 'src/walks/entities/walks.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
@@ -42,6 +43,10 @@ export class UserProfile extends CoreEntity {
   @Field((type) => [Walks], { nullable: true })
   @OneToMany(() => Walks, (walk) => walk.user)
   walks?: Walks[];
+
+  @Field((type) => [Posts], { nullable: true })
+  @OneToMany(() => Posts, (posts) => posts.likes)
+  liked?: Posts[];
 
   @Field((type) => LoginStrategy)
   @Column()

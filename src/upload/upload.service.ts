@@ -17,7 +17,7 @@ export class UploadService {
     secretAccessKey: this.options.secretAccessKey
   })
 
-  uploadFileToS3 = async (file:FileUpload):Promise<string> => {
+  async uploadFileToS3 (file:FileUpload):Promise<string> {
     console.log(file)
     
     // Setting up S3 upload parameters
@@ -37,7 +37,7 @@ export class UploadService {
     }
   }
 
-  deleteFileAtS3 = async (url:string)=>{
+  async deleteFileAtS3 (url:string) {
     const filename = url.split('https://socialdog.s3.ap-northeast-2.amazonaws.com/')[1]
     console.log(filename)
     try{
@@ -50,6 +50,25 @@ export class UploadService {
     }
     catch(e){
       throw new Error("s3 삭제 에러")
+    }
+  }
+
+  async uploadFilesToS3 (file:FileUpload):Promise<string> {
+    console.log(file)
+    
+    const params = {
+          Bucket: this.options.s3Bucket,
+          Key: "userPhoto/"+file.filename,
+          Body: file.createReadStream(),
+          ACL: 'public-read'
+        };
+
+    try{
+      const res = await this.s3.upload(params).promise();
+      return res.Location
+    }
+    catch(e){
+      throw new Error("s3 업로드 에러")
     }
   }
 }
