@@ -120,7 +120,6 @@ export class AuthService {
         'https://kapi.kakao.com/v1/user/access_token_info',
         { headers: { Authorization: `Bearer ${kakaoTokens.accessToken}` } },
       );
-      console.log(kakaoResponse);
       if (!kakaoResponse.id) {
         return {
           ok: false,
@@ -136,6 +135,7 @@ export class AuthService {
             loginStrategy: LoginStrategy.KAKAO,
           }),
         );
+        console.log(user)
         const access_token = this.jwtService.sign({ id: user.id });
         const refresh_token = this.jwtService.sign({ id: user.id }, { expiresIn: '182d' });
         await this.AuthKakaoRepository.save(
