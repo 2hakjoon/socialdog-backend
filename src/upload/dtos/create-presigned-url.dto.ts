@@ -24,4 +24,7 @@ export class CreatePreSignedUrlInputDto{
 }
 
 @ObjectType()
-export class CreatePreSignedUrlOutputDto extends CoreOutputDto{}
+export class CreatePreSignedUrlOutputDto extends CoreOutputDto{
+  @Field(type=>String)
+  url : string
+}

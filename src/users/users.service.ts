@@ -105,8 +105,7 @@ export class UsersService {
 
   async editProfile(
     user: UserProfile,
-    editProfileInputDto: EditProfileInputDto,
-    file:FileUpload
+    editProfileInputDto: EditProfileInputDto
   ): Promise<EditProfileOutputDto> {
     try {
       const userInfo = await this.usersProfileRepository.findOne({
@@ -118,15 +117,11 @@ export class UsersService {
           error: '사용자를 찾을 수 없습니다.',
         };
       }
-
-      
-      if(file){
+      if(editProfileInputDto.photo){
         if(user.photo){
           await this.uploadService.deleteFileAtS3(user.photo)
         }
-        editProfileInputDto.photo = await this.uploadService.uploadFileToS3("userPhoto/",file)
       }
-      
       if (editProfileInputDto.password) {
         const authLocal = await this.authLoalRepository.findOne({
           userId: user.id,

@@ -34,6 +34,7 @@ import { Posts } from './posts/entities/posts.entity';
         AWS_S3_ACCESS_ID: Joi.string().required(),
         AWS_S3_SECRET_KEY: Joi.string().required(),
         AWS_S3_BUCKET: Joi.string().required(),
+        AWS_S3_REGION: Joi.string().required(),
       }),
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.dev.env' : '.prod.env',
@@ -57,7 +58,8 @@ import { Posts } from './posts/entities/posts.entity';
     UploadModule.forRoot({
       accessKeyId: process.env.AWS_S3_ACCESS_ID,
       secretAccessKey: process.env.AWS_S3_SECRET_KEY,
-      s3Bucket: process.env.AWS_S3_BUCKET
+      s3Bucket: process.env.AWS_S3_BUCKET,
+      region: process.env.AWS_S3_REGION,
     }),
     AuthModule.forRoot({
       secretKey: process.env.JWT_SECRET_KEY,

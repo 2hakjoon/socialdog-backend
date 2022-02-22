@@ -30,8 +30,8 @@ export class UsersResolver {
 
   @Mutation(()=> EditProfileOutputDto)
   @UseGuards(GqlAuthGuard)
-  editProfile(@AuthUser() user:UserProfile, @Args(args) args: EditProfileInputDto,@Args('file', {type:()=>GraphQLUpload, nullable:true}) file:FileUpload ):Promise<EditProfileOutputDto>{
-    return this.usersService.editProfile(user, args, file)
+  editProfile(@AuthUser() user:UserProfile, @Args(args) args: EditProfileInputDto):Promise<EditProfileOutputDto>{
+    return this.usersService.editProfile(user, args)
   }
 
   @Query(()=>GetUserOutputDto)

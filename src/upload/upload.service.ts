@@ -14,7 +14,8 @@ export class UploadService {
 
   private s3 = new AWS.S3({
     accessKeyId: this.options.accessKeyId,
-    secretAccessKey: this.options.secretAccessKey
+    secretAccessKey: this.options.secretAccessKey,
+    region: this.options.region
   })
 
   async uploadFileToS3 (dir:string,file:FileUpload):Promise<string> {
@@ -54,12 +55,16 @@ export class UploadService {
     const params = {
       Bucket: this.options.s3Bucket,
       Key: filename,
-      Expires: 60
+      ContentType: 'image/*',
+      Expires: 60,
+      ACL: 'public-read'
+
     }
     const res = await this.s3.getSignedUrlPromise('putObject', params);
     console.log(res)
     return{
-      ok:true
+      ok:true,
+      url: res
     }
   }
 
