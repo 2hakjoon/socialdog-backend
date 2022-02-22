@@ -32,15 +32,15 @@ export class PostsService {
           userId:user.id
         })
       )
+      return {
+        ok:true
+      }
     }
     catch(e){
       return{
         ok:false,
         error:"게시물 생성에 실패하였습니다."
       }
-    }
-    return {
-      ok:true
     }
   }
 }

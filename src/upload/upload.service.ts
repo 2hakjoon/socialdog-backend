@@ -3,6 +3,7 @@ import  * as AWS  from 'aws-sdk'
 import { IUploadModule } from './upload.interface';
 import { Inject } from '@nestjs/common';
 import { CONFIG_OPTIONS } from 'src/common/constants';
+import { CreatePreSignedUrlInputDto, CreatePreSignedUrlOutputDto } from './dtos/create-presigned-url.dto';
 
 
 export class UploadService {
@@ -49,6 +50,19 @@ export class UploadService {
     }
   }
 
+  async getPreSignUrl({filename, fileType}:CreatePreSignedUrlInputDto):Promise<CreatePreSignedUrlOutputDto>{
+    const params = {
+      Bucket: this.options.s3Bucket,
+      Key: filename,
+      Expires: 60
+    }
+    const res = await this.s3.getSignedUrlPromise('putObject', params);
+    console.log(res)
+    return{
+      ok:true
+    }
+  }
+
   async uploadFilesToS3 (dir:string, files:Promise<FileUpload>[]):Promise<string[]> {
     let promiseFiles=[];
     for(let i=0; i<files.length; i++){
@@ -60,4 +74,6 @@ export class UploadService {
     console.log(promiseFiles)
     return promiseFiles
   }
+
+
 }
