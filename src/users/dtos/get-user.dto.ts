@@ -6,7 +6,7 @@ import { UserProfile } from '../entities/users-profile.entity';
 @InputType()
 export class GetUserInputDto {
   @Field(() => String)
-  @IsNumber()
+  @IsString()
   userId: string;
 }
 

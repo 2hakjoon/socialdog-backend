@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
