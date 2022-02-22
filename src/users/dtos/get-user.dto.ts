@@ -5,9 +5,9 @@ import { UserProfile } from '../entities/users-profile.entity';
 
 @InputType()
 export class GetUserInputDto {
-  @Field(() => Int)
+  @Field(() => String)
   @IsNumber()
-  userId: number;
+  userId: string;
 }
 
 @ObjectType()

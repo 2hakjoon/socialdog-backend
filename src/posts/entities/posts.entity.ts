@@ -31,10 +31,10 @@ export class Posts extends CoreEntity {
   @ManyToOne(() => UserProfile, (userProfile) => userProfile.posts)
   user: UserProfile;
 
-  @Field(() => Int)
+  @Field(() => String)
   @RelationId((posts: Posts) => posts.user)
   @Column()
-  userId: number;
+  userId: string;
 
   @Field((type) => [UserProfile])
   @ManyToOne(() => UserProfile, (userProfile) => userProfile.liked)

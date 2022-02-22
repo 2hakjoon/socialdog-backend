@@ -1,9 +1,9 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsNumber } from 'class-validator';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsString } from 'class-validator';
 
 @InputType()
 export class DeleteWalkInputDto {
-  @Field(() => Int)
-  @IsNumber()
-  walkId: number;
+  @Field(() => String)
+  @IsString()
+  walkId: string;
 }

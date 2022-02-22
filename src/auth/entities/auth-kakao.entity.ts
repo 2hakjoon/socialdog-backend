@@ -12,9 +12,9 @@ export class AuthKakao extends CoreEntity {
   @IsString()
   kakaoId: string;
 
-  @Field((type) => Int)
+  @Field((type) => String)
   @Column()
-  userId: number;
+  userId: string;
 
   @Field((type) => String)
   @Column()

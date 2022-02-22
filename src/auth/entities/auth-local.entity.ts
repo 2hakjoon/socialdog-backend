@@ -22,7 +22,7 @@ export class AuthLocal extends CoreEntity {
   @IsString()
   refreshToken?: string;
 
-  @Field((type) => Int)
+  @Field((type) => String)
   @Column()
-  userId: number;
+  userId: string;
 }

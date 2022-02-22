@@ -5,9 +5,9 @@ import { Walks } from '../entities/walks.entity';
 
 @InputType()
 export class GetWalkInputDto {
-  @Field(() => Int)
+  @Field(() => String)
   @IsNumber()
-  walkId: number;
+  walkId: string;
 }
 
 @ObjectType()
