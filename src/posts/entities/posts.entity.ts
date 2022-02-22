@@ -1,43 +1,42 @@
-import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { IsString } from "class-validator";
-import { CoreEntity } from "src/common/entity/core-entity.entity";
-import { UserProfile } from "src/users/entities/users-profile.entity";
-import { Column, Entity, ManyToOne, RelationId } from "typeorm";
-
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { IsString } from 'class-validator';
+import { CoreEntity } from 'src/common/entity/core-entity.entity';
+import { UserProfile } from 'src/users/entities/users-profile.entity';
+import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
 @Entity()
-@InputType({isAbstract:true})
+@InputType({ isAbstract: true })
 @ObjectType()
 export class Posts extends CoreEntity {
-  @Field((type)=>String)
+  @Field((type) => String)
   @Column()
-  photos: string
+  photos: string;
 
-  @Field((type)=>String)
+  @Field((type) => String)
   @IsString()
   @Column()
-  address: string
+  address: string;
 
-  @Field((type)=>String)
+  @Field((type) => String)
   @IsString()
   @Column()
-  placeId: string
+  placeId: string;
 
-  @Field(type=>String)
+  @Field((type) => String)
   @IsString()
   @Column()
-  contents: string
+  contents: string;
 
-  @Field((type)=>UserProfile)
-  @ManyToOne(()=> UserProfile, userProfile=> userProfile.posts)
-  user: UserProfile
+  @Field((type) => UserProfile)
+  @ManyToOne(() => UserProfile, (userProfile) => userProfile.posts)
+  user: UserProfile;
 
-  @Field(()=>Int)
-  @RelationId((posts:Posts)=>posts.user)
+  @Field(() => Int)
+  @RelationId((posts: Posts) => posts.user)
   @Column()
-  userId: number
+  userId: number;
 
-  @Field((type)=>[UserProfile],)
-  @ManyToOne(()=> UserProfile, userProfile=> userProfile.liked)
-  likes?: UserProfile[]
+  @Field((type) => [UserProfile])
+  @ManyToOne(() => UserProfile, (userProfile) => userProfile.liked)
+  likes?: UserProfile[];
 }
