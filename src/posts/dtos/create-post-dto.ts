@@ -4,7 +4,7 @@ import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import { Posts } from '../entities/posts.entity';
 
 @InputType()
-export class CreatePostsInputDto extends PickType(Posts, [
+export class CreatePostInputDto extends PickType(Posts, [
   'address',
   'contents',
   'placeId',

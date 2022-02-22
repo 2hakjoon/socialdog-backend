@@ -10,6 +10,7 @@ import {
 export class CoreEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
+  @IsNumber()
   id: number;
 
   @CreateDateColumn()

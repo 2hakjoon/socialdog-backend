@@ -6,8 +6,12 @@ import { args } from 'src/common/constants';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
 import {
   CreatePostOutputDot,
-  CreatePostsInputDto,
-} from './dtos/create-posts-dto';
+  CreatePostInputDto,
+} from './dtos/create-post-dto';
+import {
+  DeletePostInputDto,
+  DeletePostOutputDto,
+} from './dtos/delete-post.dto';
 import { Posts } from './entities/posts.entity';
 import { PostsService } from './posts.service';
 
@@ -19,8 +23,17 @@ export class PostsResolver {
   @UseGuards(GqlAuthGuard)
   createPost(
     @AuthUser() user: UserProfile,
-    @Args(args) args: CreatePostsInputDto,
+    @Args(args) args: CreatePostInputDto,
   ): Promise<CreatePostOutputDot> {
     return this.postsService.createPost(user, args);
+  }
+
+  @Mutation((returns) => DeletePostOutputDto)
+  @UseGuards(GqlAuthGuard)
+  deletePost(
+    @AuthUser() user: UserProfile,
+    @Args(args) args: DeletePostInputDto,
+  ): Promise<DeletePostOutputDto> {
+    return this.postsService.deletePost(user, args);
   }
 }
