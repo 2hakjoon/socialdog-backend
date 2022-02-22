@@ -1,5 +1,6 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Resolver } from "@nestjs/graphql";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { AuthUser, GqlAuthGuard } from "src/auth/auth.guard";
 import { args } from "src/common/constants";
 import { UserProfile } from "src/users/entities/users-profile.entity";
@@ -17,7 +18,7 @@ export class PostsResolver {
 
   @Mutation(returns=>CreatePostOutputDot)
   @UseGuards(GqlAuthGuard)
-  createPost(@AuthUser() user:UserProfile, @Args(args) args:CreatePostsInputDto):Promise<CreatePostOutputDot>{
-    return this.postsService.createPost(user, args)
+  createPost(@AuthUser() user:UserProfile, @Args(args) args:CreatePostsInputDto, @Args('file', {type:()=>[GraphQLUpload], nullable:true}) files:Promise<FileUpload>[] ):Promise<CreatePostOutputDot>{
+    return this.postsService.createPost(user, args, files)
   }
 }

@@ -45,6 +45,10 @@ export class UserProfile extends CoreEntity {
   walks?: Walks[];
 
   @Field((type) => [Posts], { nullable: true })
+  @OneToMany(() => Posts, (posts) => posts.user)
+  posts?: Posts[];
+
+  @Field((type) => [Posts], { nullable: true })
   @OneToMany(() => Posts, (posts) => posts.likes)
   liked?: Posts[];
 

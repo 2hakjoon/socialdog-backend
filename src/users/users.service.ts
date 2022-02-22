@@ -124,7 +124,7 @@ export class UsersService {
         if(user.photo){
           await this.uploadService.deleteFileAtS3(user.photo)
         }
-        editProfileInputDto.photo = await this.uploadService.uploadFileToS3(file)
+        editProfileInputDto.photo = await this.uploadService.uploadFileToS3("userPhoto/",file)
       }
       
       if (editProfileInputDto.password) {

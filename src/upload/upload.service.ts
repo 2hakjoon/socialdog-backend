@@ -3,7 +3,6 @@ import  * as AWS  from 'aws-sdk'
 import { IUploadModule } from './upload.interface';
 import { Inject } from '@nestjs/common';
 import { CONFIG_OPTIONS } from 'src/common/constants';
-import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 
 
 export class UploadService {
@@ -17,13 +16,11 @@ export class UploadService {
     secretAccessKey: this.options.secretAccessKey
   })
 
-  async uploadFileToS3 (file:FileUpload):Promise<string> {
+  async uploadFileToS3 (dir:string,file:FileUpload):Promise<string> {
     console.log(file)
-    
-    // Setting up S3 upload parameters
     const params = {
           Bucket: this.options.s3Bucket,
-          Key: "userPhoto/"+file.filename, // File name you want to save as in S3
+          Key: dir+Date.now()+"_"+file.filename,
           Body: file.createReadStream(),
           ACL: 'public-read'
         };
@@ -39,11 +36,10 @@ export class UploadService {
 
   async deleteFileAtS3 (url:string) {
     const filename = url.split('https://socialdog.s3.ap-northeast-2.amazonaws.com/')[1]
-    console.log(filename)
     try{
     const params = {
         Bucket: this.options.s3Bucket,
-        Key: filename, // File name you want to save as in S3
+        Key: filename,
       }
       await this.s3.deleteObject(params).promise();
       return;
@@ -53,22 +49,15 @@ export class UploadService {
     }
   }
 
-  async uploadFilesToS3 (file:FileUpload):Promise<string> {
-    console.log(file)
-    
-    const params = {
-          Bucket: this.options.s3Bucket,
-          Key: "userPhoto/"+file.filename,
-          Body: file.createReadStream(),
-          ACL: 'public-read'
-        };
-
-    try{
-      const res = await this.s3.upload(params).promise();
-      return res.Location
+  async uploadFilesToS3 (dir:string, files:Promise<FileUpload>[]):Promise<string[]> {
+    let promiseFiles=[];
+    for(let i=0; i<files.length; i++){
+      promiseFiles.push(await this.uploadFileToS3(dir, await files[i]));
     }
-    catch(e){
+    await Promise.all(promiseFiles).catch(function(err){
       throw new Error("s3 업로드 에러")
-    }
+    })
+    console.log(promiseFiles)
+    return promiseFiles
   }
 }

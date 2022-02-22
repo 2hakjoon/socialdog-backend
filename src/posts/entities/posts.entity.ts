@@ -1,8 +1,8 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { IsString } from "class-validator";
 import { CoreEntity } from "src/common/entity/core-entity.entity";
 import { UserProfile } from "src/users/entities/users-profile.entity";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, RelationId } from "typeorm";
 
 
 @Entity()
@@ -28,7 +28,15 @@ export class Posts extends CoreEntity {
   @Column()
   contents: string
 
-  
+  @Field((type)=>UserProfile)
+  @ManyToOne(()=> UserProfile, userProfile=> userProfile.posts)
+  user: UserProfile
+
+  @Field(()=>Int)
+  @RelationId((posts:Posts)=>posts.user)
+  @Column()
+  userId: number
+
   @Field((type)=>[UserProfile],)
   @ManyToOne(()=> UserProfile, userProfile=> userProfile.liked)
   likes?: UserProfile[]
