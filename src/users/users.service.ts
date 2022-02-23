@@ -25,6 +25,10 @@ import {
   ResponseSubscribeInputDto,
   ResponseSubscribeOutputDto,
 } from './dtos/response-subscribe.dto';
+import {
+  ChangeBlockStateInputDto,
+  ChangeBlockStateOutputDto,
+} from './dtos/change-block-state.dto';
 
 @Injectable()
 export class UsersService {
@@ -230,6 +234,48 @@ export class UsersService {
       return {
         ok: false,
         error: '요청 수락 및 거절을 실패했습니다.',
+      };
+    }
+  }
+
+  async changeBlockState(
+    user: UserProfile,
+    { to, block }: ChangeBlockStateInputDto,
+  ): Promise<ChangeBlockStateOutputDto> {
+    try {
+      const userTo = await this.usersProfileRepository.findOne({ id: to });
+      if (!userTo) {
+        return {
+          ok: false,
+          error: '차단 설정을 할 사용자가 존재하지 않습니다.',
+        };
+      }
+      const subscribe = await this.subscribesRepository.findOne({
+        to,
+        from: user.id,
+      });
+      if (subscribe) {
+        await this.subscribesRepository.update(subscribe.id, {
+          ...subscribe,
+          block,
+        });
+      } else {
+        await this.subscribesRepository.save(
+          await this.subscribesRepository.create({
+            from: user.id,
+            to,
+            block,
+          }),
+        );
+      }
+
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '차단 설정 중 에러가 발생하였습니다.',
       };
     }
   }

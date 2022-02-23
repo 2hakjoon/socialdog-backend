@@ -16,6 +16,7 @@ import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dt
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
 import { RequestSubscribeInputDto, RequestSubscribeOutputDto } from './dtos/request-subscribe.dto';
 import { ResponseSubscribeInputDto, ResponseSubscribeOutputDto } from './dtos/response-subscribe.dto';
+import { ChangeBlockStateInputDto, ChangeBlockStateOutputDto } from './dtos/change-block-state.dto';
 
 @Resolver((of) => UserProfile)
 export class UsersResolver {
@@ -60,10 +61,17 @@ export class UsersResolver {
   requestSubscribe(@AuthUser() user:UserProfile, @Args(args) args:RequestSubscribeInputDto):Promise<RequestSubscribeOutputDto>{
     return this.usersService.requestSubscribe(user, args)
   }
+
   @Mutation(()=>ResponseSubscribeOutputDto)
   @UseGuards(GqlAuthGuard)
   responseSubscribe(@AuthUser() user:UserProfile, @Args(args) args:ResponseSubscribeInputDto):Promise<ResponseSubscribeOutputDto>{
     return this.usersService.responseSubscribe(user, args)
+  }
+
+  @Mutation(()=>ChangeBlockStateOutputDto)
+  @UseGuards(GqlAuthGuard)
+  changeBlockState(@AuthUser() user:UserProfile, @Args(args) args:ChangeBlockStateInputDto):Promise<ChangeBlockStateOutputDto>{
+    return this.usersService.changeBlockState(user, args)
   }
   //@UseGuards(GqlAuthGuard)
   @Query(()=>Boolean)
