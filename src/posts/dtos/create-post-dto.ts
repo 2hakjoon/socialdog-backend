@@ -15,4 +15,4 @@ export class CreatePostInputDto extends PickType(Posts, [
 }
 
 @ObjectType()
-export class CreatePostOutputDot extends CoreOutputDto {}
+export class CreatePostOutputDto extends CoreOutputDto {}

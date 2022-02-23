@@ -4,13 +4,14 @@ import { UploadService } from 'src/upload/upload.service';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { Repository } from 'typeorm';
 import {
-  CreatePostOutputDot,
+  CreatePostOutputDto,
   CreatePostInputDto,
 } from './dtos/create-post-dto';
 import {
   DeletePostInputDto,
   DeletePostOutputDto,
 } from './dtos/delete-post.dto';
+import { EditPostInputDto, EditPostOutputDto } from './dtos/edit-post-dto';
 import { Posts } from './entities/posts.entity';
 
 @Injectable()
@@ -24,7 +25,7 @@ export class PostsService {
   async createPost(
     user: UserProfile,
     args: CreatePostInputDto,
-  ): Promise<CreatePostOutputDot> {
+  ): Promise<CreatePostOutputDto> {
     try {
       if (!user.id) {
         return {
@@ -47,6 +48,43 @@ export class PostsService {
       return {
         ok: false,
         error: '게시물 생성에 실패하였습니다.',
+      };
+    }
+  }
+
+  async editPost(
+    user: UserProfile,
+    { postId, ...rest }: EditPostInputDto,
+  ): Promise<EditPostOutputDto> {
+    try {
+      const post = await this.postsRepository.findOne({ id: postId });
+      if (!post) {
+        return {
+          ok: false,
+          error: '게시글이 존재하지 않습니다.',
+        };
+      }
+      if (post.userId !== user.id) {
+        return {
+          ok: false,
+          error: '다른사람의 게시글은 수정할 수 없습니다.',
+        };
+      }
+      await this.postsRepository.update(
+        { id: postId },
+        {
+          ...post,
+          ...rest,
+        },
+      );
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        ok: false,
+        error: '게시글 수정에 실패하였습니다.',
       };
     }
   }
