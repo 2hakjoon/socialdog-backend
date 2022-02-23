@@ -23,33 +23,30 @@ export class WalksResolver {
   @Mutation((returns) => CreateWalkOutputDto)
   @UseGuards(GqlAuthGuard)
   createWalk(
-    @AuthUser() user: UUID,
+    @AuthUser() userId: UUID,
     @Args(args) args: CreateWalkInputDto,
   ): Promise<CreateWalkOutputDto> {
-    return this.walksService.createWalk(user, args);
+    return this.walksService.createWalk(userId, args);
   }
 
   @Query(() => GetWalkOutputDto)
   @UseGuards(GqlAuthGuard)
   getWalk(
-    @AuthUser() user: UUID,
+    @AuthUser() userId: UUID,
     @Args(args) args: GetWalkInputDto,
   ): Promise<GetWalkOutputDto> {
-    return this.walksService.getWalk(user, args);
+    return this.walksService.getWalk(userId, args);
   }
 
   @Query(() => CoreWalksOutputDto)
   @UseGuards(GqlAuthGuard)
-  getWalks(@AuthUser() user: UUID): Promise<CoreWalksOutputDto> {
-    return this.walksService.getWalks(user);
+  getWalks(@AuthUser() userId: UUID): Promise<CoreWalksOutputDto> {
+    return this.walksService.getWalks(userId);
   }
 
   @Mutation(() => CoreOutputDto)
   @UseGuards(GqlAuthGuard)
-  deleteWalk(
-    @AuthUser() user: UUID,
-    @Args(args) args: DeleteWalkInputDto,
-  ) {
-    return this.walksService.deleteWalks(user, args);
+  deleteWalk(@AuthUser() userId: UUID, @Args(args) args: DeleteWalkInputDto) {
+    return this.walksService.deleteWalks(userId, args);
   }
 }

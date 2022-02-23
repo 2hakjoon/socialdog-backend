@@ -13,15 +13,14 @@ export class AuthResolver {
   constructor(private authService: AuthService) {}
 
   @Mutation(() => ReissueAccessTokenOutputDto)
-  
   reissueAccessToken(
     @Args(args) args: ReissueAccessTokenInputDto,
   ): Promise<ReissueAccessTokenOutputDto> {
     return this.authService.reissuanceAccessToken(args);
   }
-  
+
   @Mutation(() => LoginOutputDto)
-  localLogin(@Args(args) args:LoginInputDto):Promise<LoginOutputDto>{
+  localLogin(@Args(args) args: LoginInputDto): Promise<LoginOutputDto> {
     return this.authService.localLogin(args);
   }
 

@@ -22,27 +22,27 @@ export class PostsResolver {
   @Mutation((returns) => CreatePostOutputDto)
   @UseGuards(GqlAuthGuard)
   createPost(
-    @AuthUser() user: UUID,
+    @AuthUser() userId: UUID,
     @Args(args) args: CreatePostInputDto,
   ): Promise<CreatePostOutputDto> {
-    return this.postsService.createPost(user, args);
+    return this.postsService.createPost(userId, args);
   }
 
   @Mutation((returns) => DeletePostOutputDto)
   @UseGuards(GqlAuthGuard)
   deletePost(
-    @AuthUser() user: UUID,
+    @AuthUser() userId: UUID,
     @Args(args) args: DeletePostInputDto,
   ): Promise<DeletePostOutputDto> {
-    return this.postsService.deletePost(user, args);
+    return this.postsService.deletePost(userId, args);
   }
 
   @Mutation((returns) => EditPostOutputDto)
   @UseGuards(GqlAuthGuard)
   editPost(
-    @AuthUser() user: UUID,
+    @AuthUser() userId: UUID,
     @Args(args) args: EditPostInputDto,
   ): Promise<EditPostOutputDto> {
-    return this.postsService.editPost(user, args);
+    return this.postsService.editPost(userId, args);
   }
 }

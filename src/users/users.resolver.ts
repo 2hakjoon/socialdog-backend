@@ -32,8 +32,8 @@ export class UsersResolver {
 
   @Mutation(()=> EditProfileOutputDto)
   @UseGuards(GqlAuthGuard)
-  editProfile(@AuthUser() user:UUID, @Args(args) args: EditProfileInputDto):Promise<EditProfileOutputDto>{
-    return this.usersService.editProfile(user, args)
+  editProfile(@AuthUser() userId:UUID, @Args(args) args: EditProfileInputDto):Promise<EditProfileOutputDto>{
+    return this.usersService.editProfile(userId, args)
   }
 
   @Query(()=>GetUserOutputDto)
@@ -52,26 +52,26 @@ export class UsersResolver {
 
   @Query(()=>CoreUserOutputDto)
   @UseGuards(GqlAuthGuard)
-  me(@AuthUser() user:UUID):Promise<CoreUserOutputDto>{
-    return this.usersService.me(user)
+  me(@AuthUser() userId:UUID):Promise<CoreUserOutputDto>{
+    return this.usersService.me(userId)
   }
 
   @Mutation(()=>RequestSubscribeOutputDto)
   @UseGuards(GqlAuthGuard)
-  requestSubscribe(@AuthUser() user:UUID, @Args(args) args:RequestSubscribeInputDto):Promise<RequestSubscribeOutputDto>{
-    return this.usersService.requestSubscribe(user, args)
+  requestSubscribe(@AuthUser() userId:UUID, @Args(args) args:RequestSubscribeInputDto):Promise<RequestSubscribeOutputDto>{
+    return this.usersService.requestSubscribe(userId, args)
   }
 
   @Mutation(()=>ResponseSubscribeOutputDto)
   @UseGuards(GqlAuthGuard)
-  responseSubscribe(@AuthUser() user:UUID, @Args(args) args:ResponseSubscribeInputDto):Promise<ResponseSubscribeOutputDto>{
-    return this.usersService.responseSubscribe(user, args)
+  responseSubscribe(@AuthUser() userId:UUID, @Args(args) args:ResponseSubscribeInputDto):Promise<ResponseSubscribeOutputDto>{
+    return this.usersService.responseSubscribe(userId, args)
   }
 
   @Mutation(()=>ChangeBlockStateOutputDto)
   @UseGuards(GqlAuthGuard)
-  changeBlockState(@AuthUser() user:UUID, @Args(args) args:ChangeBlockStateInputDto):Promise<ChangeBlockStateOutputDto>{
-    return this.usersService.changeBlockState(user, args)
+  changeBlockState(@AuthUser() userId:UUID, @Args(args) args:ChangeBlockStateInputDto):Promise<ChangeBlockStateOutputDto>{
+    return this.usersService.changeBlockState(userId, args)
   }
   //@UseGuards(GqlAuthGuard)
   @Query(()=>Boolean)
