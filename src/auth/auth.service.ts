@@ -47,8 +47,12 @@ export class AuthService {
     try {
       const authLocal = await this.AuthLoalRepository.findOne(
         { email },
-        { select: ['id', 'password', 'user'] },
+        {
+          loadRelationIds: { relations: ['user'] },
+        },
       );
+      console.log(authLocal);
+
       if (!authLocal) {
         return {
           ok: false,
@@ -150,7 +154,7 @@ export class AuthService {
         await this.AuthKakaoRepository.save(
           await this.AuthKakaoRepository.create({
             kakaoId: kakaoResponse.id,
-            user: user.id,
+            user: user,
             refreshToken: refresh_token,
           }),
         );

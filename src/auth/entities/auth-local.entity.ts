@@ -14,7 +14,7 @@ export class AuthLocal extends CoreEntity {
   email: string;
 
   @Field((type) => String)
-  @Column({ select: false })
+  @Column()
   @IsString()
   password: string;
 

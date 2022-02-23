@@ -28,6 +28,7 @@ export class PostsService {
     { userId }: UUID,
     args: CreatePostInputDto,
   ): Promise<CreatePostOutputDto> {
+    console.log(userId);
     try {
       const user = await this.userProfileRepository.findOne({ id: userId });
       if (!user) {

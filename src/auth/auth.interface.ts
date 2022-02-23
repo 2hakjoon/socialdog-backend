@@ -1,4 +1,4 @@
-export interface IAuthInterface{
-  secretKey: string
-  expiresIn: string
+export interface IAuthInterface {
+  secretKey: string;
+  expiresIn: string;
 }

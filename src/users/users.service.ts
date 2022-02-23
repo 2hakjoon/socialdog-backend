@@ -71,7 +71,7 @@ export class UsersService {
       }
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const { id: user } = await this.usersProfileRepository.save(
+      const user = await this.usersProfileRepository.save(
         await this.usersProfileRepository.create({
           loginStrategy: LoginStrategy.LOCAL,
         }),
@@ -82,7 +82,7 @@ export class UsersService {
         await this.authLoalRepository.create({
           email,
           password: hashedPassword,
-          user,
+          user: user.id,
         }),
       );
 

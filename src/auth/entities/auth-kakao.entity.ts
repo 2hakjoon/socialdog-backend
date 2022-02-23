@@ -15,7 +15,7 @@ export class AuthKakao extends CoreEntity {
 
   @Field((type) => String)
   @ManyToOne(() => UserProfile, (user) => user.id)
-  user: string;
+  user: UserProfile;
 
   @Field((type) => String)
   @Column()
