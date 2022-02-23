@@ -1,7 +1,8 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
-import { Column, Entity } from 'typeorm';
+import { UserProfile } from 'src/users/entities/users-profile.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity()
 @InputType()
@@ -13,7 +14,7 @@ export class AuthKakao extends CoreEntity {
   kakaoId: string;
 
   @Field((type) => String)
-  @Column()
+  @ManyToOne(() => UserProfile, (user) => user.id)
   userId: string;
 
   @Field((type) => String)

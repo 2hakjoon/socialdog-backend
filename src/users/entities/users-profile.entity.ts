@@ -36,9 +36,9 @@ export class UserProfile extends CoreEntity {
   @Length(0, 20)
   dogname?: string;
 
-  @Field((type) => String,{nullable:true})
-  @Column({nullable:true})
-  photo?: string
+  @Field((type) => String, { nullable: true })
+  @Column({ nullable: true })
+  photo?: string;
 
   @Field((type) => [Walks], { nullable: true })
   @OneToMany(() => Walks, (walk) => walk.user)

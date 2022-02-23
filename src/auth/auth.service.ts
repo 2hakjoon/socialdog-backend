@@ -47,7 +47,7 @@ export class AuthService {
     try {
       const authLocal = await this.AuthLoalRepository.findOne(
         { email },
-        { select: ['id', 'password','userId'] },
+        { select: ['id', 'password', 'userId'] },
       );
       if (!authLocal) {
         return {
@@ -55,15 +55,21 @@ export class AuthService {
           error: '로그인 정보가 잘못되었습니다.',
         };
       }
-      const isPasswordCorrect = await bcrypt.compare(password, authLocal.password);
+      const isPasswordCorrect = await bcrypt.compare(
+        password,
+        authLocal.password,
+      );
       if (!isPasswordCorrect) {
         return {
           ok: false,
           error: '로그인 정보가 잘못되었습니다.',
         };
       }
-      const access_token = this.jwtService.sign({ id: authLocal.userId} );
-      const refresh_token = this.jwtService.sign({ id: authLocal.userId }, { expiresIn: '182d' });
+      const access_token = this.jwtService.sign({ id: authLocal.userId });
+      const refresh_token = this.jwtService.sign(
+        { id: authLocal.userId },
+        { expiresIn: '182d' },
+      );
       await this.AuthLoalRepository.update(authLocal.id, {
         ...authLocal,
         refreshToken: refresh_token,
@@ -135,9 +141,12 @@ export class AuthService {
             loginStrategy: LoginStrategy.KAKAO,
           }),
         );
-        console.log(user)
+        console.log(user);
         const access_token = this.jwtService.sign({ id: user.id });
-        const refresh_token = this.jwtService.sign({ id: user.id }, { expiresIn: '182d' });
+        const refresh_token = this.jwtService.sign(
+          { id: user.id },
+          { expiresIn: '182d' },
+        );
         await this.AuthKakaoRepository.save(
           await this.AuthKakaoRepository.create({
             kakaoId: kakaoResponse.id,
@@ -153,7 +162,10 @@ export class AuthService {
       }
 
       const access_token = this.jwtService.sign({ id: authKakaoUser.userId });
-      const refresh_token = this.jwtService.sign({ id: authKakaoUser.id }, { expiresIn: '182d' });
+      const refresh_token = this.jwtService.sign(
+        { id: authKakaoUser.id },
+        { expiresIn: '182d' },
+      );
       await this.AuthKakaoRepository.update(authKakaoUser.id, {
         refreshToken: refresh_token,
       });
