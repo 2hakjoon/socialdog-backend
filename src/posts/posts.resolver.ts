@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
 import { args } from 'src/common/constants';
-import { UserProfile } from 'src/users/entities/users-profile.entity';
+import { UUID } from 'src/users/entities/users-profile.entity';
 import {
   CreatePostOutputDto,
   CreatePostInputDto,
@@ -22,7 +22,7 @@ export class PostsResolver {
   @Mutation((returns) => CreatePostOutputDto)
   @UseGuards(GqlAuthGuard)
   createPost(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UUID,
     @Args(args) args: CreatePostInputDto,
   ): Promise<CreatePostOutputDto> {
     return this.postsService.createPost(user, args);
@@ -31,7 +31,7 @@ export class PostsResolver {
   @Mutation((returns) => DeletePostOutputDto)
   @UseGuards(GqlAuthGuard)
   deletePost(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UUID,
     @Args(args) args: DeletePostInputDto,
   ): Promise<DeletePostOutputDto> {
     return this.postsService.deletePost(user, args);
@@ -40,7 +40,7 @@ export class PostsResolver {
   @Mutation((returns) => EditPostOutputDto)
   @UseGuards(GqlAuthGuard)
   editPost(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UUID,
     @Args(args) args: EditPostInputDto,
   ): Promise<EditPostOutputDto> {
     return this.postsService.editPost(user, args);

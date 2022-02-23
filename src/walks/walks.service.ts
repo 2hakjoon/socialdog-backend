@@ -3,7 +3,7 @@ import {
   CoreOutputDto,
   CoreWalksOutputDto,
 } from 'src/common/dtos/core-output.dto';
-import { UserProfile } from 'src/users/entities/users-profile.entity';
+import { UserProfile, UUID } from 'src/users/entities/users-profile.entity';
 import { Repository } from 'typeorm';
 import {
   CreateWalkInputDto,
@@ -17,15 +17,24 @@ export class WalksService {
   constructor(
     @InjectRepository(Walks)
     private walksRepository: Repository<Walks>,
+    @InjectRepository(UserProfile)
+    private userProfileRepository: Repository<UserProfile>,
   ) {}
 
   async createWalk(
-    user: UserProfile,
+    { userId }: UUID,
     args: CreateWalkInputDto,
   ): Promise<CreateWalkOutputDto> {
     try {
+      const user = await this.userProfileRepository.findOne({ id: userId });
+      if (!user) {
+        return {
+          ok: false,
+          error: '유저정보를 찾을 수 없습니다.',
+        };
+      }
       await this.walksRepository.save(
-        this.walksRepository.create({ ...args, userId: user.id, user: user }),
+        this.walksRepository.create({ ...args, userId: userId, user: user }),
       );
       return {
         ok: true,
@@ -39,7 +48,7 @@ export class WalksService {
   }
 
   async getWalk(
-    user: UserProfile,
+    { userId }: UUID,
     { walkId }: GetWalkInputDto,
   ): Promise<GetWalkOutputDto> {
     try {
@@ -51,7 +60,7 @@ export class WalksService {
             error: '산책정보가 없습니다.',
           };
         }
-        if (walk.userId !== user.id) {
+        if (walk.userId !== userId) {
           return {
             ok: false,
             error: '다른사람의 산책정보는 조회 할 수 없습니다.',
@@ -68,15 +77,14 @@ export class WalksService {
           error: '산책정보 조회에 실패했습니다.',
         };
       }
-      return { ok: true };
     } catch (e) {
       return { ok: false, error: '산책기록 조회에 실패했습니다.' };
     }
   }
 
-  async getWalks(user: UserProfile): Promise<CoreWalksOutputDto> {
+  async getWalks({ userId }: UUID): Promise<CoreWalksOutputDto> {
     try {
-      const walks = await this.walksRepository.find({ userId: user.id });
+      const walks = await this.walksRepository.find({ userId });
       return {
         ok: true,
         data: walks,
@@ -91,12 +99,12 @@ export class WalksService {
   }
 
   async deleteWalks(
-    user: UserProfile,
+    { userId }: UUID,
     { walkId }: DeleteWalkInputDto,
   ): Promise<CoreOutputDto> {
     try {
       const walk = await this.walksRepository.findOne({ id: walkId });
-      if (walk.userId !== user.id) {
+      if (walk.userId !== userId) {
         return {
           ok: false,
           error: '다른사람의 산책정보는 삭제할 수 없습니다.',

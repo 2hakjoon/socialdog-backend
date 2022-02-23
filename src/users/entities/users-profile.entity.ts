@@ -3,6 +3,7 @@ import {
   InputType,
   Int,
   ObjectType,
+  PickType,
   registerEnumType,
 } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
@@ -55,4 +56,8 @@ export class UserProfile extends CoreEntity {
   @Field((type) => LoginStrategy)
   @Column()
   loginStrategy: LoginStrategy;
+}
+
+export class UUID {
+  userId: string;
 }

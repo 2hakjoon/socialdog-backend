@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectRepository(UserProfile)
     private usersProfileRepository: Repository<UserProfile>,
-    @Inject(CONFIG_OPTIONS) private readonly options
+    @Inject(CONFIG_OPTIONS) private readonly options,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -22,6 +22,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    return await this.usersProfileRepository.findOne({ id: payload.id });
+    return { userId: payload.id };
   }
 }

@@ -4,7 +4,7 @@ import {
   CreateAccountInputDto,
   CreateAccountOutputDto,
 } from './dtos/craete-account.dto';
-import { UserProfile } from './entities/users-profile.entity';
+import { UUID } from './entities/users-profile.entity';
 import { UsersService } from './users.service';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
@@ -18,7 +18,7 @@ import { RequestSubscribeInputDto, RequestSubscribeOutputDto } from './dtos/requ
 import { ResponseSubscribeInputDto, ResponseSubscribeOutputDto } from './dtos/response-subscribe.dto';
 import { ChangeBlockStateInputDto, ChangeBlockStateOutputDto } from './dtos/change-block-state.dto';
 
-@Resolver((of) => UserProfile)
+@Resolver((of) => UUID)
 export class UsersResolver {
   constructor(
     private usersService: UsersService,
@@ -32,7 +32,7 @@ export class UsersResolver {
 
   @Mutation(()=> EditProfileOutputDto)
   @UseGuards(GqlAuthGuard)
-  editProfile(@AuthUser() user:UserProfile, @Args(args) args: EditProfileInputDto):Promise<EditProfileOutputDto>{
+  editProfile(@AuthUser() user:UUID, @Args(args) args: EditProfileInputDto):Promise<EditProfileOutputDto>{
     return this.usersService.editProfile(user, args)
   }
 
@@ -52,25 +52,25 @@ export class UsersResolver {
 
   @Query(()=>CoreUserOutputDto)
   @UseGuards(GqlAuthGuard)
-  me(@AuthUser() user:UserProfile):Promise<CoreUserOutputDto>{
+  me(@AuthUser() user:UUID):Promise<CoreUserOutputDto>{
     return this.usersService.me(user)
   }
 
   @Mutation(()=>RequestSubscribeOutputDto)
   @UseGuards(GqlAuthGuard)
-  requestSubscribe(@AuthUser() user:UserProfile, @Args(args) args:RequestSubscribeInputDto):Promise<RequestSubscribeOutputDto>{
+  requestSubscribe(@AuthUser() user:UUID, @Args(args) args:RequestSubscribeInputDto):Promise<RequestSubscribeOutputDto>{
     return this.usersService.requestSubscribe(user, args)
   }
 
   @Mutation(()=>ResponseSubscribeOutputDto)
   @UseGuards(GqlAuthGuard)
-  responseSubscribe(@AuthUser() user:UserProfile, @Args(args) args:ResponseSubscribeInputDto):Promise<ResponseSubscribeOutputDto>{
+  responseSubscribe(@AuthUser() user:UUID, @Args(args) args:ResponseSubscribeInputDto):Promise<ResponseSubscribeOutputDto>{
     return this.usersService.responseSubscribe(user, args)
   }
 
   @Mutation(()=>ChangeBlockStateOutputDto)
   @UseGuards(GqlAuthGuard)
-  changeBlockState(@AuthUser() user:UserProfile, @Args(args) args:ChangeBlockStateInputDto):Promise<ChangeBlockStateOutputDto>{
+  changeBlockState(@AuthUser() user:UUID, @Args(args) args:ChangeBlockStateInputDto):Promise<ChangeBlockStateOutputDto>{
     return this.usersService.changeBlockState(user, args)
   }
   //@UseGuards(GqlAuthGuard)

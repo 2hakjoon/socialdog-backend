@@ -5,7 +5,11 @@ import {
   CreateAccountInputDto,
   CreateAccountOutputDto,
 } from './dtos/craete-account.dto';
-import { LoginStrategy, UserProfile } from './entities/users-profile.entity';
+import {
+  LoginStrategy,
+  UserProfile,
+  UUID,
+} from './entities/users-profile.entity';
 import * as bcrypt from 'bcrypt';
 import {
   EditProfileInputDto,
@@ -118,12 +122,12 @@ export class UsersService {
   }
 
   async editProfile(
-    user: UserProfile,
+    { userId }: UUID,
     editProfileInputDto: EditProfileInputDto,
   ): Promise<EditProfileOutputDto> {
     try {
       const userInfo = await this.usersProfileRepository.findOne({
-        id: user.id,
+        id: userId,
       });
       if (!userInfo) {
         return {
@@ -132,13 +136,13 @@ export class UsersService {
         };
       }
       if (editProfileInputDto.photo) {
-        if (user.photo) {
-          await this.uploadService.deleteFileAtS3(user.photo);
+        if (userInfo.photo) {
+          await this.uploadService.deleteFileAtS3(userInfo.photo);
         }
       }
       if (editProfileInputDto.password) {
         const authLocal = await this.authLoalRepository.findOne({
-          user: user.id,
+          user: userId,
         });
         if (!authLocal) {
           return {
@@ -154,10 +158,13 @@ export class UsersService {
           password: hashedPassword,
         });
       }
-      await this.usersProfileRepository.update(user.id, {
-        ...user,
-        ...editProfileInputDto,
-      });
+      await this.usersProfileRepository.update(
+        { id: userId },
+        {
+          ...userInfo,
+          ...editProfileInputDto,
+        },
+      );
 
       return {
         ok: true,
@@ -171,19 +178,33 @@ export class UsersService {
     }
   }
 
-  async me(user: UserProfile): Promise<CoreUserOutputDto> {
-    return {
-      ok: true,
-      data: user,
-    };
+  async me({ userId }: UUID): Promise<CoreUserOutputDto> {
+    try {
+      const user = await this.usersProfileRepository.findOne({ id: userId });
+      if (!user) {
+        return {
+          ok: false,
+          error: '유저가 존재하지 않습니다.',
+        };
+      }
+      return {
+        ok: true,
+        data: user,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '유저정보 조회에 실패했습니다.',
+      };
+    }
   }
 
   async requestSubscribe(
-    user: UserProfile,
+    { userId }: UUID,
     { to }: RequestSubscribeInputDto,
   ): Promise<RequestSubscribeOutputDto> {
     try {
-      if (user.id === to) {
+      if (userId === to) {
         return {
           ok: false,
           error: '자신에게 요청할 수 없습니다.',
@@ -191,7 +212,7 @@ export class UsersService {
       }
       const subscribe = await this.subscribesRepository.findOne({
         to,
-        from: user.id,
+        from: userId,
       });
 
       if (subscribe) {
@@ -212,7 +233,7 @@ export class UsersService {
         await this.subscribesRepository.save(
           await this.subscribesRepository.create({
             to,
-            from: user.id,
+            from: userId,
             subscribeRequest: SubscribeStatus.REQUESTED,
           }),
         );
@@ -229,7 +250,7 @@ export class UsersService {
   }
 
   async responseSubscribe(
-    user: UserProfile,
+    { userId }: UUID,
     { id, subscribeRequest }: ResponseSubscribeInputDto,
   ): Promise<ResponseSubscribeOutputDto> {
     try {
@@ -237,7 +258,7 @@ export class UsersService {
         { id },
         { loadRelationIds: { relations: ['to', 'from'] } },
       );
-      if (subscribe.to !== user.id) {
+      if (subscribe.to !== userId) {
         return {
           ok: false,
           error: '다른 사람에게 온 요청은 수락할 수 없습니다.',
@@ -267,7 +288,7 @@ export class UsersService {
   }
 
   async changeBlockState(
-    user: UserProfile,
+    { userId }: UUID,
     { to, block }: ChangeBlockStateInputDto,
   ): Promise<ChangeBlockStateOutputDto> {
     try {
@@ -282,7 +303,7 @@ export class UsersService {
 
       const subscribe = await this.subscribesRepository.findOne({
         to,
-        from: user.id,
+        from: userId,
       });
 
       if (subscribe) {
@@ -293,7 +314,7 @@ export class UsersService {
       } else {
         await this.subscribesRepository.save(
           await this.subscribesRepository.create({
-            from: user.id,
+            from: userId,
             to,
             block,
           }),

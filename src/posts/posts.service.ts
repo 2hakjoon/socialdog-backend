@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UploadService } from 'src/upload/upload.service';
-import { UserProfile } from 'src/users/entities/users-profile.entity';
+import { UUID } from 'src/users/entities/users-profile.entity';
 import { Repository } from 'typeorm';
 import {
   CreatePostOutputDto,
@@ -23,11 +23,12 @@ export class PostsService {
   ) {}
 
   async createPost(
-    user: UserProfile,
+    { userId }: UUID,
     args: CreatePostInputDto,
   ): Promise<CreatePostOutputDto> {
     try {
-      if (!user.id) {
+      const user = await this.postsRepository.findOne({ id: userId });
+      if (!user) {
         return {
           ok: false,
           error: '유저정보를 찾을 수 없습니다.',
@@ -38,7 +39,7 @@ export class PostsService {
           ...args,
           photos: JSON.stringify(args.photos),
           user,
-          userId: user.id,
+          userId,
         }),
       );
       return {
@@ -53,7 +54,7 @@ export class PostsService {
   }
 
   async editPost(
-    user: UserProfile,
+    { userId }: UUID,
     { postId, ...rest }: EditPostInputDto,
   ): Promise<EditPostOutputDto> {
     try {
@@ -64,7 +65,7 @@ export class PostsService {
           error: '게시글이 존재하지 않습니다.',
         };
       }
-      if (post.userId !== user.id) {
+      if (post.userId !== userId) {
         return {
           ok: false,
           error: '다른사람의 게시글은 수정할 수 없습니다.',
@@ -90,7 +91,7 @@ export class PostsService {
   }
 
   async deletePost(
-    user: UserProfile,
+    { userId }: UUID,
     { id }: DeletePostInputDto,
   ): Promise<DeletePostOutputDto> {
     try {
@@ -101,7 +102,7 @@ export class PostsService {
           error: '게시글이 존재하지 않습니다.',
         };
       }
-      if (post.userId !== user.id) {
+      if (post.userId !== userId) {
         return {
           ok: false,
           error: '다른 사람의 게시글은 삭제할수 없습니다.',
