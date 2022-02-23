@@ -12,6 +12,7 @@ import {
   DeletePostOutputDto,
 } from './dtos/delete-post.dto';
 import { EditPostInputDto, EditPostOutputDto } from './dtos/edit-post-dto';
+import { GetMyPostsOutputDto } from './dtos/get-my-Posts.dto';
 import { Posts } from './entities/posts.entity';
 
 @Injectable()
@@ -128,6 +129,21 @@ export class PostsService {
       return {
         ok: false,
         error: '게시물 삭제에 실패했습니다.',
+      };
+    }
+  }
+
+  async getMyPosts({ userId }: UUID): Promise<GetMyPostsOutputDto> {
+    try {
+      const posts = await this.postsRepository.find({ userId });
+      return {
+        ok: true,
+        data: posts,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '게시물 조회에 실패했습니다.',
       };
     }
   }

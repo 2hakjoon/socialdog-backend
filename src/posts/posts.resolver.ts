@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
 import { args } from 'src/common/constants';
 import { UUID } from 'src/users/entities/users-profile.entity';
@@ -12,6 +12,7 @@ import {
   DeletePostOutputDto,
 } from './dtos/delete-post.dto';
 import { EditPostInputDto, EditPostOutputDto } from './dtos/edit-post-dto';
+import { GetMyPostsOutputDto } from './dtos/get-my-Posts.dto';
 import { Posts } from './entities/posts.entity';
 import { PostsService } from './posts.service';
 
@@ -44,5 +45,11 @@ export class PostsResolver {
     @Args(args) args: EditPostInputDto,
   ): Promise<EditPostOutputDto> {
     return this.postsService.editPost(userId, args);
+  }
+
+  @Query((returns) => GetMyPostsOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getMyPosts(@AuthUser() userId: UUID): Promise<GetMyPostsOutputDto> {
+    return this.postsService.getMyPosts(userId);
   }
 }
