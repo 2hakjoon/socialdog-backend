@@ -4,7 +4,7 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { UserProfile } from './users-profile.entity';
@@ -33,8 +33,9 @@ export class Subscribes extends CoreEntity {
   @ManyToOne(() => UserProfile, (user) => user.id)
   to: string;
 
-  @Field(() => registerEnumType)
+  @Field(() => SubscribeStatus)
   @Column({ nullable: true })
+  @IsEnum(SubscribeStatus)
   subscribeRequest?: SubscribeStatus;
 
   @Field(() => Boolean)

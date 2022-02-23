@@ -14,7 +14,8 @@ import { args } from 'src/common/constants';
 import { MailService } from 'src/mail/mail.service';
 import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { RequestSubscribeInputDto, RequestSubscribeOutputDto } from './dtos/request-subscribe.dto';
+import { ResponseSubscribeInputDto, ResponseSubscribeOutputDto } from './dtos/response-subscribe.dto';
 
 @Resolver((of) => UserProfile)
 export class UsersResolver {
@@ -54,6 +55,16 @@ export class UsersResolver {
     return this.usersService.me(user)
   }
 
+  @Mutation(()=>RequestSubscribeOutputDto)
+  @UseGuards(GqlAuthGuard)
+  requestSubscribe(@AuthUser() user:UserProfile, @Args(args) args:RequestSubscribeInputDto):Promise<RequestSubscribeOutputDto>{
+    return this.usersService.requestSubscribe(user, args)
+  }
+  @Mutation(()=>ResponseSubscribeOutputDto)
+  @UseGuards(GqlAuthGuard)
+  responseSubscribe(@AuthUser() user:UserProfile, @Args(args) args:ResponseSubscribeInputDto):Promise<ResponseSubscribeOutputDto>{
+    return this.usersService.responseSubscribe(user, args)
+  }
   //@UseGuards(GqlAuthGuard)
   @Query(()=>Boolean)
   test(){

@@ -25,5 +25,5 @@ export class AuthLocal extends CoreEntity {
 
   @Field((type) => String)
   @ManyToOne(() => UserProfile, (user) => user.id)
-  userId: string;
+  user: string;
 }

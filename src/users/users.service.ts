@@ -15,8 +15,16 @@ import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
 import { MailService } from 'src/mail/mail.service';
 import { CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { AuthLocal } from 'src/auth/entities/auth-local.entity';
-import { FileUpload } from 'graphql-upload';
 import { UploadService } from 'src/upload/upload.service';
+import {
+  RequestSubscribeInputDto,
+  RequestSubscribeOutputDto,
+} from './dtos/request-subscribe.dto';
+import { Subscribes, SubscribeStatus } from './entities/subscribes.entity';
+import {
+  ResponseSubscribeInputDto,
+  ResponseSubscribeOutputDto,
+} from './dtos/response-subscribe.dto';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +33,8 @@ export class UsersService {
     private usersProfileRepository: Repository<UserProfile>,
     @InjectRepository(AuthLocal)
     private authLoalRepository: Repository<AuthLocal>,
+    @InjectRepository(Subscribes)
+    private subscribesRepository: Repository<Subscribes>,
     private uploadService: UploadService,
     private mailService: MailService,
   ) {}
@@ -53,18 +63,18 @@ export class UsersService {
       }
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const { id: userId } = await this.usersProfileRepository.save(
+      const { id: user } = await this.usersProfileRepository.save(
         await this.usersProfileRepository.create({
           loginStrategy: LoginStrategy.LOCAL,
         }),
       );
-      console.log(userId);
+      console.log(user);
 
       await this.authLoalRepository.save(
         await this.authLoalRepository.create({
           email,
           password: hashedPassword,
-          userId,
+          user,
         }),
       );
 
@@ -124,7 +134,7 @@ export class UsersService {
       }
       if (editProfileInputDto.password) {
         const authLocal = await this.authLoalRepository.findOne({
-          userId: user.id,
+          user: user.id,
         });
         if (!authLocal) {
           return {
@@ -162,5 +172,65 @@ export class UsersService {
       ok: true,
       data: user,
     };
+  }
+
+  async requestSubscribe(
+    user: UserProfile,
+    { to }: RequestSubscribeInputDto,
+  ): Promise<RequestSubscribeOutputDto> {
+    try {
+      if (user.id === to) {
+        return {
+          ok: false,
+          error: '자신에게 요청할 수 없습니다.',
+        };
+      }
+      await this.subscribesRepository.save(
+        await this.subscribesRepository.create({
+          to,
+          from: user.id,
+          subscribeRequest: SubscribeStatus.REQUESTED,
+        }),
+      );
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: true,
+        error: '요청을 실패하였습니다.',
+      };
+    }
+  }
+
+  async responseSubscribe(
+    user: UserProfile,
+    { id, subscribeRequest }: ResponseSubscribeInputDto,
+  ): Promise<ResponseSubscribeOutputDto> {
+    try {
+      const subscribe = await this.subscribesRepository.findOne(
+        { id },
+        { loadRelationIds: { relations: ['to', 'from'] } },
+      );
+      console.log(subscribe, user.id);
+      if (subscribe.to !== user.id) {
+        return {
+          ok: false,
+          error: '다른 사람에게 온 요청은 수락할 수 없습니다.',
+        };
+      }
+      await this.subscribesRepository.update(id, {
+        ...subscribe,
+        subscribeRequest,
+      });
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '요청 수락 및 거절을 실패했습니다.',
+      };
+    }
   }
 }

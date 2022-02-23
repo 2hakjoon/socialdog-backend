@@ -47,7 +47,7 @@ export class AuthService {
     try {
       const authLocal = await this.AuthLoalRepository.findOne(
         { email },
-        { select: ['id', 'password', 'userId'] },
+        { select: ['id', 'password', 'user'] },
       );
       if (!authLocal) {
         return {
@@ -65,9 +65,9 @@ export class AuthService {
           error: '로그인 정보가 잘못되었습니다.',
         };
       }
-      const access_token = this.jwtService.sign({ id: authLocal.userId });
+      const access_token = this.jwtService.sign({ id: authLocal.user });
       const refresh_token = this.jwtService.sign(
-        { id: authLocal.userId },
+        { id: authLocal.user },
         { expiresIn: '182d' },
       );
       await this.AuthLoalRepository.update(authLocal.id, {
@@ -107,7 +107,7 @@ export class AuthService {
           error: '엑세스 토큰이 일치하지 않습니다.',
         };
       }
-      const newAccessToken = this.jwtService.sign({ id: authLocal.userId });
+      const newAccessToken = this.jwtService.sign({ id: authLocal.user });
       return {
         ok: true,
         accessToken: newAccessToken,
@@ -150,7 +150,7 @@ export class AuthService {
         await this.AuthKakaoRepository.save(
           await this.AuthKakaoRepository.create({
             kakaoId: kakaoResponse.id,
-            userId: user.id,
+            user: user.id,
             refreshToken: refresh_token,
           }),
         );
@@ -161,7 +161,7 @@ export class AuthService {
         };
       }
 
-      const access_token = this.jwtService.sign({ id: authKakaoUser.userId });
+      const access_token = this.jwtService.sign({ id: authKakaoUser.user });
       const refresh_token = this.jwtService.sign(
         { id: authKakaoUser.id },
         { expiresIn: '182d' },

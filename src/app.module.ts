@@ -18,7 +18,7 @@ import { AuthKakao } from './auth/entities/auth-kakao.entity';
 import { UploadModule } from './upload/upload.module';
 import { PostsModule } from './posts/posts.module';
 import { Posts } from './posts/entities/posts.entity';
-
+import { Subscribes } from './users/entities/subscribes.entity';
 
 @Module({
   imports: [
@@ -53,7 +53,15 @@ import { Posts } from './posts/entities/posts.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV === 'dev',
       logging: true,
-      entities: [UserProfile, AuthLocal, Walks, Verifies, AuthKakao, Posts],
+      entities: [
+        UserProfile,
+        AuthLocal,
+        Walks,
+        Verifies,
+        AuthKakao,
+        Posts,
+        Subscribes,
+      ],
     }),
     UploadModule.forRoot({
       accessKeyId: process.env.AWS_S3_ACCESS_ID,
@@ -63,7 +71,7 @@ import { Posts } from './posts/entities/posts.entity';
     }),
     AuthModule.forRoot({
       secretKey: process.env.JWT_SECRET_KEY,
-      expiresIn : '7d'
+      expiresIn: '7d',
     }),
     UsersModule,
     WalksModule,
