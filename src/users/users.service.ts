@@ -189,13 +189,34 @@ export class UsersService {
           error: '자신에게 요청할 수 없습니다.',
         };
       }
-      await this.subscribesRepository.save(
-        await this.subscribesRepository.create({
-          to,
-          from: user.id,
-          subscribeRequest: SubscribeStatus.REQUESTED,
-        }),
-      );
+      const subscribe = await this.subscribesRepository.findOne({
+        to,
+        from: user.id,
+      });
+
+      if (subscribe) {
+        if (!subscribe.subscribeRequest) {
+          await this.subscribesRepository.update(subscribe.id, {
+            ...subscribe,
+            subscribeRequest: SubscribeStatus.REQUESTED,
+          });
+        }
+      } else {
+        const userTo = await this.usersProfileRepository.findOne({ id: to });
+        if (!userTo) {
+          return {
+            ok: false,
+            error: '요청할 사용자가 존재하지 않습니다.',
+          };
+        }
+        await this.subscribesRepository.save(
+          await this.subscribesRepository.create({
+            to,
+            from: user.id,
+            subscribeRequest: SubscribeStatus.REQUESTED,
+          }),
+        );
+      }
       return {
         ok: true,
       };
@@ -216,13 +237,20 @@ export class UsersService {
         { id },
         { loadRelationIds: { relations: ['to', 'from'] } },
       );
-      console.log(subscribe, user.id);
       if (subscribe.to !== user.id) {
         return {
           ok: false,
           error: '다른 사람에게 온 요청은 수락할 수 없습니다.',
         };
       }
+
+      if (!subscribe.subscribeRequest) {
+        return {
+          ok: false,
+          error: '아직 요청을 수락 및 거절 할 수 없습니다.',
+        };
+      }
+
       await this.subscribesRepository.update(id, {
         ...subscribe,
         subscribeRequest,
@@ -244,16 +272,19 @@ export class UsersService {
   ): Promise<ChangeBlockStateOutputDto> {
     try {
       const userTo = await this.usersProfileRepository.findOne({ id: to });
+
       if (!userTo) {
         return {
           ok: false,
           error: '차단 설정을 할 사용자가 존재하지 않습니다.',
         };
       }
+
       const subscribe = await this.subscribesRepository.findOne({
         to,
         from: user.id,
       });
+
       if (subscribe) {
         await this.subscribesRepository.update(subscribe.id, {
           ...subscribe,
