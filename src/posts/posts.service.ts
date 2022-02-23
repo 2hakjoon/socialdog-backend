@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UploadService } from 'src/upload/upload.service';
-import { UUID } from 'src/users/entities/users-profile.entity';
+import { UserProfile, UUID } from 'src/users/entities/users-profile.entity';
 import { Repository } from 'typeorm';
 import {
   CreatePostOutputDto,
@@ -19,6 +19,8 @@ export class PostsService {
   constructor(
     @InjectRepository(Posts)
     private postsRepository: Repository<Posts>,
+    @InjectRepository(UserProfile)
+    private userProfileRepository: Repository<UserProfile>,
     private uploadService: UploadService,
   ) {}
 
@@ -27,7 +29,7 @@ export class PostsService {
     args: CreatePostInputDto,
   ): Promise<CreatePostOutputDto> {
     try {
-      const user = await this.postsRepository.findOne({ id: userId });
+      const user = await this.userProfileRepository.findOne({ id: userId });
       if (!user) {
         return {
           ok: false,
