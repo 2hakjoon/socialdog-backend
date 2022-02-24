@@ -12,7 +12,8 @@ import {
   DeletePostOutputDto,
 } from './dtos/delete-post.dto';
 import { EditPostInputDto, EditPostOutputDto } from './dtos/edit-post-dto';
-import { GetMyPostsOutputDto } from './dtos/get-my-Posts.dto';
+import { GetMyPostsOutputDto } from './dtos/get-my-posts.dto';
+import { GetSubscribingPostsOutputDto } from './dtos/get-subscribing-posts.dto';
 import { Posts } from './entities/posts.entity';
 import { PostsService } from './posts.service';
 
@@ -51,5 +52,13 @@ export class PostsResolver {
   @UseGuards(GqlAuthGuard)
   getMyPosts(@AuthUser() userId: UUID): Promise<GetMyPostsOutputDto> {
     return this.postsService.getMyPosts(userId);
+  }
+
+  @Query((returns) => GetSubscribingPostsOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getSubscribingPosts(
+    @AuthUser() userId: UUID,
+  ): Promise<GetSubscribingPostsOutputDto> {
+    return this.postsService.getSubscribingPosts(userId);
   }
 }

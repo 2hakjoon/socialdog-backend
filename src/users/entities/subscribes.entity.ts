@@ -9,15 +9,15 @@ import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { UserProfile } from './users-profile.entity';
 
-export enum SubscribeStatus {
+export enum RequestStatus {
   REQUESTED = 'REQUESTED',
   REJECTED = 'REJECTED',
   CONFIRMED = 'CONFIRMED',
 }
 
-registerEnumType(SubscribeStatus, {
-  name: 'SubscribeStatus',
-  description: 'SubscribeStatus',
+registerEnumType(RequestStatus, {
+  name: 'RequestStatus',
+  description: 'RequestStatus',
 });
 
 @Entity()
@@ -33,10 +33,10 @@ export class Subscribes extends CoreEntity {
   @ManyToOne(() => UserProfile, (user) => user.id)
   to: string;
 
-  @Field(() => SubscribeStatus)
+  @Field(() => RequestStatus)
   @Column({ nullable: true })
-  @IsEnum(SubscribeStatus)
-  subscribeRequest?: SubscribeStatus;
+  @IsEnum(RequestStatus)
+  subscribeRequest?: RequestStatus;
 
   @Field(() => Boolean)
   @Column({ default: false })

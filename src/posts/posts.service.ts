@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { subscribe } from 'graphql';
 import { UploadService } from 'src/upload/upload.service';
+import {
+  Subscribes,
+  RequestStatus,
+} from 'src/users/entities/subscribes.entity';
 import { UserProfile, UUID } from 'src/users/entities/users-profile.entity';
-import { Repository } from 'typeorm';
+import { createQueryBuilder, getConnection, Repository } from 'typeorm';
 import {
   CreatePostOutputDto,
   CreatePostInputDto,
@@ -12,7 +17,8 @@ import {
   DeletePostOutputDto,
 } from './dtos/delete-post.dto';
 import { EditPostInputDto, EditPostOutputDto } from './dtos/edit-post-dto';
-import { GetMyPostsOutputDto } from './dtos/get-my-Posts.dto';
+import { GetMyPostsOutputDto } from './dtos/get-my-posts.dto';
+import { GetSubscribingPostsOutputDto } from './dtos/get-subscribing-posts.dto';
 import { Posts } from './entities/posts.entity';
 
 @Injectable()
@@ -22,6 +28,8 @@ export class PostsService {
     private postsRepository: Repository<Posts>,
     @InjectRepository(UserProfile)
     private userProfileRepository: Repository<UserProfile>,
+    @InjectRepository(Subscribes)
+    private subscribesRepository: Repository<Subscribes>,
     private uploadService: UploadService,
   ) {}
 
@@ -141,6 +149,44 @@ export class PostsService {
         data: posts,
       };
     } catch (e) {
+      return {
+        ok: false,
+        error: '게시물 조회에 실패했습니다.',
+      };
+    }
+  }
+
+  async getSubscribingPosts({
+    userId,
+  }: UUID): Promise<GetSubscribingPostsOutputDto> {
+    try {
+      const mySubscibes = await this.subscribesRepository.find({
+        where: {
+          from: userId,
+          subscribeRequest: RequestStatus.CONFIRMED,
+          block: false,
+        },
+        loadRelationIds: { relations: ['to'] },
+        select: ['to', 'id'],
+      });
+      console.log(mySubscibes);
+      const subscribeIds = mySubscibes.map((subscribe) => subscribe.to);
+      console.log(subscribeIds);
+      const myPosts = await this.postsRepository
+        .createQueryBuilder('posts')
+        .where('posts.userId IN (:...userIds)', {
+          userIds: [userId, ...subscribeIds],
+        })
+        .leftJoinAndSelect('posts.user', 'user')
+        .skip(0)
+        .take(5)
+        .getMany();
+      console.log(myPosts);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: '게시물 조회에 실패했습니다.',

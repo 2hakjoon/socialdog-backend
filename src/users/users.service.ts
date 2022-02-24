@@ -24,7 +24,7 @@ import {
   RequestSubscribeInputDto,
   RequestSubscribeOutputDto,
 } from './dtos/request-subscribe.dto';
-import { Subscribes, SubscribeStatus } from './entities/subscribes.entity';
+import { Subscribes, RequestStatus } from './entities/subscribes.entity';
 import {
   ResponseSubscribeInputDto,
   ResponseSubscribeOutputDto,
@@ -219,7 +219,7 @@ export class UsersService {
         if (!subscribe.subscribeRequest) {
           await this.subscribesRepository.update(subscribe.id, {
             ...subscribe,
-            subscribeRequest: SubscribeStatus.REQUESTED,
+            subscribeRequest: RequestStatus.REQUESTED,
           });
         }
       } else {
@@ -234,7 +234,7 @@ export class UsersService {
           await this.subscribesRepository.create({
             to,
             from: userId,
-            subscribeRequest: SubscribeStatus.REQUESTED,
+            subscribeRequest: RequestStatus.REQUESTED,
           }),
         );
       }

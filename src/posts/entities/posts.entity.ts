@@ -28,7 +28,9 @@ export class Posts extends CoreEntity {
   contents: string;
 
   @Field((type) => UserProfile)
-  @ManyToOne(() => UserProfile, (userProfile) => userProfile.posts)
+  @ManyToOne(() => UserProfile, (userProfile) => userProfile.posts, {
+    eager: true,
+  })
   user: UserProfile;
 
   @Field(() => String)
