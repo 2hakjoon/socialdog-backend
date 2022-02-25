@@ -6,27 +6,22 @@ import { AuthKakao } from '../entities/auth-kakao.entity';
 @InputType()
 export class KakaoLoginInputDto {
   @Field(() => String)
-  @Column()
   @IsString()
   accessToken: string;
 
-  @Field(() => String)
-  @Column()
+  @Field(() => String, { nullable: true })
   @IsString()
-  accessTokenExpiresAt: string;
+  accessTokenExpiresAt?: string;
 
-  @Field(() => String)
-  @Column()
+  @Field(() => String, { nullable: true })
   @IsString()
-  refreshToken: string;
+  refreshToken?: string;
 
-  @Field(() => String)
-  @Column()
+  @Field(() => String, { nullable: true })
   @IsString()
-  refreshTokenExpiresAt: string;
+  refreshTokenExpiresAt?: string;
 
-  @Field(() => String)
-  @Column()
+  @Field(() => String, { nullable: true })
   @IsString()
-  scopes: string;
+  scopes?: string;
 }

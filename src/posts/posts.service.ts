@@ -169,10 +169,10 @@ export class PostsService {
         loadRelationIds: { relations: ['to'] },
         select: ['to', 'id'],
       });
-      console.log(mySubscibes);
+
       const subscribeIds = mySubscibes.map((subscribe) => subscribe.to);
-      console.log(subscribeIds);
-      const myPosts = await this.postsRepository
+
+      const describingPosts = await this.postsRepository
         .createQueryBuilder('posts')
         .where('posts.userId IN (:...userIds)', {
           userIds: [userId, ...subscribeIds],
@@ -181,9 +181,9 @@ export class PostsService {
         .skip(0)
         .take(5)
         .getMany();
-      console.log(myPosts);
       return {
         ok: true,
+        data: describingPosts,
       };
     } catch (e) {
       console.log(e);
