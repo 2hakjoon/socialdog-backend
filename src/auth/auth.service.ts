@@ -135,9 +135,15 @@ export class AuthService {
           ok: false,
         };
       }
-      const authKakaoUser = await this.AuthKakaoRepository.findOne({
-        kakaoId: kakaoResponse.id,
-      });
+      const authKakaoUser = await this.AuthKakaoRepository.findOne(
+        {
+          kakaoId: kakaoResponse.id,
+        },
+        {
+          loadRelationIds: { relations: ['user'] },
+        },
+      );
+      console.log(authKakaoUser);
       //로그인 한 적이 없을때
       if (!authKakaoUser) {
         const user = await this.userProfileRepository.save(
@@ -167,7 +173,7 @@ export class AuthService {
 
       const access_token = this.jwtService.sign({ id: authKakaoUser.user });
       const refresh_token = this.jwtService.sign(
-        { id: authKakaoUser.id },
+        { id: authKakaoUser.user },
         { expiresIn: '182d' },
       );
       await this.AuthKakaoRepository.update(authKakaoUser.id, {

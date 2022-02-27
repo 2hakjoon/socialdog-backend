@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
-import { IsArray } from 'class-validator';
+import { ArrayMaxSize, IsArray, Length } from 'class-validator';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import { Posts } from '../entities/posts.entity';
 
@@ -11,6 +11,7 @@ export class CreatePostInputDto extends PickType(Posts, [
 ]) {
   @Field(() => [String])
   @IsArray()
+  @ArrayMaxSize(5)
   photos: string[];
 }
 

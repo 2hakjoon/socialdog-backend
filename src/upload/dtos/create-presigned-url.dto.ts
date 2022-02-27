@@ -4,7 +4,13 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { IsArray, IsEnum, IsObject, IsString } from 'class-validator';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsEnum,
+  IsObject,
+  IsString,
+} from 'class-validator';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 
 export enum FileType {
@@ -31,6 +37,7 @@ class FileInputDto {
 export class CreatePreSignedUrlsInputDto {
   @Field((type) => [FileInputDto])
   @IsArray()
+  @ArrayMaxSize(5)
   files: FileInputDto[];
 }
 

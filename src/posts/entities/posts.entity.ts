@@ -1,5 +1,5 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
+import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
@@ -14,16 +14,19 @@ export class Posts extends CoreEntity {
 
   @Field((type) => String)
   @IsString()
+  @Length(0, 50)
   @Column()
   address: string;
 
   @Field((type) => String)
   @IsString()
+  @Length(0, 50)
   @Column()
   placeId: string;
 
   @Field((type) => String)
   @IsString()
+  @Length(0, 300)
   @Column()
   contents: string;
 

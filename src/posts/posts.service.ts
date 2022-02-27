@@ -171,13 +171,13 @@ export class PostsService {
       });
 
       const subscribeIds = mySubscibes.map((subscribe) => subscribe.to);
-
       const describingPosts = await this.postsRepository
         .createQueryBuilder('posts')
         .where('posts.userId IN (:...userIds)', {
           userIds: [userId, ...subscribeIds],
         })
         .leftJoinAndSelect('posts.user', 'user')
+        .orderBy('posts.createdAt', 'DESC')
         .skip(0)
         .take(5)
         .getMany();
