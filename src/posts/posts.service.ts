@@ -178,22 +178,6 @@ export class PostsService {
         .innerJoin('subs.to', 'user')
         .select(['subs.id', 'user.id'])
         .getMany();
-      // const mySubscibes = await this.subscribesRepository.find({
-      //   where: [
-      //     {
-      //       from: userId,
-      //       subscribeRequest: RequestStatus.CONFIRMED,
-      //       block: false,
-      //     },
-      //     {
-      //       to: userId,
-      //       subscribeRequest: RequestStatus.CONFIRMED,
-      //       block: false,
-      //     },
-      //   ],
-      //   loadRelationIds: { relations: ['to'] },
-      //   select: ['to', 'id'],
-      // });
       console.log(mySubscibes);
       const subscribeIds = mySubscibes.map((subscribe) => subscribe.to?.['id']);
       const describingPosts = await this.postsRepository
