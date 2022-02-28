@@ -160,17 +160,42 @@ export class PostsService {
     userId,
   }: UUID): Promise<GetSubscribingPostsOutputDto> {
     try {
-      const mySubscibes = await this.subscribesRepository.find({
-        where: {
-          from: userId,
-          subscribeRequest: RequestStatus.CONFIRMED,
-          block: false,
-        },
-        loadRelationIds: { relations: ['to'] },
-        select: ['to', 'id'],
-      });
-
-      const subscribeIds = mySubscibes.map((subscribe) => subscribe.to);
+      const mySubscibes = await this.subscribesRepository
+        .createQueryBuilder('subs')
+        .where('subs.to = :userId AND subs.from = :userId', { userId })
+        .where('subs.to = :userId AND block = :blockstate', {
+          userId,
+          blockstate: false,
+        })
+        .where(
+          'subs.from = :userId AND block = :blockstate AND subs.subscribeRequest = :requestState',
+          {
+            userId,
+            blockstate: false,
+            requestState: RequestStatus.CONFIRMED,
+          },
+        )
+        .innerJoin('subs.to', 'user')
+        .select(['subs.id', 'user.id'])
+        .getMany();
+      // const mySubscibes = await this.subscribesRepository.find({
+      //   where: [
+      //     {
+      //       from: userId,
+      //       subscribeRequest: RequestStatus.CONFIRMED,
+      //       block: false,
+      //     },
+      //     {
+      //       to: userId,
+      //       subscribeRequest: RequestStatus.CONFIRMED,
+      //       block: false,
+      //     },
+      //   ],
+      //   loadRelationIds: { relations: ['to'] },
+      //   select: ['to', 'id'],
+      // });
+      console.log(mySubscibes);
+      const subscribeIds = mySubscibes.map((subscribe) => subscribe.to?.['id']);
       const describingPosts = await this.postsRepository
         .createQueryBuilder('posts')
         .where('posts.userId IN (:...userIds)', {
