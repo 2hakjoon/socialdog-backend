@@ -62,5 +62,6 @@ export class Posts extends CoreEntity {
   @AfterLoad()
   public async countLikes() {
     this.likeCounts = this.likes?.length || 0;
+    this.isLiked = Boolean(this.likes?.filter((user) => user.id === this.id));
   }
 }
