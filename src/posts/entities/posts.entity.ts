@@ -56,7 +56,6 @@ export class Posts extends CoreEntity {
   likeCounts: number;
 
   @Field((type) => Boolean)
-  @Column({ default: false })
   isLiked: boolean;
 
   @AfterLoad()
