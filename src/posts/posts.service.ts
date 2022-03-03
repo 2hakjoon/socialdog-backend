@@ -18,7 +18,10 @@ import {
   DeletePostOutputDto,
 } from './dtos/delete-post.dto';
 import { EditPostInputDto, EditPostOutputDto } from './dtos/edit-post-dto';
-import { GetMyPostsOutputDto } from './dtos/get-my-posts.dto';
+import {
+  GetMyPostsInputDto,
+  GetMyPostsOutputDto,
+} from './dtos/get-my-posts.dto';
 import { GetSubscribingPostsOutputDto } from './dtos/get-subscribing-posts.dto';
 import { Posts } from './entities/posts.entity';
 import { GetUserPostsInputDto } from './dtos/get-user-posts.dto';
@@ -145,9 +148,18 @@ export class PostsService {
     }
   }
 
-  async getMyPosts({ userId }: UUID): Promise<GetMyPostsOutputDto> {
+  async getMyPosts(
+    { userId }: UUID,
+    { limit, offset }: GetMyPostsInputDto,
+  ): Promise<GetMyPostsOutputDto> {
     try {
-      const posts = await this.postsRepository.find({ userId });
+      const posts = await this.postsRepository.find({
+        where: {
+          userId,
+        },
+        skip: offset,
+        take: limit,
+      });
       return {
         ok: true,
         data: posts,
