@@ -80,7 +80,6 @@ export class UsersService {
           loginStrategy: LoginStrategy.LOCAL,
         }),
       );
-      console.log(user);
 
       await this.authLoalRepository.save(
         await this.authLoalRepository.create({
@@ -128,7 +127,6 @@ export class UsersService {
           return true;
         }
       });
-      console.log(blocking, blocked);
       if (blocking.length) {
         return {
           ok: true,
