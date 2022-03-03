@@ -15,9 +15,20 @@ export enum RequestStatus {
   CONFIRMED = 'CONFIRMED',
 }
 
+export enum BlockState {
+  NONE = 'NONE',
+  BLOCKED = 'BLOCKED',
+  BLOCKING = 'BLOCKING',
+}
+
 registerEnumType(RequestStatus, {
   name: 'RequestStatus',
   description: 'RequestStatus',
+});
+
+registerEnumType(BlockState, {
+  name: 'BlockState',
+  description: 'BlockState',
 });
 
 @Entity()

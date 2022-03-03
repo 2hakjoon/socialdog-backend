@@ -24,7 +24,11 @@ import {
   RequestSubscribeInputDto,
   RequestSubscribeOutputDto,
 } from './dtos/request-subscribe.dto';
-import { Subscribes, RequestStatus } from './entities/subscribes.entity';
+import {
+  Subscribes,
+  RequestStatus,
+  BlockState,
+} from './entities/subscribes.entity';
 import {
   ResponseSubscribeInputDto,
   ResponseSubscribeOutputDto,
@@ -97,9 +101,45 @@ export class UsersService {
     }
   }
 
-  async getProfile({ userId }: GetUserInputDto): Promise<GetUserOutputDto> {
-    console.log(userId);
+  async getProfile(
+    { userId: authUser }: UUID,
+    { userId }: GetUserInputDto,
+  ): Promise<GetUserOutputDto> {
     try {
+      const blockstate = await this.subscribesRepository
+        .createQueryBuilder('subs')
+        .where('subs.to = :userId AND subs.from = :authUser', {
+          userId,
+          authUser,
+        })
+        .orWhere('subs.to = :authUser AND subs.from = :userId', {
+          userId,
+          authUser,
+        })
+        .loadAllRelationIds({ relations: ['to', 'from'] })
+        .getMany();
+      const blocking = blockstate.filter((subs) => {
+        if (subs.to === userId && subs.block) {
+          return true;
+        }
+      });
+      const blocked = blockstate.filter((subs) => {
+        if (subs.from === userId && subs.block) {
+          return true;
+        }
+      });
+      console.log(blocking, blocked);
+      if (blocking.length) {
+        return {
+          ok: true,
+          blocking: BlockState.BLOCKING,
+        };
+      }
+      if (blocked.length) {
+        return {
+          ok: true,
+        };
+      }
       const userInfo = await this.usersProfileRepository.findOne({
         id: userId,
       });
@@ -182,7 +222,7 @@ export class UsersService {
     try {
       const user = await this.usersProfileRepository.findOne(
         { id: userId },
-        { relations: ['posts', 'subscribingUsers', 'subscribeUsers'] },
+        { relations: ['subscribingUsers', 'subscribeUsers'] },
       );
       if (!user) {
         return {
@@ -190,7 +230,6 @@ export class UsersService {
           error: '유저가 존재하지 않습니다.',
         };
       }
-      console.log(user);
       return {
         ok: true,
         data: user,
@@ -203,6 +242,29 @@ export class UsersService {
     }
   }
 
+  async getUserProfile({ userId }: UUID): Promise<CoreUserOutputDto> {
+    try {
+      const user = await this.usersProfileRepository.findOne(
+        { id: userId },
+        { relations: ['subscribingUsers', 'subscribeUsers'] },
+      );
+      if (!user) {
+        return {
+          ok: false,
+          error: '유저가 존재하지 않습니다.',
+        };
+      }
+      return {
+        ok: true,
+        data: user,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '유저정보 조회에 실패했습니다.',
+      };
+    }
+  }
   async requestSubscribe(
     { userId }: UUID,
     { to }: RequestSubscribeInputDto,
