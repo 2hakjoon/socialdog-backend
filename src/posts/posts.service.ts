@@ -5,6 +5,7 @@ import { UploadService } from 'src/upload/upload.service';
 import {
   Subscribes,
   RequestStatus,
+  BlockState,
 } from 'src/subscribes/entities/subscribes.entity';
 import { UserProfile, UUID } from 'src/users/entities/users-profile.entity';
 import { createQueryBuilder, getConnection, Repository } from 'typeorm';
@@ -20,6 +21,8 @@ import { EditPostInputDto, EditPostOutputDto } from './dtos/edit-post-dto';
 import { GetMyPostsOutputDto } from './dtos/get-my-posts.dto';
 import { GetSubscribingPostsOutputDto } from './dtos/get-subscribing-posts.dto';
 import { Posts } from './entities/posts.entity';
+import { GetUserPostsInputDto } from './dtos/get-user-posts.dto';
+import { SubscribesService } from 'src/subscribes/subscribes.service';
 
 @Injectable()
 export class PostsService {
@@ -30,6 +33,7 @@ export class PostsService {
     private userProfileRepository: Repository<UserProfile>,
     @InjectRepository(Subscribes)
     private subscribesRepository: Repository<Subscribes>,
+    private subscribesService: SubscribesService,
     private uploadService: UploadService,
   ) {}
 
@@ -143,6 +147,34 @@ export class PostsService {
 
   async getMyPosts({ userId }: UUID): Promise<GetMyPostsOutputDto> {
     try {
+      const posts = await this.postsRepository.find({ userId });
+      return {
+        ok: true,
+        data: posts,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '게시물 조회에 실패했습니다.',
+      };
+    }
+  }
+
+  async getUsersPosts(
+    { userId: authUserId }: UUID,
+    { userId }: GetUserPostsInputDto,
+  ): Promise<GetMyPostsOutputDto> {
+    try {
+      const { blocking } = await this.subscribesService.checkBlockingState({
+        requestUser: authUserId,
+        targetUser: userId,
+      });
+      if (blocking !== BlockState.NONE) {
+        return {
+          ok: true,
+          data: [],
+        };
+      }
       const posts = await this.postsRepository.find({ userId });
       return {
         ok: true,

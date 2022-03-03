@@ -14,6 +14,7 @@ import {
 import { EditPostInputDto, EditPostOutputDto } from './dtos/edit-post-dto';
 import { GetMyPostsOutputDto } from './dtos/get-my-posts.dto';
 import { GetSubscribingPostsOutputDto } from './dtos/get-subscribing-posts.dto';
+import { GetUserPostsInputDto } from './dtos/get-user-posts.dto';
 import { Posts } from './entities/posts.entity';
 import { PostsService } from './posts.service';
 
@@ -52,6 +53,15 @@ export class PostsResolver {
   @UseGuards(GqlAuthGuard)
   getMyPosts(@AuthUser() userId: UUID): Promise<GetMyPostsOutputDto> {
     return this.postsService.getMyPosts(userId);
+  }
+
+  @Query((returns) => GetMyPostsOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getUserPosts(
+    @AuthUser() authUserId: UUID,
+    @Args(args) userId: GetUserPostsInputDto,
+  ): Promise<GetMyPostsOutputDto> {
+    return this.postsService.getUsersPosts(authUserId, userId);
   }
 
   @Query((returns) => GetSubscribingPostsOutputDto)
