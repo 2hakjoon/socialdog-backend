@@ -5,7 +5,7 @@ import { UploadService } from 'src/upload/upload.service';
 import {
   Subscribes,
   RequestStatus,
-} from 'src/users/entities/subscribes.entity';
+} from 'src/subscribes/entities/subscribes.entity';
 import { UserProfile, UUID } from 'src/users/entities/users-profile.entity';
 import { createQueryBuilder, getConnection, Repository } from 'typeorm';
 import {

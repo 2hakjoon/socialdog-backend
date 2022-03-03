@@ -14,9 +14,6 @@ import { args } from 'src/common/constants';
 import { MailService } from 'src/mail/mail.service';
 import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
-import { RequestSubscribeInputDto, RequestSubscribeOutputDto } from './dtos/request-subscribe.dto';
-import { ResponseSubscribeInputDto, ResponseSubscribeOutputDto } from './dtos/response-subscribe.dto';
-import { ChangeBlockStateInputDto, ChangeBlockStateOutputDto } from './dtos/change-block-state.dto';
 
 @Resolver((of) => UUID)
 export class UsersResolver {
@@ -57,24 +54,6 @@ export class UsersResolver {
     return this.usersService.me(userId)
   }
 
-
-  @Mutation(()=>RequestSubscribeOutputDto)
-  @UseGuards(GqlAuthGuard)
-  requestSubscribe(@AuthUser() userId:UUID, @Args(args) args:RequestSubscribeInputDto):Promise<RequestSubscribeOutputDto>{
-    return this.usersService.requestSubscribe(userId, args)
-  }
-
-  @Mutation(()=>ResponseSubscribeOutputDto)
-  @UseGuards(GqlAuthGuard)
-  responseSubscribe(@AuthUser() userId:UUID, @Args(args) args:ResponseSubscribeInputDto):Promise<ResponseSubscribeOutputDto>{
-    return this.usersService.responseSubscribe(userId, args)
-  }
-
-  @Mutation(()=>ChangeBlockStateOutputDto)
-  @UseGuards(GqlAuthGuard)
-  changeBlockState(@AuthUser() userId:UUID, @Args(args) args:ChangeBlockStateInputDto):Promise<ChangeBlockStateOutputDto>{
-    return this.usersService.changeBlockState(userId, args)
-  }
   //@UseGuards(GqlAuthGuard)
   @Query(()=>Boolean)
   test(){

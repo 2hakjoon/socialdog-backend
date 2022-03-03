@@ -11,7 +11,7 @@ import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Posts } from 'src/posts/entities/posts.entity';
 import { Walks } from 'src/walks/entities/walks.entity';
 import { AfterLoad, Column, Entity, OneToMany } from 'typeorm';
-import { Subscribes } from './subscribes.entity';
+import { Subscribes } from '../../subscribes/entities/subscribes.entity';
 
 export enum LoginStrategy {
   LOCAL = 'LOCAL',

@@ -1,7 +1,7 @@
-import { Field, InputType, Int, ObjectType, PickType } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { IsString } from 'class-validator';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
-import { BlockState } from '../entities/subscribes.entity';
+import { BlockState } from '../../subscribes/entities/subscribes.entity';
 import { UserProfile } from '../entities/users-profile.entity';
 
 @InputType()

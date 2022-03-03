@@ -7,7 +7,7 @@ import {
 import { IsEnum, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { UserProfile } from './users-profile.entity';
+import { UserProfile } from '../../users/entities/users-profile.entity';
 
 export enum RequestStatus {
   REQUESTED = 'REQUESTED',

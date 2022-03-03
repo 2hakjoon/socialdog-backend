@@ -18,7 +18,8 @@ import { AuthKakao } from './auth/entities/auth-kakao.entity';
 import { UploadModule } from './upload/upload.module';
 import { PostsModule } from './posts/posts.module';
 import { Posts } from './posts/entities/posts.entity';
-import { Subscribes } from './users/entities/subscribes.entity';
+import { Subscribes } from './subscribes/entities/subscribes.entity';
+import { SubscribesModule } from './subscribes/subscribes.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { Subscribes } from './users/entities/subscribes.entity';
     WalksModule,
     MailModule,
     PostsModule,
+    SubscribesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
