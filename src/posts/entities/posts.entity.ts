@@ -50,17 +50,19 @@ export class Posts extends CoreEntity {
 
   @Field((type) => [UserProfile])
   @ManyToOne(() => UserProfile, (userProfile) => userProfile.liked)
-  likes?: UserProfile[];
+  likedUsers?: UserProfile[];
 
   @Field((type) => Int)
-  likeCounts: number;
+  likes: number;
 
   @Field((type) => Boolean)
   isLiked: boolean;
 
   @AfterLoad()
-  public async countLikes() {
-    this.likeCounts = this.likes?.length || 0;
-    this.isLiked = Boolean(this.likes?.filter((user) => user.id === this.id));
+  countLikesAndIsLiked() {
+    this.likes = this.likedUsers?.length || 0;
+    this.isLiked = Boolean(
+      this.likedUsers?.filter((user) => user.id === this.id),
+    );
   }
 }

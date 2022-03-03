@@ -180,13 +180,17 @@ export class UsersService {
 
   async me({ userId }: UUID): Promise<CoreUserOutputDto> {
     try {
-      const user = await this.usersProfileRepository.findOne({ id: userId });
+      const user = await this.usersProfileRepository.findOne(
+        { id: userId },
+        { relations: ['posts', 'subscribingUsers', 'subscribeUsers'] },
+      );
       if (!user) {
         return {
           ok: false,
           error: '유저가 존재하지 않습니다.',
         };
       }
+      console.log(user);
       return {
         ok: true,
         data: user,
