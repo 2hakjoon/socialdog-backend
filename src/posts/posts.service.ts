@@ -153,9 +153,13 @@ export class PostsService {
     { limit, offset }: GetMyPostsInputDto,
   ): Promise<GetMyPostsOutputDto> {
     try {
+      console.log('limit : ', limit, 'offset : ', offset);
       const posts = await this.postsRepository.find({
         where: {
           userId,
+        },
+        order: {
+          createdAt: 'DESC',
         },
         skip: offset,
         take: limit,
