@@ -18,6 +18,10 @@ import {
 } from './dtos/get-my-posts.dto';
 import { GetSubscribingPostsOutputDto } from './dtos/get-subscribing-posts.dto';
 import { GetUserPostsInputDto } from './dtos/get-user-posts.dto';
+import {
+  ToggleLikePostInputDto,
+  ToggleLikePostOutputDto,
+} from '../likes/dtos/toggle-like-post.dto';
 import { Posts } from './entities/posts.entity';
 import { PostsService } from './posts.service';
 

@@ -1,8 +1,9 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
+import { Likes } from 'src/likes/entities/likes.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
-import { Column, Entity, ManyToMany, ManyToOne, RelationId } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 
 @Entity()
 @InputType({ isAbstract: true })
@@ -41,7 +42,7 @@ export class Posts extends CoreEntity {
   @Column()
   userId: string;
 
-  @Field((type) => [UserProfile])
-  @ManyToMany(() => UserProfile, (userProfile) => userProfile.liked)
-  likedUsers?: UserProfile[];
+  @Field((type) => [Likes], { nullable: true })
+  @OneToMany(() => Likes, (likes) => likes.post)
+  likedUsers?: Likes[];
 }

@@ -26,6 +26,10 @@ import { GetSubscribingPostsOutputDto } from './dtos/get-subscribing-posts.dto';
 import { Posts } from './entities/posts.entity';
 import { GetUserPostsInputDto } from './dtos/get-user-posts.dto';
 import { SubscribesService } from 'src/subscribes/subscribes.service';
+import {
+  ToggleLikePostInputDto,
+  ToggleLikePostOutputDto,
+} from '../likes/dtos/toggle-like-post.dto';
 
 @Injectable()
 export class PostsService {

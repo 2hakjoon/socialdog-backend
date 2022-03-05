@@ -20,6 +20,8 @@ import { PostsModule } from './posts/posts.module';
 import { Posts } from './posts/entities/posts.entity';
 import { Subscribes } from './subscribes/entities/subscribes.entity';
 import { SubscribesModule } from './subscribes/subscribes.module';
+import { LikesModule } from './likes/likes.module';
+import { Likes } from './likes/entities/likes.entity';
 
 @Module({
   imports: [
@@ -62,6 +64,7 @@ import { SubscribesModule } from './subscribes/subscribes.module';
         AuthKakao,
         Posts,
         Subscribes,
+        Likes,
       ],
     }),
     UploadModule.forRoot({
@@ -79,6 +82,7 @@ import { SubscribesModule } from './subscribes/subscribes.module';
     MailModule,
     PostsModule,
     SubscribesModule,
+    LikesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
