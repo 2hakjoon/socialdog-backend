@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Posts } from 'src/posts/entities/posts.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { Walks } from 'src/walks/entities/walks.entity';
 @ObjectType()
@@ -31,4 +32,25 @@ export class CoreUserOutputDto extends CoreOutputDto {
 export class CoreWalksOutputDto extends CoreOutputDto {
   @Field(() => [Walks], { nullable: true })
   data?: Walks[];
+}
+
+@ObjectType()
+export class PostAll extends Posts {
+  @Field((type) => Int, { nullable: true })
+  likes?: number;
+
+  @Field((type) => Boolean, { nullable: true })
+  isLiked?: boolean;
+}
+
+@ObjectType()
+export class CorePostsOutputDto extends CoreOutputDto {
+  @Field(() => [PostAll])
+  data?: PostAll[];
+}
+
+@ObjectType()
+export class CorePostOutputDto extends CoreOutputDto {
+  @Field(() => PostAll)
+  data?: PostAll;
 }

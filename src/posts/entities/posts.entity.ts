@@ -2,14 +2,7 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
-import {
-  AfterLoad,
-  BeforeInsert,
-  Column,
-  Entity,
-  ManyToOne,
-  RelationId,
-} from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, RelationId } from 'typeorm';
 
 @Entity()
 @InputType({ isAbstract: true })
@@ -49,20 +42,6 @@ export class Posts extends CoreEntity {
   userId: string;
 
   @Field((type) => [UserProfile])
-  @ManyToOne(() => UserProfile, (userProfile) => userProfile.liked)
+  @ManyToMany(() => UserProfile, (userProfile) => userProfile.liked)
   likedUsers?: UserProfile[];
-
-  @Field((type) => Int)
-  likes: number;
-
-  @Field((type) => Boolean)
-  isLiked: boolean;
-
-  @AfterLoad()
-  countLikesAndIsLiked() {
-    this.likes = this.likedUsers?.length || 0;
-    this.isLiked = Boolean(
-      this.likedUsers?.filter((user) => user.id === this.id),
-    );
-  }
 }

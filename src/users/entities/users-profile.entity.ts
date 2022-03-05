@@ -1,16 +1,14 @@
 import {
   Field,
   InputType,
-  Int,
   ObjectType,
-  PickType,
   registerEnumType,
 } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Posts } from 'src/posts/entities/posts.entity';
 import { Walks } from 'src/walks/entities/walks.entity';
-import { AfterLoad, Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { Subscribes } from '../../subscribes/entities/subscribes.entity';
 
 export enum LoginStrategy {
@@ -57,7 +55,8 @@ export class UserProfile extends CoreEntity {
   posts?: Posts[];
 
   @Field((type) => [Posts], { nullable: true })
-  @OneToMany(() => Posts, (posts) => posts.likedUsers)
+  @ManyToMany(() => Posts, (posts) => posts.likedUsers)
+  @JoinTable()
   liked?: Posts[];
 
   //내가 구독하는 사람들

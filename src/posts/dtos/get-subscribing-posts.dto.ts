@@ -1,9 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
-import { Posts } from '../entities/posts.entity';
+import { CorePostsOutputDto } from 'src/common/dtos/core-output.dto';
 
 @ObjectType()
-export class GetSubscribingPostsOutputDto extends CoreOutputDto {
-  @Field((type) => [Posts])
-  data?: Posts[];
-}
+export class GetSubscribingPostsOutputDto extends CorePostsOutputDto {}

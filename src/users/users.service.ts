@@ -104,9 +104,12 @@ export class UsersService {
           ok: true,
         };
       }
-      const userInfo = await this.usersProfileRepository.findOne({
-        id: userId,
-      });
+      const userInfo = await this.usersProfileRepository
+        .createQueryBuilder('user')
+        .where('id = :userId', { userId })
+        .loadRelationCountAndMap('user.subscribings', 'user.subscribingUsers')
+        .loadRelationCountAndMap('user.subscribers', 'user.subscribeUsers')
+        .getOne();
       if (!userInfo) {
         return {
           ok: false,
@@ -190,7 +193,7 @@ export class UsersService {
         .createQueryBuilder('user')
         .where('id = :userId', { userId })
         .loadRelationCountAndMap('user.subscribings', 'user.subscribingUsers')
-        .loadRelationCountAndMap('user.subscribers', 'user.subscribingUsers')
+        .loadRelationCountAndMap('user.subscribers', 'user.subscribeUsers')
         .getOne();
       // console.log(user);
       if (!user) {
@@ -201,7 +204,7 @@ export class UsersService {
       }
       return {
         ok: true,
-        data: { ...user, subscribers: 0, subscribings: 0 },
+        data: user,
       };
     } catch (e) {
       console.log(e);

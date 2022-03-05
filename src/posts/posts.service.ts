@@ -154,21 +154,21 @@ export class PostsService {
   ): Promise<GetMyPostsOutputDto> {
     try {
       console.log('limit : ', limit, 'offset : ', offset);
-      const posts = await this.postsRepository.find({
-        where: {
-          userId,
-        },
-        order: {
-          createdAt: 'DESC',
-        },
-        skip: offset,
-        take: limit,
-      });
+      const posts = await this.postsRepository
+        .createQueryBuilder('posts')
+        .where('posts.userId = :userId', { userId })
+        .loadRelationCountAndMap('posts.likes', 'posts.likedUsers')
+        .orderBy('posts.createdAt', 'DESC')
+        .skip(offset)
+        .take(limit)
+        .getMany();
+      console.log(posts);
       return {
         ok: true,
         data: posts,
       };
     } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: '게시물 조회에 실패했습니다.',
@@ -233,7 +233,9 @@ export class PostsService {
         .where('posts.userId IN (:...userIds)', {
           userIds: [userId, ...subscribeIds],
         })
-        .leftJoinAndSelect('posts.user', 'user')
+        // .loadRelationCountAndMap('posts.likes', 'posts.likedUsers')
+        // .loadAllRelationIds({ relations: ['posts.likedUsers'] })
+        .innerJoinAndSelect('posts.user', 'user')
         .orderBy('posts.createdAt', 'DESC')
         .skip(0)
         .take(5)
