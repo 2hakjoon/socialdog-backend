@@ -47,6 +47,25 @@ export class LikesService {
         { loadRelationIds: { relations: ['user', 'post'] } },
       );
 
+      if (!like) {
+        await this.likesRepository.save(
+          await this.likesRepository.create({
+            post,
+            postId: post.id,
+            user,
+            userId: userId,
+            like: true,
+          }),
+        );
+      } else {
+        await this.likesRepository.update(
+          { id: like.id },
+          {
+            like: !like.like,
+          },
+        );
+      }
+
       return {
         ok: true,
       };
