@@ -1,8 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsString, IsUUID } from 'class-validator';
-import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
+import { IsUUID } from 'class-validator';
+import { CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { BlockState } from '../../subscribes/entities/subscribes.entity';
-import { UserProfile } from '../entities/users-profile.entity';
 
 @InputType()
 export class GetUserInputDto {
@@ -12,10 +11,7 @@ export class GetUserInputDto {
 }
 
 @ObjectType()
-export class GetUserOutputDto extends CoreOutputDto {
-  @Field(() => UserProfile, { nullable: true })
-  data?: UserProfile;
-
+export class GetUserOutputDto extends CoreUserOutputDto {
   @Field(() => BlockState, { nullable: true })
   blocking?: BlockState;
 }

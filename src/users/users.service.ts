@@ -130,9 +130,11 @@ export class UsersService {
     editProfileInputDto: EditProfileInputDto,
   ): Promise<EditProfileOutputDto> {
     try {
+      console.log(editProfileInputDto);
       const userInfo = await this.usersProfileRepository.findOne({
         id: userId,
       });
+      console.log(userInfo);
       if (!userInfo) {
         return {
           ok: false,
@@ -184,10 +186,13 @@ export class UsersService {
 
   async me({ userId }: UUID): Promise<CoreUserOutputDto> {
     try {
-      const user = await this.usersProfileRepository.findOne(
-        { id: userId },
-        { relations: ['subscribingUsers', 'subscribeUsers'] },
-      );
+      const user = await this.usersProfileRepository
+        .createQueryBuilder('user')
+        .where('id = :userId', { userId })
+        .loadRelationCountAndMap('user.subscribings', 'user.subscribingUsers')
+        .loadRelationCountAndMap('user.subscribers', 'user.subscribingUsers')
+        .getOne();
+      // console.log(user);
       if (!user) {
         return {
           ok: false,
@@ -196,9 +201,10 @@ export class UsersService {
       }
       return {
         ok: true,
-        data: user,
+        data: { ...user, subscribers: 0, subscribings: 0 },
       };
     } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: '유저정보 조회에 실패했습니다.',

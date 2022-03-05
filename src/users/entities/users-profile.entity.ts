@@ -27,7 +27,7 @@ registerEnumType(LoginStrategy, {
 @ObjectType({ isAbstract: true })
 export class UserProfile extends CoreEntity {
   @Field((type) => String, { nullable: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   @IsString()
   @Length(0, 20)
   username?: string;
@@ -45,14 +45,6 @@ export class UserProfile extends CoreEntity {
   @Field((type) => LoginStrategy)
   @Column()
   loginStrategy: LoginStrategy;
-
-  //내가 구독하는 사람들
-  @Field((type) => Int)
-  subscribings: number;
-
-  //나를 구독하는 사람들
-  @Field((type) => Int)
-  subscribers: number;
 
   //Relations
 
@@ -77,13 +69,6 @@ export class UserProfile extends CoreEntity {
   @Field((type) => [Subscribes], { nullable: true })
   @OneToMany(() => Subscribes, (subscribes) => subscribes.from)
   subscribeUsers?: Subscribes[];
-
-  //listeners
-  @AfterLoad()
-  countSubscribes() {
-    this.subscribings = this.subscribingUsers?.length || 0;
-    this.subscribers = this.subscribeUsers?.length || 0;
-  }
 }
 
 export class UUID {
