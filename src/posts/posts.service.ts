@@ -30,6 +30,7 @@ import {
   ToggleLikePostInputDto,
   ToggleLikePostOutputDto,
 } from '../likes/dtos/toggle-like-post.dto';
+import { Likes } from 'src/likes/entities/likes.entity';
 
 @Injectable()
 export class PostsService {
@@ -40,6 +41,8 @@ export class PostsService {
     private userProfileRepository: Repository<UserProfile>,
     @InjectRepository(Subscribes)
     private subscribesRepository: Repository<Subscribes>,
+    @InjectRepository(Likes)
+    private likesRepository: Repository<Likes>,
     private subscribesService: SubscribesService,
     private uploadService: UploadService,
   ) {}
@@ -166,7 +169,7 @@ export class PostsService {
         .skip(offset)
         .take(limit)
         .getMany();
-      console.log(posts);
+
       return {
         ok: true,
         data: posts,
@@ -230,23 +233,46 @@ export class PostsService {
         .innerJoin('subs.to', 'user')
         .select(['subs.id', 'user.id'])
         .getMany();
-      console.log(mySubscibes);
+
+      // console.log(mySubscibes);
       const subscribeIds = mySubscibes.map((subscribe) => subscribe.to?.['id']);
-      const describingPosts = await this.postsRepository
+      const subscribingPosts = await this.postsRepository
         .createQueryBuilder('posts')
+        .select(['posts', 'user.photo', 'user.id', 'user.username'])
         .where('posts.userId IN (:...userIds)', {
           userIds: [userId, ...subscribeIds],
         })
-        // .loadRelationCountAndMap('posts.likes', 'posts.likedUsers')
-        // .loadAllRelationIds({ relations: ['posts.likedUsers'] })
-        .innerJoinAndSelect('posts.user', 'user')
+        .innerJoin('posts.user', 'user')
         .orderBy('posts.createdAt', 'DESC')
         .skip(0)
         .take(5)
         .getMany();
+      // console.log(subscribingPosts);
+
+      const postIds = subscribingPosts.map((post) => post.id);
+      const myLikes = await this.likesRepository
+        .createQueryBuilder('like')
+        .select(['like.like', 'like.userId', 'like.postId'])
+        .where('like.postId IN (:...postIds)', { postIds })
+        .getMany();
+
+      // console.log(myLikes);
+      const subscribingPostsWithLike = subscribingPosts.map((post) => {
+        if (
+          myLikes.filter((like) => {
+            return like.postId === post.id && like.userId === userId;
+          }).length
+        ) {
+          return { ...post, liked: true };
+        }
+        return { ...post, liked: false };
+      });
+
+      // console.log(postsWithLike);
+
       return {
         ok: true,
-        data: describingPosts,
+        data: subscribingPostsWithLike,
       };
     } catch (e) {
       console.log(e);

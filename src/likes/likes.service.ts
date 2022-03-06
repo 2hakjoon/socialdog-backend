@@ -58,12 +58,7 @@ export class LikesService {
           }),
         );
       } else {
-        await this.likesRepository.update(
-          { id: like.id },
-          {
-            like: !like.like,
-          },
-        );
+        await this.likesRepository.delete({ id: like.id });
       }
 
       return {

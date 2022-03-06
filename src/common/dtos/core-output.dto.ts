@@ -36,11 +36,11 @@ export class CoreWalksOutputDto extends CoreOutputDto {
 
 @ObjectType()
 export class PostAll extends Posts {
-  @Field((type) => Int, { nullable: true })
+  @Field((type) => Int)
   likes?: number;
 
-  @Field((type) => Boolean, { nullable: true })
-  isLiked?: boolean;
+  @Field((type) => Boolean)
+  liked?: boolean;
 }
 
 @ObjectType()
