@@ -236,6 +236,14 @@ export class PostsService {
 
       // console.log(mySubscibes);
       const subscribeIds = mySubscibes.map((subscribe) => subscribe.to?.['id']);
+
+      if (!subscribeIds.length) {
+        return {
+          ok: true,
+          data: [],
+        };
+      }
+
       const subscribingPosts = await this.postsRepository
         .createQueryBuilder('posts')
         .select(['posts', 'user.photo', 'user.id', 'user.username'])
@@ -248,6 +256,17 @@ export class PostsService {
         .take(5)
         .getMany();
       // console.log(subscribingPosts);
+
+      if (!subscribeIds.length) {
+        const subscribingPostsWithLike = subscribingPosts.map((post) => {
+          return { ...post, liked: false };
+        });
+
+        return {
+          ok: true,
+          data: subscribingPostsWithLike,
+        };
+      }
 
       const postIds = subscribingPosts.map((post) => post.id);
       const myLikes = await this.likesRepository

@@ -233,6 +233,13 @@ export class SubscribesService {
         (subscribing) => subscribing.to,
       );
 
+      if (!subscribingUserIds.length) {
+        return {
+          ok: true,
+          data: [],
+        };
+      }
+
       const subscribingUsers = await this.usersProfileRepository
         .createQueryBuilder('users')
         .where('users.Id IN (:...userIds)', { userIds: subscribingUserIds })
@@ -264,6 +271,12 @@ export class SubscribesService {
 
       const subscriberIds = subscribers.map((subscriber) => subscriber.from);
 
+      if (!subscriberIds.length) {
+        return {
+          ok: true,
+          data: [],
+        };
+      }
       const subscribingUsers = await this.usersProfileRepository
         .createQueryBuilder('users')
         .where('users.Id IN (:...userIds)', { userIds: subscriberIds })
@@ -294,6 +307,12 @@ export class SubscribesService {
 
       const blockingUserIds = blockings.map((blockingUser) => blockingUser.to);
 
+      if (!blockingUserIds.length) {
+        return {
+          ok: true,
+          data: [],
+        };
+      }
       const blockingUsers = await this.usersProfileRepository
         .createQueryBuilder('users')
         .where('users.Id IN (:...userIds)', { userIds: blockingUserIds })
