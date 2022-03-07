@@ -256,18 +256,7 @@ export class PostsService {
         .take(5)
         .getMany();
       // console.log(subscribingPosts);
-
-      if (!subscribeIds.length) {
-        const subscribingPostsWithLike = subscribingPosts.map((post) => {
-          return { ...post, liked: false };
-        });
-
-        return {
-          ok: true,
-          data: subscribingPostsWithLike,
-        };
-      }
-
+      
       const postIds = subscribingPosts.map((post) => post.id);
       const myLikes = await this.likesRepository
         .createQueryBuilder('like')
