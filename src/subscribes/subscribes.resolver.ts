@@ -19,6 +19,7 @@ import { SubscribesService } from './subscribes.service';
 import { args } from '../common/constants';
 import { GetMySubscribingsOutputDto } from './dtos/get-my-subscribings.dto';
 import { GetMySubscribersOutputDto } from './dtos/get-my-subscribers.dto';
+import { GetBlockingUsersOutputDto } from './dtos/get-blocking-users.dto';
 
 @Resolver((of) => Subscribes)
 export class SubscribesResolver {
@@ -65,5 +66,13 @@ export class SubscribesResolver {
     @AuthUser() userId: UUID,
   ): Promise<GetMySubscribersOutputDto> {
     return this.subscribeService.getMySubscribers(userId);
+  }
+
+  @Query(() => GetBlockingUsersOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getMyBlockingUsers(
+    @AuthUser() userId: UUID,
+  ): Promise<GetBlockingUsersOutputDto> {
+    return this.subscribeService.getBlokingUsers(userId);
   }
 }

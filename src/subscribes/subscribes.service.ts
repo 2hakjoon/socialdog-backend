@@ -5,6 +5,7 @@ import {
   ChangeBlockStateInputDto,
   ChangeBlockStateOutputDto,
 } from './dtos/change-block-state.dto';
+import { GetBlockingUsersOutputDto } from './dtos/get-blocking-users.dto';
 import { GetMySubscribersOutputDto } from './dtos/get-my-subscribers.dto';
 import { GetMySubscribingsOutputDto } from './dtos/get-my-subscribings.dto';
 import {
@@ -275,6 +276,37 @@ export class SubscribesService {
       return {
         ok: false,
         error: '구독자 정보를 불러오는데 실패했습니다.',
+      };
+    }
+  }
+
+  async getBlokingUsers({ userId }: UUID): Promise<GetBlockingUsersOutputDto> {
+    try {
+      const blockings = await this.subscribesRepository.find({
+        where: {
+          from: userId,
+          block: true,
+        },
+        select: ['id', 'to'],
+        loadRelationIds: { relations: ['to'] },
+      });
+      // console.log(subscribings);
+
+      const blockingUserIds = blockings.map((blockingUser) => blockingUser.to);
+
+      const blockingUsers = await this.usersProfileRepository
+        .createQueryBuilder('users')
+        .where('users.Id IN (:...userIds)', { userIds: blockingUserIds })
+        .getMany();
+
+      return {
+        ok: true,
+        data: blockingUsers,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '차단한 사용자를 불러오는데 실패했습니다.',
       };
     }
   }
