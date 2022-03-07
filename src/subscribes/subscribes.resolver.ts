@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
 import { UUID } from 'src/users/entities/users-profile.entity';
 import {
@@ -17,6 +17,8 @@ import {
 import { Subscribes } from './entities/subscribes.entity';
 import { SubscribesService } from './subscribes.service';
 import { args } from '../common/constants';
+import { GetMySubscribingsOutputDto } from './dtos/get-my-subscribings.dto';
+import { GetMySubscribersOutputDto } from './dtos/get-my-subscribers.dto';
 
 @Resolver((of) => Subscribes)
 export class SubscribesResolver {
@@ -47,5 +49,21 @@ export class SubscribesResolver {
     @Args(args) args: ChangeBlockStateInputDto,
   ): Promise<ChangeBlockStateOutputDto> {
     return this.subscribeService.changeBlockState(userId, args);
+  }
+
+  @Query(() => GetMySubscribingsOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getMySubscribings(
+    @AuthUser() userId: UUID,
+  ): Promise<GetMySubscribingsOutputDto> {
+    return this.subscribeService.getMySubscribings(userId);
+  }
+
+  @Query(() => GetMySubscribersOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getMySubscribers(
+    @AuthUser() userId: UUID,
+  ): Promise<GetMySubscribersOutputDto> {
+    return this.subscribeService.getMySubscribers(userId);
   }
 }

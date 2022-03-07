@@ -65,12 +65,12 @@ export class UserProfile extends CoreEntity {
 
   //내가 구독하는 사람들
   @Field((type) => [Subscribes], { nullable: true })
-  @OneToMany(() => Subscribes, (subscribes) => subscribes.to)
+  @OneToMany(() => Subscribes, (subscribes) => subscribes.from)
   subscribingUsers?: Subscribes[];
 
   //나를 구독하는 사람들
   @Field((type) => [Subscribes], { nullable: true })
-  @OneToMany(() => Subscribes, (subscribes) => subscribes.from)
+  @OneToMany(() => Subscribes, (subscribes) => subscribes.to)
   subscribeUsers?: Subscribes[];
 }
 

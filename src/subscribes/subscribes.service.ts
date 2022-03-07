@@ -5,6 +5,8 @@ import {
   ChangeBlockStateInputDto,
   ChangeBlockStateOutputDto,
 } from './dtos/change-block-state.dto';
+import { GetMySubscribersOutputDto } from './dtos/get-my-subscribers.dto';
+import { GetMySubscribingsOutputDto } from './dtos/get-my-subscribings.dto';
 import {
   RequestSubscribeInputDto,
   RequestSubscribeOutputDto,
@@ -44,7 +46,10 @@ export class SubscribesService {
       });
 
       if (subscribe) {
-        if (!subscribe.subscribeRequest) {
+        if (
+          !subscribe.subscribeRequest &&
+          subscribe.subscribeRequest !== RequestStatus.REQUESTED
+        ) {
           await this.subscribesRepository.update(subscribe.id, {
             ...subscribe,
             subscribeRequest: RequestStatus.REQUESTED,
@@ -205,6 +210,72 @@ export class SubscribesService {
       };
     } catch (e) {
       throw new Error('차단 상태 확인 오류');
+    }
+  }
+
+  async getMySubscribings({
+    userId,
+  }: UUID): Promise<GetMySubscribingsOutputDto> {
+    try {
+      const subscribings = await this.subscribesRepository.find({
+        where: {
+          from: userId,
+          subscribeRequest: RequestStatus.CONFIRMED,
+          block: false,
+        },
+        select: ['id', 'to'],
+        loadRelationIds: { relations: ['to'] },
+      });
+      // console.log(subscribings);
+
+      const subscribingUserIds = subscribings.map(
+        (subscribing) => subscribing.to,
+      );
+
+      const subscribingUsers = await this.usersProfileRepository
+        .createQueryBuilder('users')
+        .where('users.Id IN (:...userIds)', { userIds: subscribingUserIds })
+        .getMany();
+      return {
+        ok: true,
+        data: subscribingUsers,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '구독중인 계정 정보를 불러오는데 실패했습니다.',
+      };
+    }
+  }
+
+  async getMySubscribers({ userId }: UUID): Promise<GetMySubscribersOutputDto> {
+    try {
+      const subscribers = await this.subscribesRepository.find({
+        where: {
+          to: userId,
+          subscribeRequest: RequestStatus.CONFIRMED,
+          block: false,
+        },
+        select: ['id', 'from'],
+        loadRelationIds: { relations: ['from'] },
+      });
+      // console.log(subscribings);
+
+      const subscriberIds = subscribers.map((subscriber) => subscriber.from);
+
+      const subscribingUsers = await this.usersProfileRepository
+        .createQueryBuilder('users')
+        .where('users.Id IN (:...userIds)', { userIds: subscriberIds })
+        .getMany();
+      return {
+        ok: true,
+        data: subscribingUsers,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '구독자 정보를 불러오는데 실패했습니다.',
+      };
     }
   }
 }
