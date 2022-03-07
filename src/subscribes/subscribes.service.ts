@@ -8,6 +8,8 @@ import {
 import { GetBlockingUsersOutputDto } from './dtos/get-blocking-users.dto';
 import { GetMySubscribersOutputDto } from './dtos/get-my-subscribers.dto';
 import { GetMySubscribingsOutputDto } from './dtos/get-my-subscribings.dto';
+import { GetSubscribeRequestsOutputDto } from './dtos/get-subscribe-requests.dto';
+import { GetSubscribingRequestsOutputDto } from './dtos/get-subscribing-requests.dto';
 import {
   RequestSubscribeInputDto,
   RequestSubscribeOutputDto,
@@ -326,6 +328,96 @@ export class SubscribesService {
       return {
         ok: false,
         error: '차단한 사용자를 불러오는데 실패했습니다.',
+      };
+    }
+  }
+
+  async getSubscribingRequests({
+    userId,
+  }: UUID): Promise<GetSubscribingRequestsOutputDto> {
+    try {
+      const subscribingRequests = await this.subscribesRepository.find({
+        where: [
+          {
+            from: userId,
+            subscribeRequest: RequestStatus.REJECTED,
+          },
+          {
+            from: userId,
+            subscribeRequest: RequestStatus.REQUESTED,
+          },
+        ],
+        select: ['id', 'to'],
+        loadRelationIds: { relations: ['to'] },
+      });
+
+      const subscribingRequestsUserIds = subscribingRequests.map(
+        (subscribingRequest) => subscribingRequest.to,
+      );
+
+      if (!subscribingRequestsUserIds.length) {
+        return {
+          ok: true,
+          data: [],
+        };
+      }
+      const subscribingRequestsUsers = await this.usersProfileRepository
+        .createQueryBuilder('users')
+        .where('users.Id IN (:...userIds)', {
+          userIds: subscribingRequestsUserIds,
+        })
+        .getMany();
+
+      return {
+        ok: true,
+        data: subscribingRequestsUsers,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '구독 신청한 사용자 목록을 불러오는데 실패했습니다.',
+      };
+    }
+  }
+
+  async getSubscribeRequests({
+    userId,
+  }: UUID): Promise<GetSubscribeRequestsOutputDto> {
+    try {
+      const subscribeRequests = await this.subscribesRepository.find({
+        where: {
+          to: userId,
+          subscribeRequest: RequestStatus.REQUESTED,
+        },
+        select: ['id', 'from'],
+        loadRelationIds: { relations: ['from'] },
+      });
+
+      const subscribeRequestsUserIds = subscribeRequests.map(
+        (subscribeRequest) => subscribeRequest.from,
+      );
+
+      if (!subscribeRequestsUserIds.length) {
+        return {
+          ok: true,
+          data: [],
+        };
+      }
+      const subscribeRequestsUsers = await this.usersProfileRepository
+        .createQueryBuilder('users')
+        .where('users.Id IN (:...userIds)', {
+          userIds: subscribeRequestsUserIds,
+        })
+        .getMany();
+
+      return {
+        ok: true,
+        data: subscribeRequestsUsers,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '구독 신청한 사용자 목록을 불러오는데 실패했습니다.',
       };
     }
   }

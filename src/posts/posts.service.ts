@@ -256,7 +256,7 @@ export class PostsService {
         .take(5)
         .getMany();
       // console.log(subscribingPosts);
-      
+
       const postIds = subscribingPosts.map((post) => post.id);
       const myLikes = await this.likesRepository
         .createQueryBuilder('like')
