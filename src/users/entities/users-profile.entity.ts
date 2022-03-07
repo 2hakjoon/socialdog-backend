@@ -45,6 +45,10 @@ export class UserProfile extends CoreEntity {
   @Column()
   loginStrategy: LoginStrategy;
 
+  @Field((type) => Boolean, { nullable: true })
+  @Column({ default: false })
+  ProfileOpen: boolean;
+
   //Relations
 
   @Field((type) => [Walks], { nullable: true })
