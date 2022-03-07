@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import {
   CreateAccountInputDto,
   CreateAccountOutputDto,
@@ -22,6 +22,10 @@ import { AuthLocal } from 'src/auth/entities/auth-local.entity';
 import { UploadService } from 'src/upload/upload.service';
 import { SubscribesService } from 'src/subscribes/subscribes.service';
 import { BlockState } from 'src/subscribes/entities/subscribes.entity';
+import {
+  FindUserByUsernameInputDto,
+  FindUserByUsernameOutputDto,
+} from './dtos/find-user-by-username.dto';
 
 @Injectable()
 export class UsersService {
@@ -113,7 +117,7 @@ export class UsersService {
       if (!userInfo) {
         return {
           ok: false,
-          error: '유저가 존재하지 않습니다.',
+          error: '사용자가 존재하지 않습니다.',
         };
       }
       return {
@@ -123,7 +127,7 @@ export class UsersService {
     } catch (e) {
       return {
         ok: false,
-        error: '유저정보 조회에 실패했습니다.',
+        error: '사용자정보 조회에 실패했습니다.',
       };
     }
   }
@@ -199,7 +203,7 @@ export class UsersService {
       if (!user) {
         return {
           ok: false,
-          error: '유저가 존재하지 않습니다.',
+          error: '사용자가 존재하지 않습니다.',
         };
       }
       return {
@@ -210,7 +214,27 @@ export class UsersService {
       console.log(e);
       return {
         ok: false,
-        error: '유저정보 조회에 실패했습니다.',
+        error: '사용자정보 조회에 실패했습니다.',
+      };
+    }
+  }
+
+  async findUsersByUsername({
+    username,
+  }: FindUserByUsernameInputDto): Promise<FindUserByUsernameOutputDto> {
+    try {
+      const users = await this.usersProfileRepository.find({
+        username: ILike(`%${username}%`),
+      });
+      //console.log(users);
+      return {
+        ok: true,
+        data: users,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '사용자 검색에 실패했습니다.',
       };
     }
   }

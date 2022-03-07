@@ -14,6 +14,7 @@ import { args } from 'src/common/constants';
 import { MailService } from 'src/mail/mail.service';
 import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
+import { FindUserByUsernameInputDto, FindUserByUsernameOutputDto } from './dtos/find-user-by-username.dto';
 
 @Resolver((of) => UUID)
 export class UsersResolver {
@@ -52,6 +53,11 @@ export class UsersResolver {
   @UseGuards(GqlAuthGuard)
   me(@AuthUser() userId:UUID):Promise<CoreUserOutputDto>{
     return this.usersService.me(userId)
+  }
+
+  @Query(()=>FindUserByUsernameOutputDto)
+  findUsersByUsername(@Args(args) args:FindUserByUsernameInputDto):Promise<FindUserByUsernameOutputDto>{
+    return this.usersService.findUsersByUsername(args)
   }
 
   //@UseGuards(GqlAuthGuard)

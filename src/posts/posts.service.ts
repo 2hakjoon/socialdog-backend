@@ -57,7 +57,7 @@ export class PostsService {
       if (!user) {
         return {
           ok: false,
-          error: '유저정보를 찾을 수 없습니다.',
+          error: '사용자정보를 찾을 수 없습니다.',
         };
       }
       await this.postsRepository.save(
