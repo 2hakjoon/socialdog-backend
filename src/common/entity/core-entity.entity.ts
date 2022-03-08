@@ -14,8 +14,12 @@ export class CoreEntity {
   id: string;
 
   @CreateDateColumn()
+  @Field(() => String)
+  @IsString()
   createdAt: string;
 
   @UpdateDateColumn()
+  @Field(() => String)
+  @IsString()
   updatedAt: string;
 }
