@@ -20,7 +20,7 @@ import {
 } from './dtos/response-subscribe.dto';
 import {
   BlockState,
-  RequestStatus,
+  SubscribeRequestState,
   Subscribes,
 } from './entities/subscribes.entity';
 
@@ -51,11 +51,11 @@ export class SubscribesService {
       if (subscribe) {
         if (
           !subscribe.subscribeRequest &&
-          subscribe.subscribeRequest !== RequestStatus.REQUESTED
+          subscribe.subscribeRequest !== SubscribeRequestState.REQUESTED
         ) {
           await this.subscribesRepository.update(subscribe.id, {
             ...subscribe,
-            subscribeRequest: RequestStatus.REQUESTED,
+            subscribeRequest: SubscribeRequestState.REQUESTED,
           });
         }
       } else {
@@ -70,7 +70,7 @@ export class SubscribesService {
           await this.subscribesRepository.create({
             to,
             from: userId,
-            subscribeRequest: RequestStatus.REQUESTED,
+            subscribeRequest: SubscribeRequestState.REQUESTED,
           }),
         );
       }
@@ -223,7 +223,7 @@ export class SubscribesService {
       const subscribings = await this.subscribesRepository.find({
         where: {
           from: userId,
-          subscribeRequest: RequestStatus.CONFIRMED,
+          subscribeRequest: SubscribeRequestState.CONFIRMED,
           block: false,
         },
         select: ['id', 'to'],
@@ -263,7 +263,7 @@ export class SubscribesService {
       const subscribers = await this.subscribesRepository.find({
         where: {
           to: userId,
-          subscribeRequest: RequestStatus.CONFIRMED,
+          subscribeRequest: SubscribeRequestState.CONFIRMED,
           block: false,
         },
         select: ['id', 'from'],
@@ -340,11 +340,11 @@ export class SubscribesService {
         where: [
           {
             from: userId,
-            subscribeRequest: RequestStatus.REJECTED,
+            subscribeRequest: SubscribeRequestState.REJECTED,
           },
           {
             from: userId,
-            subscribeRequest: RequestStatus.REQUESTED,
+            subscribeRequest: SubscribeRequestState.REQUESTED,
           },
         ],
         select: ['id', 'to'],
@@ -387,7 +387,7 @@ export class SubscribesService {
       const subscribeRequests = await this.subscribesRepository.find({
         where: {
           to: userId,
-          subscribeRequest: RequestStatus.REQUESTED,
+          subscribeRequest: SubscribeRequestState.REQUESTED,
         },
         select: ['id', 'from'],
         loadRelationIds: { relations: ['from'] },

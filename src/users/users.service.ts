@@ -21,7 +21,11 @@ import { CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { AuthLocal } from 'src/auth/entities/auth-local.entity';
 import { UploadService } from 'src/upload/upload.service';
 import { SubscribesService } from 'src/subscribes/subscribes.service';
-import { BlockState } from 'src/subscribes/entities/subscribes.entity';
+import {
+  BlockState,
+  SubscribeRequestState,
+  Subscribes,
+} from 'src/subscribes/entities/subscribes.entity';
 import {
   FindUserByUsernameInputDto,
   FindUserByUsernameOutputDto,
@@ -34,6 +38,8 @@ export class UsersService {
     private usersProfileRepository: Repository<UserProfile>,
     @InjectRepository(AuthLocal)
     private authLoalRepository: Repository<AuthLocal>,
+    @InjectRepository(Subscribes)
+    private subscribesRepository: Repository<Subscribes>,
     private subscribesService: SubscribesService,
     private uploadService: UploadService,
     private mailService: MailService,
@@ -108,6 +114,7 @@ export class UsersService {
           ok: true,
         };
       }
+
       const userInfo = await this.usersProfileRepository
         .createQueryBuilder('user')
         .where('id = :userId', { userId })
@@ -120,6 +127,28 @@ export class UsersService {
           error: '사용자가 존재하지 않습니다.',
         };
       }
+
+      if (userInfo.ProfileOpen) {
+        return {
+          ok: true,
+          data: userInfo,
+        };
+      }
+
+      const isUserSubscribing = await this.subscribesRepository.find({
+        where: {
+          from: authUser,
+          to: userId,
+          subscribeRequest: SubscribeRequestState.CONFIRMED,
+        },
+      });
+      if (!isUserSubscribing) {
+        return {
+          ok: true,
+          profileOpened: false,
+        };
+      }
+
       return {
         ok: true,
         data: userInfo,

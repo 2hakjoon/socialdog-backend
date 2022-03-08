@@ -9,7 +9,7 @@ import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { UserProfile } from '../../users/entities/users-profile.entity';
 
-export enum RequestStatus {
+export enum SubscribeRequestState {
   REQUESTED = 'REQUESTED',
   REJECTED = 'REJECTED',
   CONFIRMED = 'CONFIRMED',
@@ -21,9 +21,9 @@ export enum BlockState {
   BLOCKING = 'BLOCKING',
 }
 
-registerEnumType(RequestStatus, {
-  name: 'RequestStatus',
-  description: 'RequestStatus',
+registerEnumType(SubscribeRequestState, {
+  name: 'SubscribeRequestState',
+  description: 'SubscribeRequestState',
 });
 
 registerEnumType(BlockState, {
@@ -44,10 +44,10 @@ export class Subscribes extends CoreEntity {
   @ManyToOne(() => UserProfile, (user) => user.id)
   to: string;
 
-  @Field(() => RequestStatus)
+  @Field(() => SubscribeRequestState)
   @Column({ nullable: true })
-  @IsEnum(RequestStatus)
-  subscribeRequest?: RequestStatus;
+  @IsEnum(SubscribeRequestState)
+  subscribeRequest?: SubscribeRequestState;
 
   @Field(() => Boolean)
   @Column({ default: false })

@@ -14,4 +14,7 @@ export class GetUserInputDto {
 export class GetUserOutputDto extends CoreUserOutputDto {
   @Field(() => BlockState, { nullable: true })
   blocking?: BlockState;
+
+  @Field(() => Boolean)
+  profileOpened?: boolean;
 }

@@ -4,7 +4,7 @@ import { subscribe } from 'graphql';
 import { UploadService } from 'src/upload/upload.service';
 import {
   Subscribes,
-  RequestStatus,
+  SubscribeRequestState,
   BlockState,
 } from 'src/subscribes/entities/subscribes.entity';
 import { UserProfile, UUID } from 'src/users/entities/users-profile.entity';
@@ -227,7 +227,7 @@ export class PostsService {
           {
             userId,
             blockstate: false,
-            requestState: RequestStatus.CONFIRMED,
+            requestState: SubscribeRequestState.CONFIRMED,
           },
         )
         .innerJoin('subs.to', 'user')
