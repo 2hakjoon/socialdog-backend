@@ -225,8 +225,24 @@ export class UsersService {
       const user = await this.usersProfileRepository
         .createQueryBuilder('user')
         .where('id = :userId', { userId })
-        .loadRelationCountAndMap('user.subscribings', 'user.subscribingUsers')
-        .loadRelationCountAndMap('user.subscribers', 'user.subscribeUsers')
+        .loadRelationCountAndMap(
+          'user.subscribings',
+          'user.subscribingUsers',
+          'subscribings',
+          (qb) =>
+            qb.where('subscribings.subscribeRequest = :value', {
+              value: SubscribeRequestState.CONFIRMED,
+            }),
+        )
+        .loadRelationCountAndMap(
+          'user.subscribers',
+          'user.subscribeUsers',
+          'subscribers',
+          (qb) =>
+            qb.where('subscribers.subscribeRequest = :value', {
+              value: SubscribeRequestState.CONFIRMED,
+            }),
+        )
         .getOne();
       // console.log(user);
       if (!user) {
