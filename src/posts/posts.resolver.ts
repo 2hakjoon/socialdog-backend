@@ -17,7 +17,10 @@ import {
   GetMyPostsOutputDto,
 } from './dtos/get-my-posts.dto';
 import { GetSubscribingPostsOutputDto } from './dtos/get-subscribing-posts.dto';
-import { GetUserPostsInputDto } from './dtos/get-user-posts.dto';
+import {
+  GetUserPostsInputDto,
+  GetUserPostsOutputDto,
+} from './dtos/get-user-posts.dto';
 import {
   ToggleLikePostInputDto,
   ToggleLikePostOutputDto,
@@ -65,13 +68,13 @@ export class PostsResolver {
     return this.postsService.getMyPosts(userId, args);
   }
 
-  @Query((returns) => GetMyPostsOutputDto)
+  @Query((returns) => GetUserPostsOutputDto)
   @UseGuards(GqlAuthGuard)
   getUserPosts(
     @AuthUser() authUserId: UUID,
-    @Args(args) userId: GetUserPostsInputDto,
-  ): Promise<GetMyPostsOutputDto> {
-    return this.postsService.getUsersPosts(authUserId, userId);
+    @Args(args) args: GetUserPostsInputDto,
+  ): Promise<GetUserPostsOutputDto> {
+    return this.postsService.getUserPosts(authUserId, args);
   }
 
   @Query((returns) => GetSubscribingPostsOutputDto)

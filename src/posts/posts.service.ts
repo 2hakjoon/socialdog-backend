@@ -24,7 +24,10 @@ import {
 } from './dtos/get-my-posts.dto';
 import { GetSubscribingPostsOutputDto } from './dtos/get-subscribing-posts.dto';
 import { Posts } from './entities/posts.entity';
-import { GetUserPostsInputDto } from './dtos/get-user-posts.dto';
+import {
+  GetUserPostsInputDto,
+  GetUserPostsOutputDto,
+} from './dtos/get-user-posts.dto';
 import { SubscribesService } from 'src/subscribes/subscribes.service';
 import {
   ToggleLikePostInputDto,
@@ -170,6 +173,7 @@ export class PostsService {
         .take(limit)
         .getMany();
 
+      console.log(posts)
       return {
         ok: true,
         data: posts,
@@ -183,11 +187,26 @@ export class PostsService {
     }
   }
 
-  async getUsersPosts(
+  async getUserPosts(
     { userId: authUserId }: UUID,
-    { userId }: GetUserPostsInputDto,
-  ): Promise<GetMyPostsOutputDto> {
+    { username, limit, offset }: GetUserPostsInputDto,
+  ): Promise<GetUserPostsOutputDto> {
     try {
+      const { id: userId } = await this.userProfileRepository.findOne({
+        username,
+      });
+
+      if (!userId) {
+        return {
+          ok: false,
+          error: '사용자를 찾을 수 없습니다.',
+        };
+      }
+
+      if (authUserId === userId) {
+        return this.getMyPosts({ userId }, { limit, offset });
+      }
+
       const { blocking } = await this.subscribesService.checkBlockingState({
         requestUser: authUserId,
         targetUser: userId,

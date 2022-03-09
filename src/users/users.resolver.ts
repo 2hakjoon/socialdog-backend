@@ -36,8 +36,8 @@ export class UsersResolver {
 
   @Query(()=>GetUserOutputDto)
   @UseGuards(GqlAuthGuard)
-  getProfile(@AuthUser() authUser:UUID, @Args(args) args:GetUserInputDto):Promise<GetUserOutputDto>{
-    return this.usersService.getProfile(authUser, args)
+  getUserProfile(@AuthUser() authUser:UUID, @Args(args) args:GetUserInputDto):Promise<GetUserOutputDto>{
+    return this.usersService.getUserProfile(authUser, args)
   }
 
   @Mutation(()=>CoreOutputDto)

@@ -94,73 +94,6 @@ export class UsersService {
     }
   }
 
-  async getProfile(
-    { userId: authUser }: UUID,
-    { userId }: GetUserInputDto,
-  ): Promise<GetUserOutputDto> {
-    try {
-      const { blocking } = await this.subscribesService.checkBlockingState({
-        requestUser: authUser,
-        targetUser: userId,
-      });
-      if (blocking === BlockState.BLOCKING) {
-        return {
-          ok: true,
-          blocking: BlockState.BLOCKING,
-        };
-      }
-      if (blocking === BlockState.BLOCKED) {
-        return {
-          ok: true,
-        };
-      }
-
-      const userInfo = await this.usersProfileRepository
-        .createQueryBuilder('user')
-        .where('id = :userId', { userId })
-        .loadRelationCountAndMap('user.subscribings', 'user.subscribingUsers')
-        .loadRelationCountAndMap('user.subscribers', 'user.subscribeUsers')
-        .getOne();
-      if (!userInfo) {
-        return {
-          ok: false,
-          error: '사용자가 존재하지 않습니다.',
-        };
-      }
-
-      if (userInfo.ProfileOpen) {
-        return {
-          ok: true,
-          data: userInfo,
-        };
-      }
-
-      const isUserSubscribing = await this.subscribesRepository.find({
-        where: {
-          from: authUser,
-          to: userId,
-          subscribeRequest: SubscribeRequestState.CONFIRMED,
-        },
-      });
-      if (!isUserSubscribing) {
-        return {
-          ok: true,
-          profileOpened: false,
-        };
-      }
-
-      return {
-        ok: true,
-        data: userInfo,
-      };
-    } catch (e) {
-      return {
-        ok: false,
-        error: '사용자정보 조회에 실패했습니다.',
-      };
-    }
-  }
-
   async editProfile(
     { userId }: UUID,
     editProfileInputDto: EditProfileInputDto,
@@ -220,7 +153,99 @@ export class UsersService {
     }
   }
 
-  async me({ userId }: UUID): Promise<CoreUserOutputDto> {
+  async getUserProfile(
+    { userId: authUser }: UUID,
+    { username }: GetUserInputDto,
+  ): Promise<GetUserOutputDto> {
+    try {
+      const { id: userId } = await this.usersProfileRepository.findOne({
+        username,
+      });
+
+      if (!userId) {
+        return {
+          ok: false,
+          error: '사용자가 존재하지 않습니다.',
+        };
+      }
+
+      if (authUser === userId) {
+        return this.getMyProfile({ userId });
+      }
+
+      const { blocking } = await this.subscribesService.checkBlockingState({
+        requestUser: authUser,
+        targetUser: userId,
+      });
+      if (blocking === BlockState.BLOCKING) {
+        return {
+          ok: true,
+          blocking: BlockState.BLOCKING,
+        };
+      }
+      if (blocking === BlockState.BLOCKED) {
+        return {
+          ok: true,
+        };
+      }
+
+      const userInfo = await this.usersProfileRepository
+        .createQueryBuilder('user')
+        .where('id = :userId', { userId })
+        .loadRelationCountAndMap(
+          'user.subscribings',
+          'user.subscribingUsers',
+          'subscribings',
+          (qb) =>
+            qb.where('subscribings.subscribeRequest = :value', {
+              value: SubscribeRequestState.CONFIRMED,
+            }),
+        )
+        .loadRelationCountAndMap(
+          'user.subscribers',
+          'user.subscribeUsers',
+          'subscribers',
+          (qb) =>
+            qb.where('subscribers.subscribeRequest = :value', {
+              value: SubscribeRequestState.CONFIRMED,
+            }),
+        )
+        .getOne();
+
+      if (userInfo.ProfileOpen) {
+        return {
+          ok: true,
+          data: userInfo,
+        };
+      }
+
+      const isUserSubscribing = await this.subscribesRepository.find({
+        where: {
+          from: authUser,
+          to: userId,
+          subscribeRequest: SubscribeRequestState.CONFIRMED,
+        },
+      });
+      if (!isUserSubscribing) {
+        return {
+          ok: true,
+          profileOpened: false,
+        };
+      }
+
+      return {
+        ok: true,
+        data: userInfo,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '사용자정보 조회에 실패했습니다.',
+      };
+    }
+  }
+
+  async getMyProfile({ userId }: UUID): Promise<CoreUserOutputDto> {
     try {
       const user = await this.usersProfileRepository
         .createQueryBuilder('user')
@@ -243,6 +268,32 @@ export class UsersService {
               value: SubscribeRequestState.CONFIRMED,
             }),
         )
+        .getOne();
+      // console.log(user);
+      if (!user) {
+        return {
+          ok: false,
+          error: '사용자가 존재하지 않습니다.',
+        };
+      }
+      return {
+        ok: true,
+        data: user,
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        ok: false,
+        error: '사용자정보 조회에 실패했습니다.',
+      };
+    }
+  }
+
+  async me({ userId }: UUID): Promise<CoreUserOutputDto> {
+    try {
+      const user = await this.usersProfileRepository
+        .createQueryBuilder('user')
+        .where('id = :userId', { userId })
         .getOne();
       // console.log(user);
       if (!user) {

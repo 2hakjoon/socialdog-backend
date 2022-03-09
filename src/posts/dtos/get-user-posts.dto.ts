@@ -1,14 +1,14 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsUUID } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
-import { UUID } from 'src/users/entities/users-profile.entity';
+import { CorePagination } from 'src/common/dtos/core-pagination.dto';
 import { Posts } from '../entities/posts.entity';
 
 @InputType()
-export class GetUserPostsInputDto {
+export class GetUserPostsInputDto extends CorePagination {
   @Field((type) => String)
-  @IsUUID()
-  userId: string;
+  @IsString()
+  username: string;
 }
 
 @ObjectType()
