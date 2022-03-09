@@ -173,7 +173,7 @@ export class PostsService {
         .take(limit)
         .getMany();
 
-      console.log(posts)
+      console.log(posts);
       return {
         ok: true,
         data: posts,
@@ -193,7 +193,7 @@ export class PostsService {
   ): Promise<GetUserPostsOutputDto> {
     try {
       const { id: userId } = await this.userProfileRepository.findOne({
-        username,
+        where: { username },
       });
 
       if (!userId) {
@@ -217,7 +217,14 @@ export class PostsService {
           data: [],
         };
       }
-      const posts = await this.postsRepository.find({ userId });
+      const posts = await this.postsRepository
+        .createQueryBuilder('posts')
+        .where('posts.userId = :userId', { userId })
+        .orderBy('posts.createdAt', 'DESC')
+        .skip(offset)
+        .take(limit)
+        .getMany();
+
       return {
         ok: true,
         data: posts,
