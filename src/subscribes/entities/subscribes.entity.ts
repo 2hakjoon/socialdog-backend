@@ -13,6 +13,7 @@ export enum SubscribeRequestState {
   REQUESTED = 'REQUESTED',
   REJECTED = 'REJECTED',
   CONFIRMED = 'CONFIRMED',
+  NONE = 'NONE',
 }
 
 export enum BlockState {

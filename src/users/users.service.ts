@@ -219,23 +219,32 @@ export class UsersService {
         };
       }
 
-      const isUserSubscribing = await this.subscribesRepository.find({
+      const { subscribeRequest } = await this.subscribesRepository.findOne({
         where: {
           from: authUser,
           to: userId,
-          subscribeRequest: SubscribeRequestState.CONFIRMED,
         },
       });
-      if (!isUserSubscribing) {
+
+      // 구독하기 버튼 활성화 상태를 위해 필요.
+      // 거절당한경우를 가리기 위해서 REJECTED는 REQUESTED로 변환.
+      const checkSubscribeRequested =
+        subscribeRequest === SubscribeRequestState.REJECTED
+          ? SubscribeRequestState.REQUESTED
+          : subscribeRequest;
+
+      if (subscribeRequest !== SubscribeRequestState.CONFIRMED) {
         return {
           ok: true,
           profileOpened: false,
+          subscribeRequested: checkSubscribeRequested,
         };
       }
 
       return {
         ok: true,
         data: userInfo,
+        subscribeRequested: checkSubscribeRequested,
       };
     } catch (e) {
       return {
