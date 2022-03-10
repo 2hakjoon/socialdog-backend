@@ -197,9 +197,13 @@ export class UsersService {
           'user.subscribingUsers',
           'subscribings',
           (qb) =>
-            qb.where('subscribings.subscribeRequest = :value', {
-              value: SubscribeRequestState.CONFIRMED,
-            }),
+            qb.where(
+              'subscribings.subscribeRequest = :subscribe AND subscribings.block = :block',
+              {
+                subscribe: SubscribeRequestState.CONFIRMED,
+                block: false,
+              },
+            ),
         )
         .loadRelationCountAndMap(
           'user.subscribers',
@@ -212,7 +216,7 @@ export class UsersService {
         )
         .getOne();
 
-      if (userInfo.ProfileOpen) {
+      if (userInfo.profileOpen) {
         return {
           ok: true,
           data: userInfo,
@@ -236,6 +240,7 @@ export class UsersService {
       if (subscribeRequest !== SubscribeRequestState.CONFIRMED) {
         return {
           ok: true,
+          data: userInfo,
           profileOpened: false,
           subscribeRequested: checkSubscribeRequested,
         };
@@ -264,9 +269,13 @@ export class UsersService {
           'user.subscribingUsers',
           'subscribings',
           (qb) =>
-            qb.where('subscribings.subscribeRequest = :value', {
-              value: SubscribeRequestState.CONFIRMED,
-            }),
+            qb.where(
+              'subscribings.subscribeRequest = :subscribe AND subscribings.block = :block',
+              {
+                subscribe: SubscribeRequestState.CONFIRMED,
+                block: false,
+              },
+            ),
         )
         .loadRelationCountAndMap(
           'user.subscribers',

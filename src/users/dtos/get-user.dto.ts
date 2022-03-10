@@ -14,9 +14,9 @@ export class GetUserOutputDto extends CoreUserOutputDto {
   @Field(() => BlockState, { nullable: true })
   blocking?: BlockState;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   profileOpened?: boolean;
 
-  @Field(() => SubscribeRequestState)
+  @Field(() => SubscribeRequestState, { nullable: true })
   subscribeRequested?: SubscribeRequestState;
 }

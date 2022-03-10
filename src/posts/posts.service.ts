@@ -173,7 +173,7 @@ export class PostsService {
         .take(limit)
         .getMany();
 
-      console.log(posts);
+      // console.log(posts);
       return {
         ok: true,
         data: posts,
@@ -192,9 +192,10 @@ export class PostsService {
     { username, limit, offset }: GetUserPostsInputDto,
   ): Promise<GetUserPostsOutputDto> {
     try {
-      const { id: userId } = await this.userProfileRepository.findOne({
-        where: { username },
-      });
+      const { id: userId, profileOpen } =
+        await this.userProfileRepository.findOne({
+          where: { username },
+        });
 
       if (!userId) {
         return {
@@ -205,6 +206,19 @@ export class PostsService {
 
       if (authUserId === userId) {
         return this.getMyPosts({ userId }, { limit, offset });
+      }
+
+      const isSubscribing = await this.subscribesRepository.findOne({
+        from: authUserId,
+        to: userId,
+        subscribeRequest: SubscribeRequestState.CONFIRMED,
+      });
+      console.log(profileOpen, isSubscribing);
+      if (!profileOpen && !isSubscribing) {
+        return {
+          ok: true,
+          data: [],
+        };
       }
 
       const { blocking } = await this.subscribesService.checkBlockingState({
@@ -261,7 +275,10 @@ export class PostsService {
         .getMany();
 
       // console.log(mySubscibes);
-      const subscribeIds = mySubscibes.map((subscribe) => subscribe.to?.['id']);
+      const subscribeIds = [
+        ...mySubscibes.map((subscribe) => subscribe.to?.['id']),
+        userId,
+      ];
 
       if (!subscribeIds.length) {
         return {
@@ -274,7 +291,7 @@ export class PostsService {
         .createQueryBuilder('posts')
         .select(['posts', 'user.photo', 'user.id', 'user.username'])
         .where('posts.userId IN (:...userIds)', {
-          userIds: [userId, ...subscribeIds],
+          userIds: subscribeIds,
         })
         .innerJoin('posts.user', 'user')
         .orderBy('posts.createdAt', 'DESC')

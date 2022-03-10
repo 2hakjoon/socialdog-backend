@@ -47,7 +47,7 @@ export class UserProfile extends CoreEntity {
 
   @Field((type) => Boolean, { nullable: true })
   @Column({ default: false })
-  ProfileOpen: boolean;
+  profileOpen: boolean;
 
   //Relations
 

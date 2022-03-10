@@ -1,5 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Posts } from 'src/posts/entities/posts.entity';
+import {
+  BlockState,
+  SubscribeRequestState,
+} from 'src/subscribes/entities/subscribes.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { Walks } from 'src/walks/entities/walks.entity';
 @ObjectType()
