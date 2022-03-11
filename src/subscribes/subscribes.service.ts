@@ -125,10 +125,10 @@ export class SubscribesService {
 
   async changeBlockState(
     { userId }: UUID,
-    { to, block }: ChangeBlockStateInputDto,
+    { block, username }: ChangeBlockStateInputDto,
   ): Promise<ChangeBlockStateOutputDto> {
     try {
-      const userTo = await this.usersProfileRepository.findOne({ id: to });
+      const userTo = await this.usersProfileRepository.findOne({ username });
 
       if (!userTo) {
         return {
@@ -138,7 +138,7 @@ export class SubscribesService {
       }
 
       const subscribe = await this.subscribesRepository.findOne({
-        to,
+        to: userTo.id,
         from: userId,
       });
 
@@ -151,7 +151,7 @@ export class SubscribesService {
         await this.subscribesRepository.save(
           await this.subscribesRepository.create({
             from: userId,
-            to,
+            to: userTo.id,
             block,
           }),
         );
