@@ -23,6 +23,10 @@ import {
   SubscribeRequestState,
   Subscribes,
 } from './entities/subscribes.entity';
+import {
+  CancelSubscribeInputDto,
+  CancelSubscribeOutputDto,
+} from './dtos/cancel-subscribe.dto';
 
 export class SubscribesService {
   constructor(
@@ -123,12 +127,56 @@ export class SubscribesService {
     }
   }
 
+  async cancleSubscribe(
+    { userId: authUser }: UUID,
+    { to }: CancelSubscribeInputDto,
+  ): Promise<CancelSubscribeOutputDto> {
+    try {
+      if (authUser === to) {
+        return {
+          ok: false,
+          error: '자신에게 요청할 수 없습니다.',
+        };
+      }
+      const subscribes = await this.subscribesRepository.findOne({
+        to,
+        from: authUser,
+      });
+
+      if (!subscribes) {
+        return {
+          ok: false,
+          error: '구독정보가 없습니다.',
+        };
+      }
+      await this.subscribesRepository.update(
+        { id: subscribes.id },
+        { ...subscribes, subscribeRequest: SubscribeRequestState.NONE },
+      );
+
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '구독취소를 실패했습니다.',
+      };
+    }
+  }
+
   async changeBlockState(
     { userId }: UUID,
     { block, username }: ChangeBlockStateInputDto,
   ): Promise<ChangeBlockStateOutputDto> {
     try {
       const userTo = await this.usersProfileRepository.findOne({ username });
+      if (userId === userTo.id) {
+        return {
+          ok: false,
+          error: '자신에게 요청할 수 없습니다.',
+        };
+      }
 
       if (!userTo) {
         return {
