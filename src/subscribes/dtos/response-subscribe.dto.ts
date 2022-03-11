@@ -4,7 +4,7 @@ import { Subscribes } from '../entities/subscribes.entity';
 
 @InputType()
 export class ResponseSubscribeInputDto extends PickType(Subscribes, [
-  'id',
+  'from',
   'subscribeRequest',
 ]) {}
 

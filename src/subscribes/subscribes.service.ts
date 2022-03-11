@@ -90,19 +90,13 @@ export class SubscribesService {
 
   async responseSubscribe(
     { userId }: UUID,
-    { id, subscribeRequest }: ResponseSubscribeInputDto,
+    { from, subscribeRequest }: ResponseSubscribeInputDto,
   ): Promise<ResponseSubscribeOutputDto> {
     try {
       const subscribe = await this.subscribesRepository.findOne(
-        { id },
+        { from, to: userId },
         { loadRelationIds: { relations: ['to', 'from'] } },
       );
-      if (subscribe.to !== userId) {
-        return {
-          ok: false,
-          error: '다른 사람에게 온 요청은 수락할 수 없습니다.',
-        };
-      }
 
       if (!subscribe.subscribeRequest) {
         return {
@@ -111,10 +105,13 @@ export class SubscribesService {
         };
       }
 
-      await this.subscribesRepository.update(id, {
-        ...subscribe,
-        subscribeRequest,
-      });
+      await this.subscribesRepository.update(
+        { from },
+        {
+          ...subscribe,
+          subscribeRequest,
+        },
+      );
       return {
         ok: true,
       };
