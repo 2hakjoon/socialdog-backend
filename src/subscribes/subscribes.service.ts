@@ -24,8 +24,8 @@ import {
   Subscribes,
 } from './entities/subscribes.entity';
 import {
-  CancelSubscribeInputDto,
-  CancelSubscribeOutputDto,
+  CancelSubscribingInputDto,
+  CancelSubscribingOutputDto,
 } from './dtos/cancel-subscribe.dto';
 
 export class SubscribesService {
@@ -127,10 +127,10 @@ export class SubscribesService {
     }
   }
 
-  async cancleSubscribe(
+  async cancelSubscribing(
     { userId: authUser }: UUID,
-    { to }: CancelSubscribeInputDto,
-  ): Promise<CancelSubscribeOutputDto> {
+    { to }: CancelSubscribingInputDto,
+  ): Promise<CancelSubscribingOutputDto> {
     try {
       if (authUser === to) {
         return {

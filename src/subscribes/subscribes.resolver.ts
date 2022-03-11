@@ -23,8 +23,8 @@ import { GetBlockingUsersOutputDto } from './dtos/get-blocking-users.dto';
 import { GetSubscribeRequestsOutputDto } from './dtos/get-subscribe-requests.dto';
 import { GetSubscribingRequestsOutputDto } from './dtos/get-subscribing-requests.dto';
 import {
-  CancelSubscribeInputDto,
-  CancelSubscribeOutputDto,
+  CancelSubscribingInputDto,
+  CancelSubscribingOutputDto,
 } from './dtos/cancel-subscribe.dto';
 
 @Resolver((of) => Subscribes)
@@ -49,13 +49,13 @@ export class SubscribesResolver {
     return this.subscribeService.responseSubscribe(userId, args);
   }
 
-  @Mutation(() => CancelSubscribeOutputDto)
+  @Mutation(() => CancelSubscribingOutputDto)
   @UseGuards(GqlAuthGuard)
-  cancelSubscribe(
+  cancelSubscribing(
     @AuthUser() userId: UUID,
-    @Args(args) args: CancelSubscribeInputDto,
-  ): Promise<CancelSubscribeOutputDto> {
-    return this.subscribeService.cancleSubscribe(userId, args);
+    @Args(args) args: CancelSubscribingInputDto,
+  ): Promise<CancelSubscribingOutputDto> {
+    return this.subscribeService.cancelSubscribing(userId, args);
   }
 
   @Mutation(() => ChangeBlockStateOutputDto)
