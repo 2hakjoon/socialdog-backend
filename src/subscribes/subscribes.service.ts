@@ -388,10 +388,10 @@ export class SubscribesService {
         select: ['id', 'from'],
         loadRelationIds: { relations: ['from'] },
       });
-      // console.log(rejectedSubscribes);
+      //console.log(rejectedSubscribes);
 
       const rejectedUserIds = rejectedSubscribes.map(
-        (rejectedUser) => rejectedUser.to,
+        (rejectedUser) => rejectedUser.from,
       );
 
       if (!rejectedUserIds.length) {
