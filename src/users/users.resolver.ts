@@ -65,10 +65,4 @@ export class UsersResolver {
   checkUsernameExist(@Args(args) args: CheckUsernameExistInputDto):Promise<CheckUsernameExistOutputDto>{
     return this.usersService.checkUsernameExist(args)
   }
-
-  //@UseGuards(GqlAuthGuard)
-  @Query(()=>Boolean)
-  test(){
-    return true
-  }
 }

@@ -103,6 +103,18 @@ export class UsersService {
     editProfileInputDto: EditProfileInputDto,
   ): Promise<EditProfileOutputDto> {
     try {
+      if (editProfileInputDto.username) {
+        const isUsernameExists = await this.usersProfileRepository.findOne({
+          username: editProfileInputDto.username,
+        });
+        if (isUsernameExists) {
+          return {
+            ok: false,
+            error: '사용자 이름이 중복되었습니다.',
+          };
+        }
+      }
+
       const userInfo = await this.usersProfileRepository.findOne({
         id: userId,
       });
