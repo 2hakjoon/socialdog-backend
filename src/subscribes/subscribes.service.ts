@@ -52,11 +52,10 @@ export class SubscribesService {
         from: userId,
       });
 
+      // console.log(subscribe);
+
       if (subscribe) {
-        if (
-          !subscribe.subscribeRequest &&
-          subscribe.subscribeRequest !== SubscribeRequestState.REQUESTED
-        ) {
+        if (subscribe.subscribeRequest !== SubscribeRequestState.REQUESTED) {
           await this.subscribesRepository.update(subscribe.id, {
             ...subscribe,
             subscribeRequest: SubscribeRequestState.REQUESTED,

@@ -227,6 +227,7 @@ export class UsersService {
           (qb) =>
             qb.where('subscribers.subscribeRequest = :value', {
               value: SubscribeRequestState.CONFIRMED,
+              block: false,
             }),
         )
         .getOne();
@@ -299,6 +300,7 @@ export class UsersService {
           (qb) =>
             qb.where('subscribers.subscribeRequest = :value', {
               value: SubscribeRequestState.CONFIRMED,
+              block: false,
             }),
         )
         .getOne();
