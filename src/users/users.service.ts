@@ -239,7 +239,7 @@ export class UsersService {
         };
       }
 
-      const { subscribeRequest } = await this.subscribesRepository.findOne({
+      const subscribe = await this.subscribesRepository.findOne({
         where: {
           from: authUser,
           to: userId,
@@ -249,11 +249,11 @@ export class UsersService {
       // 구독하기 버튼 활성화 상태를 위해 필요.
       // 거절당한경우를 가리기 위해서 REJECTED는 REQUESTED로 변환.
       const checkSubscribeRequested =
-        subscribeRequest === SubscribeRequestState.REJECTED
+        subscribe?.subscribeRequest === SubscribeRequestState.REJECTED
           ? SubscribeRequestState.REQUESTED
-          : subscribeRequest;
+          : subscribe?.subscribeRequest;
 
-      if (subscribeRequest !== SubscribeRequestState.CONFIRMED) {
+      if (subscribe?.subscribeRequest !== SubscribeRequestState.CONFIRMED) {
         return {
           ok: true,
           data: userInfo,
@@ -268,6 +268,7 @@ export class UsersService {
         subscribeRequested: checkSubscribeRequested,
       };
     } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: '사용자정보 조회에 실패했습니다.',
