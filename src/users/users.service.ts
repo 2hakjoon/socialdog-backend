@@ -251,7 +251,7 @@ export class UsersService {
       const checkSubscribeRequested =
         subscribe?.subscribeRequest === SubscribeRequestState.REJECTED
           ? SubscribeRequestState.REQUESTED
-          : subscribe?.subscribeRequest;
+          : subscribe?.subscribeRequest || SubscribeRequestState.NONE;
 
       if (subscribe?.subscribeRequest !== SubscribeRequestState.CONFIRMED) {
         return {
