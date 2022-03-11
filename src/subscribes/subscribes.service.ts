@@ -27,6 +27,7 @@ import {
   CancelSubscribingInputDto,
   CancelSubscribingOutputDto,
 } from './dtos/cancel-subscribe.dto';
+import { GetSubscribeRejectedUsersOutputDto } from './dtos/get-subscribe-rejected-users.dto';
 
 export class SubscribesService {
   constructor(
@@ -372,6 +373,46 @@ export class SubscribesService {
       return {
         ok: false,
         error: '차단한 사용자를 불러오는데 실패했습니다.',
+      };
+    }
+  }
+
+  async getSubscribeRejectedUsers({
+    userId,
+  }: UUID): Promise<GetSubscribeRejectedUsersOutputDto> {
+    try {
+      const rejectedSubscribes = await this.subscribesRepository.find({
+        where: {
+          to: userId,
+        },
+        select: ['id', 'from'],
+        loadRelationIds: { relations: ['from'] },
+      });
+      // console.log(rejectedSubscribes);
+
+      const rejectedUserIds = rejectedSubscribes.map(
+        (rejectedUser) => rejectedUser.to,
+      );
+
+      if (!rejectedUserIds.length) {
+        return {
+          ok: true,
+          data: [],
+        };
+      }
+      const rejectedUsers = await this.usersProfileRepository
+        .createQueryBuilder('users')
+        .where('users.Id IN (:...userIds)', { userIds: rejectedUserIds })
+        .getMany();
+
+      return {
+        ok: true,
+        data: rejectedUsers,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '구독 거절한 사용자를 불러오는데 실패했습니다.',
       };
     }
   }

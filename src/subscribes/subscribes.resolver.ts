@@ -26,6 +26,7 @@ import {
   CancelSubscribingInputDto,
   CancelSubscribingOutputDto,
 } from './dtos/cancel-subscribe.dto';
+import { GetSubscribeRejectedUsersOutputDto } from './dtos/get-subscribe-rejected-users.dto';
 
 @Resolver((of) => Subscribes)
 export class SubscribesResolver {
@@ -97,6 +98,14 @@ export class SubscribesResolver {
     @AuthUser() userId: UUID,
   ): Promise<GetSubscribingRequestsOutputDto> {
     return this.subscribeService.getSubscribingRequests(userId);
+  }
+
+  @Query(() => GetSubscribeRejectedUsersOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getSubscribeRejectedRequests(
+    @AuthUser() userId: UUID,
+  ): Promise<GetSubscribingRequestsOutputDto> {
+    return this.subscribeService.getSubscribeRejectedUsers(userId);
   }
 
   @Query(() => GetSubscribeRequestsOutputDto)
