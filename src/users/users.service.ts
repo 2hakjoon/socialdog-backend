@@ -30,6 +30,10 @@ import {
   FindUserByUsernameInputDto,
   FindUserByUsernameOutputDto,
 } from './dtos/find-user-by-username.dto';
+import {
+  CheckUsernameExistInputDto,
+  CheckUsernameExistOutputDto,
+} from './dtos/check-username-exists.dto';
 
 @Injectable()
 export class UsersService {
@@ -348,6 +352,25 @@ export class UsersService {
       return {
         ok: false,
         error: '사용자 검색에 실패했습니다.',
+      };
+    }
+  }
+
+  async checkUsernameExist({
+    username,
+  }: CheckUsernameExistInputDto): Promise<CheckUsernameExistOutputDto> {
+    try {
+      const isUserExists = await this.usersProfileRepository.findOne({
+        username,
+      });
+      return {
+        ok: true,
+        isExist: Boolean(isUserExists),
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '사용자 이름 중복확인에 실패했습니다.',
       };
     }
   }

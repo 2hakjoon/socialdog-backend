@@ -15,6 +15,7 @@ import { MailService } from 'src/mail/mail.service';
 import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
 import { FindUserByUsernameInputDto, FindUserByUsernameOutputDto } from './dtos/find-user-by-username.dto';
+import { CheckUsernameExistInputDto, CheckUsernameExistOutputDto } from './dtos/check-username-exists.dto';
 
 @Resolver((of) => UUID)
 export class UsersResolver {
@@ -58,6 +59,11 @@ export class UsersResolver {
   @Query(()=>FindUserByUsernameOutputDto)
   findUsersByUsername(@Args(args) args:FindUserByUsernameInputDto):Promise<FindUserByUsernameOutputDto>{
     return this.usersService.findUsersByUsername(args)
+  }
+
+  @Query(()=>CheckUsernameExistOutputDto)
+  checkUsernameExist(@Args(args) args: CheckUsernameExistInputDto):Promise<CheckUsernameExistOutputDto>{
+    return this.usersService.checkUsernameExist(args)
   }
 
   //@UseGuards(GqlAuthGuard)
