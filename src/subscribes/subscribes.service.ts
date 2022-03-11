@@ -27,7 +27,7 @@ import {
   CancelSubscribingInputDto,
   CancelSubscribingOutputDto,
 } from './dtos/cancel-subscribe.dto';
-import { GetSubscribeRejectedUsersOutputDto } from './dtos/get-subscribe-rejected-users.dto';
+import { GetMyRejectRequestsOutputDto } from './dtos/get-my-reject-requests.dto';
 
 export class SubscribesService {
   constructor(
@@ -377,9 +377,9 @@ export class SubscribesService {
     }
   }
 
-  async getSubscribeRejectedUsers({
+  async getMyRejectRequests({
     userId,
-  }: UUID): Promise<GetSubscribeRejectedUsersOutputDto> {
+  }: UUID): Promise<GetMyRejectRequestsOutputDto> {
     try {
       const rejectedSubscribes = await this.subscribesRepository.find({
         where: {

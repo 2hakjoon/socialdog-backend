@@ -3,7 +3,7 @@ import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
 
 @ObjectType()
-export class GetSubscribeRejectedUsersOutputDto extends CoreOutputDto {
+export class GetMyRejectRequestsOutputDto extends CoreOutputDto {
   @Field(() => [UserProfile])
   data?: UserProfile[];
 }
