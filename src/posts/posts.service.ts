@@ -213,7 +213,7 @@ export class PostsService {
         to: userId,
         subscribeRequest: SubscribeRequestState.CONFIRMED,
       });
-      console.log(profileOpen, isSubscribing);
+      // console.log(profileOpen, isSubscribing);
       if (!profileOpen && !isSubscribing) {
         return {
           ok: true,
@@ -279,13 +279,6 @@ export class PostsService {
         ...mySubscibes.map((subscribe) => subscribe.to?.['id']),
         userId,
       ];
-
-      if (!subscribeIds.length) {
-        return {
-          ok: true,
-          data: [],
-        };
-      }
 
       const subscribingPosts = await this.postsRepository
         .createQueryBuilder('posts')

@@ -99,11 +99,10 @@ export class UsersService {
     editProfileInputDto: EditProfileInputDto,
   ): Promise<EditProfileOutputDto> {
     try {
-      console.log(editProfileInputDto);
       const userInfo = await this.usersProfileRepository.findOne({
         id: userId,
       });
-      console.log(userInfo);
+
       if (!userInfo) {
         return {
           ok: false,
