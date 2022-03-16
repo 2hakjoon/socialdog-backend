@@ -188,10 +188,11 @@ export class UsersService {
         return this.getMyProfile({ userId });
       }
 
-      const { blocking } = await this.subscribesService.checkBlockingState({
-        requestUser: authUser,
-        targetUser: userId,
-      });
+      const { blocking, subscribeRequest } =
+        await this.subscribesService.checkBlockingAndRequestState({
+          requestUser: authUser,
+          targetUser: userId,
+        });
       if (blocking === BlockState.BLOCKING) {
         return {
           ok: true,
@@ -201,6 +202,7 @@ export class UsersService {
       if (blocking === BlockState.BLOCKED) {
         return {
           ok: true,
+          subscribeRequested: subscribeRequest,
         };
       }
 
@@ -239,33 +241,19 @@ export class UsersService {
         };
       }
 
-      const subscribe = await this.subscribesRepository.findOne({
-        where: {
-          from: authUser,
-          to: userId,
-        },
-      });
-
-      // 구독하기 버튼 활성화 상태를 위해 필요.
-      // 거절당한경우를 가리기 위해서 REJECTED는 REQUESTED로 변환.
-      const checkSubscribeRequested =
-        subscribe?.subscribeRequest === SubscribeRequestState.REJECTED
-          ? SubscribeRequestState.REQUESTED
-          : subscribe?.subscribeRequest || SubscribeRequestState.NONE;
-
-      if (subscribe?.subscribeRequest !== SubscribeRequestState.CONFIRMED) {
+      if (subscribeRequest !== SubscribeRequestState.CONFIRMED) {
         return {
           ok: true,
           data: userInfo,
           profileOpened: false,
-          subscribeRequested: checkSubscribeRequested,
+          subscribeRequested: subscribeRequest,
         };
       }
 
       return {
         ok: true,
         data: userInfo,
-        subscribeRequested: checkSubscribeRequested,
+        subscribeRequested: subscribeRequest,
       };
     } catch (e) {
       console.log(e);

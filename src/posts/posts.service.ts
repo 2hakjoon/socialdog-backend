@@ -221,10 +221,11 @@ export class PostsService {
         };
       }
 
-      const { blocking } = await this.subscribesService.checkBlockingState({
-        requestUser: authUserId,
-        targetUser: userId,
-      });
+      const { blocking } =
+        await this.subscribesService.checkBlockingAndRequestState({
+          requestUser: authUserId,
+          targetUser: userId,
+        });
       if (blocking !== BlockState.NONE) {
         return {
           ok: true,
