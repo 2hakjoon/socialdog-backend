@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { subscribe } from 'graphql';
 import { UploadService } from 'src/upload/upload.service';
 import {
   Subscribes,
@@ -8,7 +7,7 @@ import {
   BlockState,
 } from 'src/subscribes/entities/subscribes.entity';
 import { UserProfile, UUID } from 'src/users/entities/users-profile.entity';
-import { createQueryBuilder, getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   CreatePostOutputDto,
   CreatePostInputDto,
@@ -29,10 +28,7 @@ import {
   GetUserPostsOutputDto,
 } from './dtos/get-user-posts.dto';
 import { SubscribesService } from 'src/subscribes/subscribes.service';
-import {
-  ToggleLikePostInputDto,
-  ToggleLikePostOutputDto,
-} from '../likes/dtos/toggle-like-post.dto';
+import { CorePagination } from '../common/dtos/core-pagination.dto';
 import { Likes } from 'src/likes/entities/likes.entity';
 
 @Injectable()
@@ -189,7 +185,8 @@ export class PostsService {
 
   async getUserPosts(
     { userId: authUserId }: UUID,
-    { username, limit, offset }: GetUserPostsInputDto,
+    { username }: GetUserPostsInputDto,
+    { limit, offset }: CorePagination,
   ): Promise<GetUserPostsOutputDto> {
     try {
       const { id: userId, profileOpen } =

@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
-import { args } from 'src/common/constants';
+import { args, page } from 'src/common/constants';
 import { UUID } from 'src/users/entities/users-profile.entity';
 import {
   CreatePostOutputDto,
@@ -21,12 +21,9 @@ import {
   GetUserPostsInputDto,
   GetUserPostsOutputDto,
 } from './dtos/get-user-posts.dto';
-import {
-  ToggleLikePostInputDto,
-  ToggleLikePostOutputDto,
-} from '../likes/dtos/toggle-like-post.dto';
 import { Posts } from './entities/posts.entity';
 import { PostsService } from './posts.service';
+import { CorePagination } from '../common/dtos/core-pagination.dto';
 
 @Resolver((of) => Posts)
 export class PostsResolver {
@@ -73,8 +70,9 @@ export class PostsResolver {
   getUserPosts(
     @AuthUser() authUserId: UUID,
     @Args(args) args: GetUserPostsInputDto,
+    @Args(page) page: CorePagination,
   ): Promise<GetUserPostsOutputDto> {
-    return this.postsService.getUserPosts(authUserId, args);
+    return this.postsService.getUserPosts(authUserId, args, page);
   }
 
   @Query((returns) => GetSubscribingPostsOutputDto)
