@@ -93,7 +93,7 @@ export class SubscribesService {
     { userId }: UUID,
     { from, subscribeRequest }: ResponseSubscribeInputDto,
   ): Promise<ResponseSubscribeOutputDto> {
-    console.log(from, subscribeRequest);
+    // console.log(from, subscribeRequest);
     try {
       if (userId === from) {
         return {
@@ -101,10 +101,11 @@ export class SubscribesService {
           error: '본인에게 요청할 수 없습니다.',
         };
       }
-      const subscribe = await this.subscribesRepository.findOne(
-        { from, to: userId },
-        { loadRelationIds: { relations: ['to', 'from'] } },
-      );
+      const subscribe = await this.subscribesRepository.findOne({
+        from,
+        to: userId,
+      });
+      console.log(subscribe);
 
       if (!subscribe?.subscribeRequest) {
         return {
@@ -114,7 +115,7 @@ export class SubscribesService {
       }
 
       await this.subscribesRepository.update(
-        { from },
+        { id: subscribe.id },
         {
           ...subscribe,
           subscribeRequest,
@@ -407,6 +408,7 @@ export class SubscribesService {
       const rejectedSubscribes = await this.subscribesRepository.find({
         where: {
           to: userId,
+          subscribeRequest: SubscribeRequestState.REJECTED,
         },
         select: ['id', 'from'],
         loadRelationIds: { relations: ['from'] },
