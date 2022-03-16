@@ -184,28 +184,6 @@ export class UsersService {
         };
       }
 
-      if (authUser === userId) {
-        return this.getMyProfile({ userId });
-      }
-
-      const { blocking, subscribeRequest } =
-        await this.subscribesService.checkBlockingAndRequestState({
-          requestUser: authUser,
-          targetUser: userId,
-        });
-      if (blocking === BlockState.BLOCKING) {
-        return {
-          ok: true,
-          blocking: BlockState.BLOCKING,
-        };
-      }
-      if (blocking === BlockState.BLOCKED) {
-        return {
-          ok: true,
-          subscribeRequested: subscribeRequest,
-        };
-      }
-
       const userInfo = await this.usersProfileRepository
         .createQueryBuilder('user')
         .where('id = :userId', { userId })
@@ -227,17 +205,59 @@ export class UsersService {
           'user.subscribeUsers',
           'subscribers',
           (qb) =>
-            qb.where('subscribers.subscribeRequest = :value', {
-              value: SubscribeRequestState.CONFIRMED,
-              block: false,
-            }),
+            qb.where(
+              'subscribers.subscribeRequest = :value AND subscribers.block = :block',
+              {
+                value: SubscribeRequestState.CONFIRMED,
+                block: false,
+              },
+            ),
         )
         .getOne();
+
+      if (authUser === userInfo.id) {
+        return {
+          ok: true,
+          data: userInfo,
+        };
+      }
+
+      const { blocking, subscribeRequest } =
+        await this.subscribesService.checkBlockingAndRequestState({
+          requestUser: authUser,
+          targetUser: userId,
+        });
+      if (blocking === BlockState.BLOCKING) {
+        return {
+          ok: true,
+          data: {
+            ...userInfo,
+            subscribers: 0,
+            subscribings: 0,
+            loginStrategy: LoginStrategy.LOCAL,
+          },
+          blocking: BlockState.BLOCKING,
+          subscribeRequested: subscribeRequest,
+        };
+      }
+      if (blocking === BlockState.BLOCKED) {
+        return {
+          ok: true,
+          data: {
+            ...userInfo,
+            subscribers: 0,
+            subscribings: 0,
+            loginStrategy: LoginStrategy.LOCAL,
+          },
+          subscribeRequested: subscribeRequest,
+        };
+      }
 
       if (userInfo.profileOpen) {
         return {
           ok: true,
           data: userInfo,
+          subscribeRequested: subscribeRequest,
         };
       }
 
@@ -263,7 +283,7 @@ export class UsersService {
       };
     }
   }
-
+  /*
   async getMyProfile({ userId }: UUID): Promise<CoreUserOutputDto> {
     try {
       const user = await this.usersProfileRepository
@@ -287,10 +307,13 @@ export class UsersService {
           'user.subscribeUsers',
           'subscribers',
           (qb) =>
-            qb.where('subscribers.subscribeRequest = :value', {
-              value: SubscribeRequestState.CONFIRMED,
-              block: false,
-            }),
+            qb.where(
+              'subscribers.subscribeRequest = :value AND subscribings.block = :block',
+              {
+                value: SubscribeRequestState.CONFIRMED,
+                block: false,
+              },
+            ),
         )
         .getOne();
       // console.log(user);
@@ -312,7 +335,7 @@ export class UsersService {
       };
     }
   }
-
+*/
   async me({ userId }: UUID): Promise<CoreUserOutputDto> {
     try {
       const user = await this.usersProfileRepository

@@ -93,13 +93,20 @@ export class SubscribesService {
     { userId }: UUID,
     { from, subscribeRequest }: ResponseSubscribeInputDto,
   ): Promise<ResponseSubscribeOutputDto> {
+    console.log(from, subscribeRequest);
     try {
+      if (userId === from) {
+        return {
+          ok: false,
+          error: '본인에게 요청할 수 없습니다.',
+        };
+      }
       const subscribe = await this.subscribesRepository.findOne(
         { from, to: userId },
         { loadRelationIds: { relations: ['to', 'from'] } },
       );
 
-      if (!subscribe.subscribeRequest) {
+      if (!subscribe?.subscribeRequest) {
         return {
           ok: false,
           error: '아직 요청을 수락 및 거절 할 수 없습니다.',
@@ -117,6 +124,7 @@ export class SubscribesService {
         ok: true,
       };
     } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: '요청 수락 및 거절을 실패했습니다.',
@@ -254,7 +262,7 @@ export class SubscribesService {
           ? SubscribeRequestState.REQUESTED
           : requestState?.subscribeRequest || SubscribeRequestState.NONE;
 
-      console.log(checkSubscribeRequested);
+      // console.log(checkSubscribeRequested);
       if (blocking.length) {
         return {
           blocking: BlockState.BLOCKING,
