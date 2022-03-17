@@ -249,9 +249,10 @@ export class PostsService {
     }
   }
 
-  async getSubscribingPosts({
-    userId,
-  }: UUID): Promise<GetSubscribingPostsOutputDto> {
+  async getSubscribingPosts(
+    { userId }: UUID,
+    { limit, offset }: CorePagination,
+  ): Promise<GetSubscribingPostsOutputDto> {
     try {
       const mySubscibes = await this.subscribesRepository
         .createQueryBuilder('subs')
@@ -286,8 +287,8 @@ export class PostsService {
         })
         .innerJoin('posts.user', 'user')
         .orderBy('posts.createdAt', 'DESC')
-        .skip(0)
-        .take(5)
+        .skip(offset)
+        .take(limit)
         .getMany();
       // console.log(subscribingPosts);
 

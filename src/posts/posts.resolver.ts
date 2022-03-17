@@ -79,7 +79,8 @@ export class PostsResolver {
   @UseGuards(GqlAuthGuard)
   getSubscribingPosts(
     @AuthUser() userId: UUID,
+    @Args(page) page: CorePagination,
   ): Promise<GetSubscribingPostsOutputDto> {
-    return this.postsService.getSubscribingPosts(userId);
+    return this.postsService.getSubscribingPosts(userId, page);
   }
 }
