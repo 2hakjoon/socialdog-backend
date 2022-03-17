@@ -338,19 +338,67 @@ export class PostsService {
       const execptUsers = await this.subscribesRepository
         .createQueryBuilder('subs')
         .where(
-          'subs.to = :userId AND subs.block = :block AND subs.from = :userId',
+          '(subs.to = :userId OR subs.from = :userId) AND subs.block = :block ',
           {
             userId,
             block: true,
           },
         )
+        .loadAllRelationIds({ relations: ['to', 'from'] })
         .getMany();
 
       console.log(execptUsers);
+
+      const execptUserIds = execptUsers.map((execptUser) => {
+        if (execptUser.to !== userId) {
+          return execptUser.to;
+        }
+        return execptUser.from;
+      });
+
+      console.log(execptUserIds);
+
+      const posts = await this.postsRepository
+        .createQueryBuilder('posts')
+        .innerJoinAndSelect('posts.user', 'user')
+        .where(`user.profileOpen = :open`, { open: true })
+        //빈 array를 집어넣으면 에러가 나므로, 0000인 UUID를 기본값으로 넣어줌
+        .andWhere('user.id NOT IN (:...userIds)', {
+          userIds: execptUserIds.length
+            ? execptUserIds
+            : ['00000000-0000-0000-0000-000000000000'],
+        })
+        .andWhere('posts.address LIKE :q', { q: `%${address}%` })
+        .skip(offset)
+        .take(limit)
+        .getMany();
+      console.log(posts);
+
+      const postIds = posts.map((post) => post.id);
+      const myLikes = await this.likesRepository
+        .createQueryBuilder('like')
+        .select(['like.like', 'like.userId', 'like.postId'])
+        .where('like.postId IN (:...postIds)', { postIds })
+        .getMany();
+
+      // console.log(myLikes);
+      const postsWithLike = posts.map((post) => {
+        if (
+          myLikes.filter((like) => {
+            return like.postId === post.id && like.userId === userId;
+          }).length
+        ) {
+          return { ...post, liked: true };
+        }
+        return { ...post, liked: false };
+      });
+
       return {
         ok: true,
+        data: postsWithLike,
       };
     } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: '게시물 주소검색에 실패했습니다.',
