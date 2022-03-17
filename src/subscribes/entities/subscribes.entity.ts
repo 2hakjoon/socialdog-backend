@@ -46,9 +46,9 @@ export class Subscribes extends CoreEntity {
   to: string;
 
   @Field(() => SubscribeRequestState)
-  @Column({ nullable: true })
+  @Column({ default: SubscribeRequestState.NONE })
   @IsEnum(SubscribeRequestState)
-  subscribeRequest?: SubscribeRequestState;
+  subscribeRequest: SubscribeRequestState;
 
   @Field(() => Boolean)
   @Column({ default: false })

@@ -56,7 +56,7 @@ export class SubscribesService {
       // console.log(subscribe);
 
       if (subscribe) {
-        if (subscribe.subscribeRequest !== SubscribeRequestState.REQUESTED) {
+        if (subscribe.subscribeRequest === SubscribeRequestState.NONE) {
           await this.subscribesRepository.update(subscribe.id, {
             ...subscribe,
             subscribeRequest: SubscribeRequestState.REQUESTED,
@@ -261,7 +261,7 @@ export class SubscribesService {
       const checkSubscribeRequested =
         requestState?.subscribeRequest === SubscribeRequestState.REJECTED
           ? SubscribeRequestState.REQUESTED
-          : requestState?.subscribeRequest || SubscribeRequestState.NONE;
+          : SubscribeRequestState.NONE;
 
       // console.log(checkSubscribeRequested);
       if (blocking.length) {
