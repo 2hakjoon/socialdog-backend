@@ -24,6 +24,7 @@ import {
 import { Posts } from './entities/posts.entity';
 import { PostsService } from './posts.service';
 import { CorePagination } from '../common/dtos/core-pagination.dto';
+import { GetPostsByAddressInputDto } from './dtos/get-posts-by-address.dto';
 
 @Resolver((of) => Posts)
 export class PostsResolver {
@@ -82,5 +83,15 @@ export class PostsResolver {
     @Args(page) page: CorePagination,
   ): Promise<GetSubscribingPostsOutputDto> {
     return this.postsService.getSubscribingPosts(userId, page);
+  }
+
+  @Query((returns) => GetSubscribingPostsOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getPostsByAddress(
+    @AuthUser() userId: UUID,
+    @Args(args) args: GetPostsByAddressInputDto,
+    @Args(page) page: CorePagination,
+  ): Promise<GetSubscribingPostsOutputDto> {
+    return this.postsService.getPostsByAddress(userId, args, page);
   }
 }

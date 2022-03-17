@@ -30,6 +30,10 @@ import {
 import { SubscribesService } from 'src/subscribes/subscribes.service';
 import { CorePagination } from '../common/dtos/core-pagination.dto';
 import { Likes } from 'src/likes/entities/likes.entity';
+import {
+  GetPostsByAddressInputDto,
+  getPostsByAddressOutputDto,
+} from './dtos/get-posts-by-address.dto';
 
 @Injectable()
 export class PostsService {
@@ -322,6 +326,34 @@ export class PostsService {
       return {
         ok: false,
         error: '게시물 조회에 실패했습니다.',
+      };
+    }
+  }
+  async getPostsByAddress(
+    { userId }: UUID,
+    { address }: GetPostsByAddressInputDto,
+    { limit, offset }: CorePagination,
+  ): Promise<getPostsByAddressOutputDto> {
+    try {
+      const execptUsers = await this.subscribesRepository
+        .createQueryBuilder('subs')
+        .where(
+          'subs.to = :userId AND subs.block = :block AND subs.from = :userId',
+          {
+            userId,
+            block: true,
+          },
+        )
+        .getMany();
+
+      console.log(execptUsers);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '게시물 주소검색에 실패했습니다.',
       };
     }
   }
