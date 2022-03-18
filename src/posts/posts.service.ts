@@ -300,7 +300,11 @@ export class PostsService {
       const myLikes = await this.likesRepository
         .createQueryBuilder('like')
         .select(['like.like', 'like.userId', 'like.postId'])
-        .where('like.postId IN (:...postIds)', { postIds })
+        .where('like.postId IN (:...postIds)', {
+          postIds: postIds.length
+            ? postIds
+            : ['00000000-0000-0000-0000-000000000000'],
+        })
         .getMany();
 
       // console.log(myLikes);
@@ -378,7 +382,11 @@ export class PostsService {
       const myLikes = await this.likesRepository
         .createQueryBuilder('like')
         .select(['like.like', 'like.userId', 'like.postId'])
-        .where('like.postId IN (:...postIds)', { postIds })
+        .where('like.postId IN (:...postIds)', {
+          postIds: postIds.length
+            ? postIds
+            : ['00000000-0000-0000-0000-000000000000'],
+        })
         .getMany();
 
       // console.log(myLikes);
