@@ -28,6 +28,7 @@ import {
   GetPostsByAddressInputDto,
   getPostsByAddressOutputDto,
 } from './dtos/get-posts-by-address.dto';
+import { GetMyLikedPostsOutputDto } from './dtos/get-my-liked-posts.dto';
 
 @Resolver((of) => Posts)
 export class PostsResolver {
@@ -96,5 +97,14 @@ export class PostsResolver {
     @Args(page) page: CorePagination,
   ): Promise<getPostsByAddressOutputDto> {
     return this.postsService.getPostsByAddress(userId, args, page);
+  }
+
+  @Query((returns) => GetMyLikedPostsOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getMyLikedPosts(
+    @AuthUser() userId: UUID,
+    @Args(page) page: CorePagination,
+  ): Promise<GetMyLikedPostsOutputDto> {
+    return this.postsService.getMyLikedPosts(userId, page);
   }
 }

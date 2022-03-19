@@ -34,6 +34,8 @@ import {
   GetPostsByAddressInputDto,
   getPostsByAddressOutputDto,
 } from './dtos/get-posts-by-address.dto';
+import { GetMyLikedPostsOutputDto } from './dtos/get-my-liked-posts.dto';
+import { PostAll } from 'src/common/dtos/core-output.dto';
 
 @Injectable()
 export class PostsService {
@@ -410,6 +412,37 @@ export class PostsService {
       return {
         ok: false,
         error: '게시물 주소검색에 실패했습니다.',
+      };
+    }
+  }
+  async getMyLikedPosts(
+    { userId }: UUID,
+    { offset, limit }: CorePagination,
+  ): Promise<GetMyLikedPostsOutputDto> {
+    try {
+      const likedPosts = await this.likesRepository
+        .createQueryBuilder('like')
+        .where('like.userId = :userId', { userId })
+        .leftJoinAndSelect('like.post', 'post')
+        .skip(offset)
+        .take(limit)
+        .getMany();
+
+      // console.log(likedPosts);
+
+      const posts = likedPosts.map((like) => ({
+        ...like.post,
+        liked: like.like,
+      }));
+
+      return {
+        ok: true,
+        data: posts,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '좋아요 누른 게시물 조회에 실패했습니다.',
       };
     }
   }
