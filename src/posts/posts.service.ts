@@ -105,7 +105,6 @@ export class PostsService {
       await this.postsRepository.update(
         { id: postId },
         {
-          ...post,
           ...rest,
         },
       );
@@ -424,6 +423,8 @@ export class PostsService {
         .createQueryBuilder('like')
         .where('like.userId = :userId', { userId })
         .leftJoinAndSelect('like.post', 'post')
+        .leftJoinAndSelect('post.user', 'user')
+        .orderBy('like.updatedAt', 'DESC')
         .skip(offset)
         .take(limit)
         .getMany();
