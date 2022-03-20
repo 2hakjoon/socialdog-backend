@@ -86,7 +86,7 @@ export class PostsService {
 
   async editPost(
     { userId }: UUID,
-    { postId, ...rest }: EditPostInputDto,
+    { postId, photoUrls, ...rest }: EditPostInputDto,
   ): Promise<EditPostOutputDto> {
     try {
       const post = await this.postsRepository.findOne({ id: postId });
@@ -106,6 +106,7 @@ export class PostsService {
         { id: postId },
         {
           ...rest,
+          photos: JSON.stringify(photoUrls),
         },
       );
       return {

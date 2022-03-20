@@ -107,7 +107,7 @@ export class UsersService {
         const isUsernameExists = await this.usersProfileRepository.findOne({
           username: editProfileInputDto.username,
         });
-        if (isUsernameExists) {
+        if (isUsernameExists.id !== userId) {
           return {
             ok: false,
             error: '사용자 이름이 중복되었습니다.',
