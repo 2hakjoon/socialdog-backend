@@ -68,7 +68,7 @@ export class PostsService {
       await this.postsRepository.save(
         await this.postsRepository.create({
           ...args,
-          photos: JSON.stringify(args.photos),
+          photos: JSON.stringify(args.photoUrls),
           user,
           userId,
         }),

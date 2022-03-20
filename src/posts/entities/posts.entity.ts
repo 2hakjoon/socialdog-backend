@@ -13,17 +13,17 @@ export class Posts extends CoreEntity {
   @Column()
   photos: string;
 
-  @Field((type) => String)
+  @Field((type) => String, { nullable: true })
   @IsString()
   @Length(0, 50)
-  @Column()
-  address: string;
+  @Column({ nullable: true })
+  address?: string;
 
-  @Field((type) => String)
+  @Field((type) => String, { nullable: true })
   @IsString()
   @Length(0, 50)
-  @Column()
-  placeId: string;
+  @Column({ nullable: true })
+  placeId?: string;
 
   @Field((type) => String)
   @IsString()
