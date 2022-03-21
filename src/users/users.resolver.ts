@@ -10,7 +10,7 @@ import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { EditProfileInputDto, EditProfileOutputDto } from './dtos/edit-profile.dto';
 import { GetUserInputDto, GetUserOutputDto } from './dtos/get-user.dto';
-import { args } from 'src/common/constants';
+import { args } from 'src/common/utils/constants';
 import { MailService } from 'src/mail/mail.service';
 import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dto';
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';

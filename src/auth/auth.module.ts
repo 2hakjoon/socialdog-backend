@@ -10,7 +10,7 @@ import { AuthResolver } from './auth.resolver';
 import { AuthLocal } from './entities/auth-local.entity';
 import { AuthKakao } from './entities/auth-kakao.entity';
 import { IAuthInterface } from './auth.interface';
-import { CONFIG_OPTIONS } from 'src/common/constants';
+import { CONFIG_OPTIONS } from 'src/common/utils/constants';
 
 @Module({})
 @Global()

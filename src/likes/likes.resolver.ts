@@ -6,7 +6,7 @@ import {
   ToggleLikePostOutputDto,
 } from 'src/likes/dtos/toggle-like-post.dto';
 import { Likes } from './entities/likes.entity';
-import { args } from '../common/constants';
+import { args } from '../common/utils/constants';
 import { UUID } from 'src/users/entities/users-profile.entity';
 import { LikesService } from './likes.service';
 

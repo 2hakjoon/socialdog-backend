@@ -279,7 +279,7 @@ export class PostsService {
         .select(['subs.id', 'user.id'])
         .getMany();
 
-      // console.log(mySubscibes);
+      console.log(mySubscibes);
       const subscribeIds = [
         ...mySubscibes.map((subscribe) => subscribe.to?.['id']),
         userId,
@@ -288,15 +288,23 @@ export class PostsService {
       const subscribingPosts = await this.postsRepository
         .createQueryBuilder('posts')
         .select(['posts', 'user.photo', 'user.id', 'user.username'])
-        .where('posts.userId IN (:...userIds)', {
+        .where(
+          '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
+          {
+            createdAt: '1645795192424',
+            postId: '3b7fa4da-310b-4f56-b2eb-cbb9d8a04b98',
+          },
+        )
+        .andWhere('posts.userId IN (:...userIds)', {
           userIds: subscribeIds,
         })
         .innerJoin('posts.user', 'user')
         .orderBy('posts.createdAt', 'DESC')
+        .addOrderBy('posts.id', 'DESC')
         .skip(offset)
         .take(limit)
         .getMany();
-      // console.log(subscribingPosts);
+      console.log(subscribingPosts);
 
       const postIds = subscribingPosts.map((post) => post.id);
       const myLikes = await this.likesRepository

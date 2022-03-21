@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { GqlAuthGuard } from 'src/auth/auth.guard';
-import { args } from 'src/common/constants';
+import { args } from 'src/common/utils/constants';
 import {
   CreatePreSignedUrlsInputDto,
   CreatePreSignedUrlsOutputDto,

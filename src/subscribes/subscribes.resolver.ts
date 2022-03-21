@@ -16,7 +16,7 @@ import {
 } from './dtos/response-subscribe.dto';
 import { Subscribes } from './entities/subscribes.entity';
 import { SubscribesService } from './subscribes.service';
-import { args } from '../common/constants';
+import { args } from '../common/utils/constants';
 import { GetMySubscribingsOutputDto } from './dtos/get-my-subscribings.dto';
 import { GetMySubscribersOutputDto } from './dtos/get-my-subscribers.dto';
 import { GetBlockingUsersOutputDto } from './dtos/get-blocking-users.dto';

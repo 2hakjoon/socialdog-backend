@@ -2,7 +2,7 @@ import { FileUpload } from 'graphql-upload';
 import * as AWS from 'aws-sdk';
 import { IUploadModule } from './upload.interface';
 import { Inject } from '@nestjs/common';
-import { CONFIG_OPTIONS } from 'src/common/constants';
+import { CONFIG_OPTIONS } from 'src/common/utils/constants';
 import {
   CreatePreSignedUrlsInputDto,
   CreatePreSignedUrlsOutputDto,

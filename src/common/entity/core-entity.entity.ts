@@ -13,12 +13,12 @@ export class CoreEntity {
   @IsString()
   id: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ precision: 3 })
   @Field(() => String)
   @IsString()
   createdAt: string;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ precision: 3 })
   @Field(() => String)
   @IsString()
   updatedAt: string;

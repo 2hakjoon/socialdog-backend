@@ -1,6 +1,6 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { args } from '../common/constants';
+import { args } from '../common/utils/constants';
 import { LoginInputDto, LoginOutputDto } from './dtos/login.dto';
 import { KakaoLoginInputDto } from './dtos/kakao-login.dto';
 import {

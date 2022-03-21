@@ -1,5 +1,5 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import { CONFIG_OPTIONS } from 'src/common/constants';
+import { CONFIG_OPTIONS } from 'src/common/utils/constants';
 import { IUploadModule } from './upload.interface';
 import { UploadResolver } from './upload.resolver';
 import { UploadService } from './upload.service';

@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
-import { args } from 'src/common/constants';
+import { args } from 'src/common/utils/constants';
 import {
   CoreOutputDto,
   CoreWalksOutputDto,
