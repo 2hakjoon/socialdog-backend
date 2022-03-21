@@ -29,6 +29,8 @@ import {
   getPostsByAddressOutputDto,
 } from './dtos/get-posts-by-address.dto';
 import { GetMyLikedPostsOutputDto } from './dtos/get-my-liked-posts.dto';
+import { createCursor } from 'src/common/utils/createCusor';
+import { CursorPaginationInputDto } from 'src/common/dtos/cursor-pagination';
 
 @Resolver((of) => Posts)
 export class PostsResolver {
@@ -84,9 +86,9 @@ export class PostsResolver {
   @UseGuards(GqlAuthGuard)
   getSubscribingPosts(
     @AuthUser() userId: UUID,
-    @Args(page) page: CorePagination,
+    @Args(page) page: CursorPaginationInputDto,
   ): Promise<GetSubscribingPostsOutputDto> {
-    return this.postsService.getSubscribingPosts(userId, page);
+    return this.postsService.getSubscribingPosts(userId, createCursor(page));
   }
 
   @Query((returns) => getPostsByAddressOutputDto)

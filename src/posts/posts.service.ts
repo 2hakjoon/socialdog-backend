@@ -36,6 +36,7 @@ import {
 } from './dtos/get-posts-by-address.dto';
 import { GetMyLikedPostsOutputDto } from './dtos/get-my-liked-posts.dto';
 import { PostAll } from 'src/common/dtos/core-output.dto';
+import { CursorPaginationArgs } from 'src/common/dtos/cursor-pagination';
 
 @Injectable()
 export class PostsService {
@@ -257,7 +258,7 @@ export class PostsService {
 
   async getSubscribingPosts(
     { userId }: UUID,
-    { limit, offset }: CorePagination,
+    { take, cursor }: CursorPaginationArgs,
   ): Promise<GetSubscribingPostsOutputDto> {
     try {
       const mySubscibes = await this.subscribesRepository
@@ -291,8 +292,8 @@ export class PostsService {
         .where(
           '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
           {
-            createdAt: '1645795192424',
-            postId: '3b7fa4da-310b-4f56-b2eb-cbb9d8a04b98',
+            createdAt: cursor.createdAt,
+            postId: cursor.id,
           },
         )
         .andWhere('posts.userId IN (:...userIds)', {
@@ -301,8 +302,7 @@ export class PostsService {
         .innerJoin('posts.user', 'user')
         .orderBy('posts.createdAt', 'DESC')
         .addOrderBy('posts.id', 'DESC')
-        .skip(offset)
-        .take(limit)
+        .take(take)
         .getMany();
       console.log(subscribingPosts);
 
