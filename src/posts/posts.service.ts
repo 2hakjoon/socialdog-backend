@@ -17,10 +17,7 @@ import {
   DeletePostOutputDto,
 } from './dtos/delete-post.dto';
 import { EditPostInputDto, EditPostOutputDto } from './dtos/edit-post-dto';
-import {
-  GetMyPostsInputDto,
-  GetMyPostsOutputDto,
-} from './dtos/get-my-posts.dto';
+import { GetMyPostsOutputDto } from './dtos/get-my-posts.dto';
 import { GetSubscribingPostsOutputDto } from './dtos/get-subscribing-posts.dto';
 import { Posts } from './entities/posts.entity';
 import {
@@ -28,7 +25,6 @@ import {
   GetUserPostsOutputDto,
 } from './dtos/get-user-posts.dto';
 import { SubscribesService } from 'src/subscribes/subscribes.service';
-import { CorePagination } from '../common/dtos/core-pagination.dto';
 import { Likes } from 'src/likes/entities/likes.entity';
 import {
   GetPostsByAddressInputDto,
