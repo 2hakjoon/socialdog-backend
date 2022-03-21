@@ -163,17 +163,23 @@ export class PostsService {
 
   async getMyPosts(
     { userId }: UUID,
-    { limit, offset }: GetMyPostsInputDto,
+    { take, cursor }: CursorPaginationArgs,
   ): Promise<GetMyPostsOutputDto> {
     try {
-      console.log('limit : ', limit, 'offset : ', offset);
+      // console.log('limit : ', limit, 'offset : ', offset);
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
-        .where('posts.userId = :userId', { userId })
+        .where(
+          '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
+          {
+            createdAt: cursor.createdAt,
+            postId: cursor.id,
+          },
+        )
+        .andWhere('posts.userId = :userId', { userId })
         .loadRelationCountAndMap('posts.likes', 'posts.likedUsers')
         .orderBy('posts.createdAt', 'DESC')
-        .skip(offset)
-        .take(limit)
+        .take(take)
         .getMany();
 
       // console.log(posts);
@@ -193,7 +199,7 @@ export class PostsService {
   async getUserPosts(
     { userId: authUserId }: UUID,
     { username }: GetUserPostsInputDto,
-    { limit, offset }: CorePagination,
+    { take, cursor }: CursorPaginationArgs,
   ): Promise<GetUserPostsOutputDto> {
     try {
       const { id: userId, profileOpen } =
@@ -209,7 +215,7 @@ export class PostsService {
       }
 
       if (authUserId === userId) {
-        return this.getMyPosts({ userId }, { limit, offset });
+        return this.getMyPosts({ userId }, { take, cursor });
       }
 
       const isSubscribing = await this.subscribesRepository.findOne({
@@ -238,10 +244,16 @@ export class PostsService {
       }
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
-        .where('posts.userId = :userId', { userId })
+        .where(
+          '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
+          {
+            createdAt: cursor.createdAt,
+            postId: cursor.id,
+          },
+        )
+        .andWhere('posts.userId = :userId', { userId })
         .orderBy('posts.createdAt', 'DESC')
-        .skip(offset)
-        .take(limit)
+        .take(take)
         .getMany();
 
       return {
@@ -280,7 +292,7 @@ export class PostsService {
         .select(['subs.id', 'user.id'])
         .getMany();
 
-      console.log(mySubscibes);
+      // console.log(mySubscibes);
       const subscribeIds = [
         ...mySubscibes.map((subscribe) => subscribe.to?.['id']),
         userId,
@@ -346,13 +358,13 @@ export class PostsService {
   async getPostsByAddress(
     { userId }: UUID,
     { address }: GetPostsByAddressInputDto,
-    { limit, offset }: CorePagination,
+    { take, cursor }: CursorPaginationArgs,
   ): Promise<getPostsByAddressOutputDto> {
     try {
       const execptUsers = await this.subscribesRepository
         .createQueryBuilder('subs')
         .where(
-          '(subs.to = :userId OR subs.from = :userId) AND subs.block = :block ',
+          '(subs.to = :userId OR subs.from = :userId) AND subs.block = :block',
           {
             userId,
             block: true,
@@ -375,7 +387,14 @@ export class PostsService {
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
         .innerJoinAndSelect('posts.user', 'user')
-        .where(`user.profileOpen = :open`, { open: true })
+        .where(
+          '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
+          {
+            createdAt: cursor.createdAt,
+            postId: cursor.id,
+          },
+        )
+        .andWhere(`user.profileOpen = :open`, { open: true })
         //빈 array를 집어넣으면 에러가 나므로, 0000인 UUID를 기본값으로 넣어줌
         .andWhere('user.id NOT IN (:...userIds)', {
           userIds: execptUserIds.length
@@ -383,8 +402,7 @@ export class PostsService {
             : ['00000000-0000-0000-0000-000000000000'],
         })
         .andWhere('posts.address LIKE :q', { q: `%${address}%` })
-        .skip(offset)
-        .take(limit)
+        .take(take)
         .getMany();
       console.log(posts);
 
@@ -425,17 +443,23 @@ export class PostsService {
   }
   async getMyLikedPosts(
     { userId }: UUID,
-    { offset, limit }: CorePagination,
+    { take, cursor }: CursorPaginationArgs,
   ): Promise<GetMyLikedPostsOutputDto> {
     try {
       const likedPosts = await this.likesRepository
         .createQueryBuilder('like')
-        .where('like.userId = :userId', { userId })
+        .where(
+          '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
+          {
+            createdAt: cursor.createdAt,
+            postId: cursor.id,
+          },
+        )
+        .andWhere('like.userId = :userId', { userId })
         .leftJoinAndSelect('like.post', 'post')
         .leftJoinAndSelect('post.user', 'user')
         .orderBy('like.updatedAt', 'DESC')
-        .skip(offset)
-        .take(limit)
+        .take(take)
         .getMany();
 
       // console.log(likedPosts);

@@ -67,9 +67,9 @@ export class PostsResolver {
   @UseGuards(GqlAuthGuard)
   getMyPosts(
     @AuthUser() userId: UUID,
-    @Args(args) args: GetMyPostsInputDto,
+    @Args(args) page: CursorPaginationInputDto,
   ): Promise<GetMyPostsOutputDto> {
-    return this.postsService.getMyPosts(userId, args);
+    return this.postsService.getMyPosts(userId, createCursor(page));
   }
 
   @Query((returns) => GetUserPostsOutputDto)
@@ -77,9 +77,9 @@ export class PostsResolver {
   getUserPosts(
     @AuthUser() authUserId: UUID,
     @Args(args) args: GetUserPostsInputDto,
-    @Args(page) page: CorePagination,
+    @Args(page) page: CursorPaginationInputDto,
   ): Promise<GetUserPostsOutputDto> {
-    return this.postsService.getUserPosts(authUserId, args, page);
+    return this.postsService.getUserPosts(authUserId, args, createCursor(page));
   }
 
   @Query((returns) => GetSubscribingPostsOutputDto)
@@ -96,17 +96,21 @@ export class PostsResolver {
   getPostsByAddress(
     @AuthUser() userId: UUID,
     @Args(args) args: GetPostsByAddressInputDto,
-    @Args(page) page: CorePagination,
+    @Args(page) page: CursorPaginationInputDto,
   ): Promise<getPostsByAddressOutputDto> {
-    return this.postsService.getPostsByAddress(userId, args, page);
+    return this.postsService.getPostsByAddress(
+      userId,
+      args,
+      createCursor(page),
+    );
   }
 
   @Query((returns) => GetMyLikedPostsOutputDto)
   @UseGuards(GqlAuthGuard)
   getMyLikedPosts(
     @AuthUser() userId: UUID,
-    @Args(page) page: CorePagination,
+    @Args(page) page: CursorPaginationInputDto,
   ): Promise<GetMyLikedPostsOutputDto> {
-    return this.postsService.getMyLikedPosts(userId, page);
+    return this.postsService.getMyLikedPosts(userId, createCursor(page));
   }
 }
