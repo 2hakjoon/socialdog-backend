@@ -175,6 +175,7 @@ export class PostsService {
         .andWhere('posts.userId = :userId', { userId })
         .loadRelationCountAndMap('posts.likes', 'posts.likedUsers')
         .orderBy('posts.createdAt', 'DESC')
+        .addOrderBy('posts.id', 'DESC')
         .take(take)
         .getMany();
 
@@ -249,6 +250,7 @@ export class PostsService {
         )
         .andWhere('posts.userId = :userId', { userId })
         .orderBy('posts.createdAt', 'DESC')
+        .addOrderBy('posts.id', 'DESC')
         .take(take)
         .getMany();
 
@@ -369,7 +371,7 @@ export class PostsService {
         .loadAllRelationIds({ relations: ['to', 'from'] })
         .getMany();
 
-      console.log(execptUsers);
+      // console.log(execptUsers);
 
       const execptUserIds = execptUsers.map((execptUser) => {
         if (execptUser.to !== userId) {
@@ -378,7 +380,7 @@ export class PostsService {
         return execptUser.from;
       });
 
-      console.log(execptUserIds);
+      // console.log(execptUserIds);
 
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
@@ -398,6 +400,8 @@ export class PostsService {
             : ['00000000-0000-0000-0000-000000000000'],
         })
         .andWhere('posts.address LIKE :q', { q: `%${address}%` })
+        .orderBy('posts.createdAt', 'DESC')
+        .addOrderBy('posts.id', 'DESC')
         .take(take)
         .getMany();
       console.log(posts);
@@ -445,7 +449,7 @@ export class PostsService {
       const likedPosts = await this.likesRepository
         .createQueryBuilder('like')
         .where(
-          '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
+          '(like.createdAt < :createdAt OR (like.createdAt = :createdAt AND like.id < :postId))',
           {
             createdAt: cursor.createdAt,
             postId: cursor.id,
@@ -455,6 +459,7 @@ export class PostsService {
         .leftJoinAndSelect('like.post', 'post')
         .leftJoinAndSelect('post.user', 'user')
         .orderBy('like.updatedAt', 'DESC')
+        .addOrderBy('like.id', 'DESC')
         .take(take)
         .getMany();
 
