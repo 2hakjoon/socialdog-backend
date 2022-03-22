@@ -144,7 +144,7 @@ export class PostsService {
         throw new Error('s3파일 삭제 실패');
       });
 
-      await this.postsRepository.remove(post);
+      await this.postsRepository.delete(post);
       return {
         ok: true,
       };

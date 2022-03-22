@@ -10,7 +10,9 @@ import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 @ObjectType()
 export class Likes extends CoreEntity {
   @Field(() => UserProfile)
-  @ManyToOne(() => UserProfile, (userProfile) => userProfile.liked)
+  @ManyToOne(() => UserProfile, (userProfile) => userProfile.liked, {
+    onDelete: 'CASCADE',
+  })
   user: UserProfile;
 
   @Field(() => String)
@@ -19,7 +21,7 @@ export class Likes extends CoreEntity {
   userId: string;
 
   @Field(() => Posts)
-  @ManyToOne(() => Posts, (posts) => posts.likedUsers)
+  @ManyToOne(() => Posts, (posts) => posts.likedUsers, { onDelete: 'CASCADE' })
   post: Posts;
 
   @Field(() => String)
