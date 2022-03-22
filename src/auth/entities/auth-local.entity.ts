@@ -24,6 +24,6 @@ export class AuthLocal extends CoreEntity {
   refreshToken?: string;
 
   @Field((type) => String)
-  @ManyToOne(() => UserProfile, (user) => user.id)
+  @ManyToOne(() => UserProfile, (user) => user.id, { onDelete: 'CASCADE' })
   user: string;
 }

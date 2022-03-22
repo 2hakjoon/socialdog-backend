@@ -34,6 +34,7 @@ export class Posts extends CoreEntity {
   @Field((type) => UserProfile)
   @ManyToOne(() => UserProfile, (userProfile) => userProfile.posts, {
     eager: true,
+    onDelete: 'CASCADE',
   })
   user: UserProfile;
 

@@ -14,7 +14,7 @@ export class AuthKakao extends CoreEntity {
   kakaoId: string;
 
   @Field((type) => String)
-  @ManyToOne(() => UserProfile, (user) => user.id)
+  @ManyToOne(() => UserProfile, (user) => user.id, { onDelete: 'CASCADE' })
   user: UserProfile;
 
   @Field((type) => String)

@@ -37,12 +37,12 @@ registerEnumType(BlockState, {
 @ObjectType()
 export class Subscribes extends CoreEntity {
   @Field(() => String)
-  @ManyToOne(() => UserProfile, (user) => user.id)
+  @ManyToOne(() => UserProfile, (user) => user.id, { onDelete: 'CASCADE' })
   from: string;
 
   @Field(() => String)
   @IsString()
-  @ManyToOne(() => UserProfile, (user) => user.id)
+  @ManyToOne(() => UserProfile, (user) => user.id, { onDelete: 'CASCADE' })
   to: string;
 
   @Field(() => SubscribeRequestState)
