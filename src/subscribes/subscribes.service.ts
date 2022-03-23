@@ -258,10 +258,11 @@ export class SubscribesService {
           return true;
         }
       })[0];
+      // console.log(requestState);
       const checkSubscribeRequested =
         requestState?.subscribeRequest === SubscribeRequestState.REJECTED
           ? SubscribeRequestState.REQUESTED
-          : SubscribeRequestState.NONE;
+          : requestState.subscribeRequest;
 
       // console.log(checkSubscribeRequested);
       if (blocking.length) {
