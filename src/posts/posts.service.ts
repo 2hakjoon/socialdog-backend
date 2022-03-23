@@ -226,6 +226,7 @@ export class PostsService {
         return {
           ok: true,
           data: [],
+          length: 0,
         };
       }
 
@@ -238,6 +239,7 @@ export class PostsService {
         return {
           ok: true,
           data: [],
+          length: 0,
         };
       }
       const posts = await this.postsRepository
