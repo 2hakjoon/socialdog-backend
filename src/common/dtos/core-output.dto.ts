@@ -45,6 +45,9 @@ export class PostAll extends Posts {
 export class CorePostsOutputDto extends CoreOutputDto {
   @Field(() => [PostAll])
   data?: PostAll[];
+
+  @Field(() => Int)
+  length?: number;
 }
 
 @ObjectType()

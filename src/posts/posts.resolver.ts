@@ -25,7 +25,7 @@ import {
   getPostsByAddressOutputDto,
 } from './dtos/get-posts-by-address.dto';
 import { GetMyLikedPostsOutputDto } from './dtos/get-my-liked-posts.dto';
-import { createCursor } from 'src/common/utils/createCusor';
+import { createCursor } from 'src/common/utils/paginationUtils';
 import { CursorPaginationInputDto } from 'src/common/dtos/cursor-pagination';
 
 @Resolver((of) => Posts)

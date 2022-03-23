@@ -271,6 +271,7 @@ export class PostsService {
     { take, cursor }: CursorPaginationArgs,
   ): Promise<GetSubscribingPostsOutputDto> {
     try {
+      console.log(take, cursor);
       const mySubscibes = await this.subscribesRepository
         .createQueryBuilder('subs')
         .where('subs.to = :userId AND subs.from = :userId', { userId })
@@ -314,7 +315,7 @@ export class PostsService {
         .addOrderBy('posts.id', 'DESC')
         .take(take)
         .getMany();
-      console.log(subscribingPosts);
+      // console.log(subscribingPosts);
 
       const postIds = subscribingPosts.map((post) => post.id);
       const myLikes = await this.likesRepository
@@ -340,10 +341,11 @@ export class PostsService {
       });
 
       // console.log(postsWithLike);
-
+      console.log(subscribingPosts.length);
       return {
         ok: true,
         data: subscribingPostsWithLike,
+        length: subscribingPosts.length,
       };
     } catch (e) {
       console.log(e);
