@@ -27,6 +27,10 @@ import {
   CancelSubscribingOutputDto,
 } from './dtos/cancel-subscribe.dto';
 import { GetMyRejectRequestsOutputDto } from './dtos/get-my-reject-requests.dto';
+import {
+  CancelSubscribeRequestInputDto,
+  CancelSubscribeRequestOutputDto,
+} from './dtos/cancel-subscribe-request';
 
 @Resolver((of) => Subscribes)
 export class SubscribesResolver {
@@ -57,6 +61,15 @@ export class SubscribesResolver {
     @Args(args) args: CancelSubscribingInputDto,
   ): Promise<CancelSubscribingOutputDto> {
     return this.subscribeService.cancelSubscribing(userId, args);
+  }
+
+  @Mutation(() => CancelSubscribeRequestOutputDto)
+  @UseGuards(GqlAuthGuard)
+  cancelSubscribingRequest(
+    @AuthUser() userId: UUID,
+    @Args(args) args: CancelSubscribeRequestInputDto,
+  ): Promise<CancelSubscribeRequestOutputDto> {
+    return this.subscribeService.CancelSubscribeRequest(userId, args);
   }
 
   @Mutation(() => ChangeBlockStateOutputDto)

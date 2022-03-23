@@ -28,6 +28,10 @@ import {
   CancelSubscribingOutputDto,
 } from './dtos/cancel-subscribe.dto';
 import { GetMyRejectRequestsOutputDto } from './dtos/get-my-reject-requests.dto';
+import {
+  CancelSubscribeRequestInputDto,
+  CancelSubscribeRequestOutputDto,
+} from './dtos/cancel-subscribe-request';
 
 export class SubscribesService {
   constructor(
@@ -129,6 +133,49 @@ export class SubscribesService {
       return {
         ok: false,
         error: '요청 수락 및 거절을 실패했습니다.',
+      };
+    }
+  }
+
+  async CancelSubscribeRequest(
+    { userId }: UUID,
+    { to }: CancelSubscribeRequestInputDto,
+  ): Promise<CancelSubscribeRequestOutputDto> {
+    try {
+      if (userId === to) {
+        return {
+          ok: false,
+          error: '자신에게 요청할 수 없습니다.',
+        };
+      }
+      const subscribe = await this.subscribesRepository.findOne({
+        to,
+        from: userId,
+      });
+
+      // console.log(subscribe);
+
+      if (
+        !subscribe &&
+        subscribe.subscribeRequest !== SubscribeRequestState.REQUESTED
+      ) {
+        return {
+          ok: false,
+          error: '잘못된 요청입니다.',
+        };
+      }
+      await this.subscribesRepository.update(subscribe.id, {
+        ...subscribe,
+        subscribeRequest: SubscribeRequestState.NONE,
+      });
+
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: true,
+        error: '요청을 실패하였습니다.',
       };
     }
   }
