@@ -183,6 +183,7 @@ export class PostsService {
       return {
         ok: true,
         data: posts,
+        length: posts.length,
       };
     } catch (e) {
       console.log(e);
@@ -257,6 +258,7 @@ export class PostsService {
       return {
         ok: true,
         data: posts,
+        length: posts.length,
       };
     } catch (e) {
       return {
@@ -271,7 +273,7 @@ export class PostsService {
     { take, cursor }: CursorPaginationArgs,
   ): Promise<GetSubscribingPostsOutputDto> {
     try {
-      console.log(take, cursor);
+      // console.log(take, cursor);
       const mySubscibes = await this.subscribesRepository
         .createQueryBuilder('subs')
         .where('subs.to = :userId AND subs.from = :userId', { userId })
@@ -341,7 +343,7 @@ export class PostsService {
       });
 
       // console.log(postsWithLike);
-      console.log(subscribingPosts.length);
+      // console.log(subscribingPosts.length);
       return {
         ok: true,
         data: subscribingPostsWithLike,
@@ -406,7 +408,7 @@ export class PostsService {
         .addOrderBy('posts.id', 'DESC')
         .take(take)
         .getMany();
-      console.log(posts);
+      // console.log(posts);
 
       const postIds = posts.map((post) => post.id);
       const myLikes = await this.likesRepository
@@ -434,6 +436,7 @@ export class PostsService {
       return {
         ok: true,
         data: postsWithLike,
+        length: postsWithLike.length,
       };
     } catch (e) {
       console.log(e);
@@ -475,6 +478,7 @@ export class PostsService {
       return {
         ok: true,
         data: posts,
+        length: posts.length,
       };
     } catch (e) {
       return {

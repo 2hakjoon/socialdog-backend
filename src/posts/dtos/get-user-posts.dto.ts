@@ -1,7 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsString, IsUUID } from 'class-validator';
-import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
-import { Posts } from '../entities/posts.entity';
+import { IsString } from 'class-validator';
+import { CorePostsOutputDto } from 'src/common/dtos/core-output.dto';
 
 @InputType()
 export class GetUserPostsInputDto {
@@ -11,7 +10,4 @@ export class GetUserPostsInputDto {
 }
 
 @ObjectType()
-export class GetUserPostsOutputDto extends CoreOutputDto {
-  @Field((type) => [Posts])
-  data?: Posts[];
-}
+export class GetUserPostsOutputDto extends CorePostsOutputDto {}
