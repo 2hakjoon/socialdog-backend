@@ -28,13 +28,13 @@ export class UserProfile extends CoreEntity {
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true, unique: true })
   @IsString()
-  @Length(0, 20)
+  @Length(0, 15)
   username?: string;
 
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
   @IsString()
-  @Length(0, 20)
+  @Length(0, 15)
   dogname?: string;
 
   @Field((type) => String, { nullable: true })
