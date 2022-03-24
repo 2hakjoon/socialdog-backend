@@ -6,7 +6,6 @@ import {
   PartialType,
   PickType,
 } from '@nestjs/graphql';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { AuthLocal } from 'src/auth/entities/auth-local.entity';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import { UserProfile } from '../entities/users-profile.entity';
