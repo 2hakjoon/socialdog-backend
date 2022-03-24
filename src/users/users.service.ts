@@ -75,6 +75,7 @@ export class UsersService {
 
       const user = await this.usersProfileRepository.save(
         await this.usersProfileRepository.create({
+          username: `사용자-${Math.round(Math.random() * 100000000)}`,
           loginStrategy: LoginStrategy.LOCAL,
         }),
       );

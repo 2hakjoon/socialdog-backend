@@ -124,7 +124,7 @@ export class AuthService {
     }
   }
   async kakaoLogin(kakaoTokens: KakaoLoginInputDto): Promise<LoginOutputDto> {
-    console.log(kakaoTokens);
+    // console.log(kakaoTokens);
     try {
       const { data: kakaoResponse }: IKakaoLoginResponse = await axios(
         'https://kapi.kakao.com/v1/user/access_token_info',
@@ -143,15 +143,17 @@ export class AuthService {
           loadRelationIds: { relations: ['user'] },
         },
       );
-      console.log(authKakaoUser);
+      // console.log(authKakaoUser);
+
       //로그인 한 적이 없을때
       if (!authKakaoUser) {
         const user = await this.userProfileRepository.save(
           await this.userProfileRepository.create({
+            username: `사용자-${Math.round(Math.random() * 100000000)}`,
             loginStrategy: LoginStrategy.KAKAO,
           }),
         );
-        console.log(user);
+        // console.log(user);
         const access_token = this.jwtService.sign({ id: user.id });
         const refresh_token = this.jwtService.sign(
           { id: user.id },
@@ -168,6 +170,7 @@ export class AuthService {
           ok: true,
           accessToken: access_token,
           refreshToken: refresh_token,
+          isJoin: true,
         };
       }
 
@@ -183,6 +186,7 @@ export class AuthService {
         ok: true,
         accessToken: access_token,
         refreshToken: refresh_token,
+        isJoin: false,
       };
     } catch (e) {
       console.log(e);

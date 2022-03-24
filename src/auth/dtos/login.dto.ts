@@ -12,4 +12,7 @@ export class LoginOutputDto extends CoreOutputDto {
 
   @Field(() => String, { nullable: true })
   refreshToken?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  isJoin?: boolean;
 }
