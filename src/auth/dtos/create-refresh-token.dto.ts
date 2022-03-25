@@ -17,4 +17,7 @@ export class ReissueAccessTokenInputDto {
 export class ReissueAccessTokenOutputDto extends CoreOutputDto {
   @Field(() => String, { nullable: true })
   accessToken?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  isRefreshTokenExpired?: boolean;
 }

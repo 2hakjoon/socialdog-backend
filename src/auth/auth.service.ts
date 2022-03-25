@@ -28,6 +28,11 @@ interface IKakaoLoginResponse {
   };
 }
 
+interface IAccessTokenArgs {
+  id: string;
+  loginStrategy: LoginStrategy;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -52,7 +57,6 @@ export class AuthService {
           loadRelationIds: { relations: ['user'] },
         },
       );
-      console.log(authLocal);
 
       if (!authLocal) {
         return {
@@ -70,10 +74,16 @@ export class AuthService {
           error: '로그인 정보가 잘못되었습니다.',
         };
       }
-      const access_token = this.jwtService.sign({ id: authLocal.user });
-      const refresh_token = this.jwtService.sign({
-        expiresIn: this.options.refrechTokenExpiresIn,
+      const access_token = this.jwtService.sign({
+        id: authLocal.user,
+        loginStrategy: LoginStrategy.LOCAL,
       });
+      const refresh_token = this.jwtService.sign(
+        {},
+        {
+          expiresIn: this.options.refreshTokenExpiresIn,
+        },
+      );
       await this.AuthLoalRepository.update(authLocal.id, {
         ...authLocal,
         refreshToken: refresh_token,
@@ -92,37 +102,6 @@ export class AuthService {
     }
   }
 
-  async reissuanceAccessToken({
-    accessToken,
-    refreshToken,
-  }: ReissueAccessTokenInputDto): Promise<ReissueAccessTokenOutputDto> {
-    try {
-      const decodedToken = this.jwtService.decode(accessToken);
-      const authLocal = await this.AuthLoalRepository.findOne({ refreshToken });
-      if (!authLocal) {
-        return {
-          ok: false,
-          error: '리프레시 토큰이 일치하지 않습니다.',
-        };
-      }
-      if (authLocal.id !== decodedToken['id']) {
-        return {
-          ok: false,
-          error: '엑세스 토큰이 일치하지 않습니다.',
-        };
-      }
-      const newAccessToken = this.jwtService.sign({ id: authLocal.user });
-      return {
-        ok: true,
-        accessToken: newAccessToken,
-      };
-    } catch (e) {
-      return {
-        ok: false,
-        error: '엑세스 재발급에 실패하였습니다.',
-      };
-    }
-  }
   async kakaoLogin(kakaoTokens: KakaoLoginInputDto): Promise<LoginOutputDto> {
     // console.log(kakaoTokens);
     try {
@@ -133,6 +112,7 @@ export class AuthService {
       if (!kakaoResponse.id) {
         return {
           ok: false,
+          error: '카카오 로그인에 실패했습니다.',
         };
       }
       const authKakaoUser = await this.AuthKakaoRepository.findOne(
@@ -150,14 +130,19 @@ export class AuthService {
         const user = await this.userProfileRepository.save(
           await this.userProfileRepository.create({
             username: `사용자-${Math.round(Math.random() * 100000000)}`,
-            loginStrategy: LoginStrategy.KAKAO,
           }),
         );
         // console.log(user);
-        const access_token = this.jwtService.sign({ id: user.id });
-        const refresh_token = this.jwtService.sign({
-          expiresIn: this.options.refrechTokenExpiresIn,
+        const access_token = this.jwtService.sign({
+          id: user.id,
+          loginStrategy: LoginStrategy.KAKAO,
         });
+        const refresh_token = this.jwtService.sign(
+          {},
+          {
+            expiresIn: this.options.refreshTokenExpiresIn,
+          },
+        );
         await this.AuthKakaoRepository.save(
           await this.AuthKakaoRepository.create({
             kakaoId: kakaoResponse.id,
@@ -172,11 +157,16 @@ export class AuthService {
           isJoin: true,
         };
       }
-
-      const access_token = this.jwtService.sign({ id: authKakaoUser.user });
-      const refresh_token = this.jwtService.sign({
-        expiresIn: this.options.refrechTokenExpiresIn,
+      const access_token = this.jwtService.sign({
+        id: authKakaoUser.user,
+        loginStrategy: LoginStrategy.KAKAO,
       });
+      const refresh_token = this.jwtService.sign(
+        {},
+        {
+          expiresIn: this.options.refreshTokenExpiresIn,
+        },
+      );
       await this.AuthKakaoRepository.update(authKakaoUser.id, {
         refreshToken: refresh_token,
       });
@@ -193,5 +183,74 @@ export class AuthService {
         error: '카카오 로그인 도중 에러가 발생했습니다.',
       };
     }
+  }
+
+  async reissuanceAccessToken({
+    accessToken,
+    refreshToken,
+  }: ReissueAccessTokenInputDto): Promise<ReissueAccessTokenOutputDto> {
+    try {
+      this.jwtService.verify(refreshToken, this.options.secretKey);
+
+      const decodedAccessToken = this.jwtService.decode(
+        accessToken,
+      ) as IAccessTokenArgs;
+      // console.log(decodedToken);
+      const authLocal = await this.getAuthInfo(
+        decodedAccessToken.loginStrategy,
+        refreshToken,
+      );
+      if (!authLocal) {
+        return {
+          ok: false,
+          error: '리프레시 토큰이 일치하지 않습니다.',
+        };
+      }
+      console.log(authLocal);
+      if (authLocal.user !== decodedAccessToken['id']) {
+        return {
+          ok: false,
+          error: '엑세스 토큰이 일치하지 않습니다.',
+        };
+      }
+      const newAccessToken = this.jwtService.sign({
+        id: authLocal.user,
+        loginStrategy: decodedAccessToken.loginStrategy,
+      });
+      return {
+        ok: true,
+        accessToken: newAccessToken,
+      };
+    } catch (e) {
+      console.log(e.message);
+      if (e.message === 'jwt expired') {
+        return {
+          ok: false,
+          isRefreshTokenExpired: true,
+          error: '토큰이 만료되었습니다. 다시 로그인해주세요.',
+        };
+      }
+      return {
+        ok: false,
+        error: '엑세스 재발급에 실패하였습니다.',
+      };
+    }
+  }
+
+  async getAuthInfo(loginStrategy: LoginStrategy, refreshToken: string) {
+    if (loginStrategy === LoginStrategy.KAKAO) {
+      return this.AuthKakaoRepository.findOne(
+        {
+          refreshToken,
+        },
+        { loadRelationIds: { relations: ['user'] } },
+      );
+    } else if (loginStrategy === LoginStrategy.LOCAL) {
+      return this.AuthLoalRepository.findOne(
+        { refreshToken },
+        { loadRelationIds: { relations: ['user'] } },
+      );
+    }
+    return undefined;
   }
 }
