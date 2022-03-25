@@ -16,7 +16,6 @@ import {
   LoginStrategy,
   UserProfile,
 } from 'src/users/entities/users-profile.entity';
-import { secret } from './key.secret';
 import { CONFIG_OPTIONS } from 'src/common/utils/constants';
 
 interface IKakaoLoginResponse {
@@ -72,10 +71,9 @@ export class AuthService {
         };
       }
       const access_token = this.jwtService.sign({ id: authLocal.user });
-      const refresh_token = this.jwtService.sign(
-        { id: authLocal.user },
-        { expiresIn: this.options.refrechTokenExpiresIn },
-      );
+      const refresh_token = this.jwtService.sign({
+        expiresIn: this.options.refrechTokenExpiresIn,
+      });
       await this.AuthLoalRepository.update(authLocal.id, {
         ...authLocal,
         refreshToken: refresh_token,
@@ -157,10 +155,9 @@ export class AuthService {
         );
         // console.log(user);
         const access_token = this.jwtService.sign({ id: user.id });
-        const refresh_token = this.jwtService.sign(
-          { id: user.id },
-          { expiresIn: this.options.refrechTokenExpiresIn },
-        );
+        const refresh_token = this.jwtService.sign({
+          expiresIn: this.options.refrechTokenExpiresIn,
+        });
         await this.AuthKakaoRepository.save(
           await this.AuthKakaoRepository.create({
             kakaoId: kakaoResponse.id,
@@ -177,10 +174,9 @@ export class AuthService {
       }
 
       const access_token = this.jwtService.sign({ id: authKakaoUser.user });
-      const refresh_token = this.jwtService.sign(
-        { id: authKakaoUser.user },
-        { expiresIn: this.options.refrechTokenExpiresIn },
-      );
+      const refresh_token = this.jwtService.sign({
+        expiresIn: this.options.refrechTokenExpiresIn,
+      });
       await this.AuthKakaoRepository.update(authKakaoUser.id, {
         refreshToken: refresh_token,
       });
