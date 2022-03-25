@@ -34,6 +34,7 @@ import {
   CheckUsernameExistInputDto,
   CheckUsernameExistOutputDto,
 } from './dtos/check-username-exists.dto';
+import { GetProfileOpenUserOutputDto } from './dtos/get-profile-open-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -399,6 +400,31 @@ export class UsersService {
       return {
         ok: false,
         error: '사용자 이름 중복확인에 실패했습니다.',
+      };
+    }
+  }
+  async getProfileOpenUser({
+    userId,
+  }: UUID): Promise<GetProfileOpenUserOutputDto> {
+    try {
+      const users = await this.usersProfileRepository
+        .createQueryBuilder('users')
+        .where('users.profileOpen = :open AND users.id != :id', {
+          open: true,
+          id: userId,
+        })
+        .orderBy('users.createdAt', 'DESC')
+        .limit(10)
+        .getMany();
+
+      return {
+        ok: true,
+        data: users,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '추천 친구목록을 불러오는데 실패했습니다.',
       };
     }
   }

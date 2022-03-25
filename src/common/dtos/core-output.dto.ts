@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, PickType } from '@nestjs/graphql';
 import { Posts } from 'src/posts/entities/posts.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { Walks } from 'src/walks/entities/walks.entity';
@@ -31,6 +31,15 @@ export class CoreUserOutputDto extends CoreOutputDto {
 }
 
 @ObjectType()
+export class UserProfileCard extends PickType(UserProfile, [
+  'id',
+  'username',
+  'photo',
+]) {}
+
+//posts
+
+@ObjectType()
 export class PostAll extends Posts {
   @Field((type) => Int)
   likes?: number;
@@ -38,8 +47,6 @@ export class PostAll extends Posts {
   @Field((type) => Boolean)
   liked?: boolean;
 }
-
-//posts
 
 @ObjectType()
 export class CorePostsOutputDto extends CoreOutputDto {

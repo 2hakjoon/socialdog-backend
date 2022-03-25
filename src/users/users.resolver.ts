@@ -16,6 +16,7 @@ import { CoreOutputDto, CoreUserOutputDto } from 'src/common/dtos/core-output.dt
 import { CreateVerificationInputDto, VerifyEmailAndCodeInputDto } from './dtos/email-verification';
 import { FindUserByUsernameInputDto, FindUserByUsernameOutputDto } from './dtos/find-user-by-username.dto';
 import { CheckUsernameExistInputDto, CheckUsernameExistOutputDto } from './dtos/check-username-exists.dto';
+import { GetProfileOpenUserOutputDto } from './dtos/get-profile-open-user.dto';
 
 @Resolver((of) => UUID)
 export class UsersResolver {
@@ -64,5 +65,11 @@ export class UsersResolver {
   @Query(()=>CheckUsernameExistOutputDto)
   checkUsernameExist(@Args(args) args: CheckUsernameExistInputDto):Promise<CheckUsernameExistOutputDto>{
     return this.usersService.checkUsernameExist(args)
+  }
+
+  @Query(()=>GetProfileOpenUserOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getProfileOpenUser(@AuthUser() userId:UUID):Promise<GetProfileOpenUserOutputDto>{
+    return this.usersService.getProfileOpenUser(userId)
   }
 }
