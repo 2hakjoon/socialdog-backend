@@ -14,20 +14,27 @@ import { CONFIG_OPTIONS } from 'src/common/utils/constants';
 
 @Module({})
 @Global()
-export class AuthModule{
-  static forRoot(options:IAuthInterface): DynamicModule{
-    return{
-      module:AuthModule,
+export class AuthModule {
+  static forRoot(options: IAuthInterface): DynamicModule {
+    return {
+      module: AuthModule,
       imports: [
         TypeOrmModule.forFeature([UserProfile, AuthLocal, AuthKakao]),
         PassportModule,
         JwtModule.register({
           secret: options.secretKey,
-          signOptions: { expiresIn: options.expiresIn },
+          signOptions: { expiresIn: options.accessTokenExpiresIn },
         }),
       ],
-      providers: [{provide:CONFIG_OPTIONS, useValue:options}, AuthService, AuthResolver, LocalStrategy, JwtStrategy, AuthLocal],
+      providers: [
+        { provide: CONFIG_OPTIONS, useValue: options },
+        AuthService,
+        AuthResolver,
+        LocalStrategy,
+        JwtStrategy,
+        AuthLocal,
+      ],
       exports: [LocalStrategy, AuthLocal],
-    }
+    };
   }
 }

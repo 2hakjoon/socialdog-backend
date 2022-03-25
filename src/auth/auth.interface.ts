@@ -1,4 +1,5 @@
 export interface IAuthInterface {
   secretKey: string;
-  expiresIn: string;
+  accessTokenExpiresIn: string;
+  refrechTokenExpiresIn: string;
 }

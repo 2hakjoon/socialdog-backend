@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { LoginInputDto, LoginOutputDto } from './dtos/login.dto';
 import { Repository } from 'typeorm';
@@ -17,6 +17,7 @@ import {
   UserProfile,
 } from 'src/users/entities/users-profile.entity';
 import { secret } from './key.secret';
+import { CONFIG_OPTIONS } from 'src/common/utils/constants';
 
 interface IKakaoLoginResponse {
   data: {
@@ -38,6 +39,7 @@ export class AuthService {
     @InjectRepository(AuthKakao)
     private AuthKakaoRepository: Repository<AuthKakao>,
     private jwtService: JwtService,
+    @Inject(CONFIG_OPTIONS) private options,
   ) {}
 
   async localLogin({
@@ -72,7 +74,7 @@ export class AuthService {
       const access_token = this.jwtService.sign({ id: authLocal.user });
       const refresh_token = this.jwtService.sign(
         { id: authLocal.user },
-        { expiresIn: '182d' },
+        { expiresIn: this.options.refrechTokenExpiresIn },
       );
       await this.AuthLoalRepository.update(authLocal.id, {
         ...authLocal,
@@ -157,7 +159,7 @@ export class AuthService {
         const access_token = this.jwtService.sign({ id: user.id });
         const refresh_token = this.jwtService.sign(
           { id: user.id },
-          { expiresIn: '182d' },
+          { expiresIn: this.options.refrechTokenExpiresIn },
         );
         await this.AuthKakaoRepository.save(
           await this.AuthKakaoRepository.create({
@@ -177,7 +179,7 @@ export class AuthService {
       const access_token = this.jwtService.sign({ id: authKakaoUser.user });
       const refresh_token = this.jwtService.sign(
         { id: authKakaoUser.user },
-        { expiresIn: '182d' },
+        { expiresIn: this.options.refrechTokenExpiresIn },
       );
       await this.AuthKakaoRepository.update(authKakaoUser.id, {
         refreshToken: refresh_token,

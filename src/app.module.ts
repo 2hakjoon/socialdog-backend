@@ -75,7 +75,8 @@ import { Likes } from './likes/entities/likes.entity';
     }),
     AuthModule.forRoot({
       secretKey: process.env.JWT_SECRET_KEY,
-      expiresIn: '7d',
+      accessTokenExpiresIn: '1d',
+      refrechTokenExpiresIn: '14d',
     }),
     UsersModule,
     WalksModule,
