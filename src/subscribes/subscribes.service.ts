@@ -309,7 +309,7 @@ export class SubscribesService {
       const checkSubscribeRequested =
         requestState?.subscribeRequest === SubscribeRequestState.REJECTED
           ? SubscribeRequestState.REQUESTED
-          : requestState.subscribeRequest;
+          : SubscribeRequestState.NONE;
 
       // console.log(checkSubscribeRequested);
       if (blocking.length) {
@@ -329,6 +329,7 @@ export class SubscribesService {
         subscribeRequest: checkSubscribeRequested,
       };
     } catch (e) {
+      console.log(e);
       throw new Error('차단 상태 확인 오류');
     }
   }
