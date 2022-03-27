@@ -13,7 +13,7 @@ export class Comments extends CoreEntity {
   @IsString()
   @Length(0, 300)
   @Column()
-  contents: string;
+  content: string;
 
   // relations
   @Field(() => Posts)
