@@ -305,7 +305,7 @@ export class SubscribesService {
           return true;
         }
       })[0];
-      console.log(requestState);
+      // console.log(requestState);
       const checkSubscribeRequested =
         requestState?.subscribeRequest === SubscribeRequestState.REJECTED
           ? SubscribeRequestState.REQUESTED
