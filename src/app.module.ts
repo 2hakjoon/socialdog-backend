@@ -22,6 +22,8 @@ import { Subscribes } from './subscribes/entities/subscribes.entity';
 import { SubscribesModule } from './subscribes/subscribes.module';
 import { LikesModule } from './likes/likes.module';
 import { Likes } from './likes/entities/likes.entity';
+import { CommentModule } from './comment/comment.module';
+import { Comments } from './comment/entities/comment.entity';
 
 @Module({
   imports: [
@@ -65,6 +67,7 @@ import { Likes } from './likes/entities/likes.entity';
         Posts,
         Subscribes,
         Likes,
+        Comments,
       ],
     }),
     UploadModule.forRoot({
@@ -84,6 +87,7 @@ import { Likes } from './likes/entities/likes.entity';
     PostsModule,
     SubscribesModule,
     LikesModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
