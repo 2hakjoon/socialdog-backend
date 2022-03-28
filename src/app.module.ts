@@ -22,8 +22,8 @@ import { Subscribes } from './subscribes/entities/subscribes.entity';
 import { SubscribesModule } from './subscribes/subscribes.module';
 import { LikesModule } from './likes/likes.module';
 import { Likes } from './likes/entities/likes.entity';
-import { CommentsModule } from './comment/comments.module';
-import { Comments } from './comment/entities/comments.entity';
+import { CommentsModule } from './comments/comments.module';
+import { Comments } from './comments/entities/comments.entity';
 
 @Module({
   imports: [
