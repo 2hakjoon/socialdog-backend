@@ -8,6 +8,14 @@ import {
   CreateReCommentInputDto,
   CreateReCommentOutputDto,
 } from './dtos/create-recomment.dto';
+import {
+  DeleteCommentInputDto,
+  DeleteCommentOutputDto,
+} from './dtos/delete-comment.dto';
+import {
+  DeleteReCommentInputDto,
+  DeleteReCommentOutputDto,
+} from './dtos/delete-recomment.dto';
 
 import {
   GetCommentDetailInputDto,
@@ -33,6 +41,20 @@ export class CommentsService {
     { id }: GetCommentDetailInputDto,
     { take, cursor }: CursorPaginationArgs,
   ): Promise<GetCommentDetailOutputDto> {
+    return { ok: true };
+  }
+
+  async deleteComment(
+    { userId }: UUID,
+    { id }: DeleteCommentInputDto,
+  ): Promise<DeleteCommentOutputDto> {
+    return { ok: true };
+  }
+
+  async deleteReComment(
+    { userId }: UUID,
+    { id }: DeleteReCommentInputDto,
+  ): Promise<DeleteReCommentOutputDto> {
     return { ok: true };
   }
 }

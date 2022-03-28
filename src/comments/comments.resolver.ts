@@ -70,7 +70,7 @@ export class CommentsResolver {
     @AuthUser() user: UUID,
     @Args(args) args: DeleteCommentInputDto,
   ): Promise<DeleteCommentOutputDto> {
-    return { ok: true };
+    return this.deleteComment(user, args);
   }
   // 대댓글 삭제
   @Mutation(() => DeleteReCommentOutputDto)
@@ -79,6 +79,6 @@ export class CommentsResolver {
     @AuthUser() user: UUID,
     @Args(args) args: DeleteReCommentInputDto,
   ): Promise<DeleteReCommentOutputDto> {
-    return { ok: true };
+    return this.deleteReComment(user, args);
   }
 }
