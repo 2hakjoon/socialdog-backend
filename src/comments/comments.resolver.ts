@@ -1,9 +1,11 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser, GqlAuthGuard } from 'src/auth/auth.guard';
-import { args } from 'src/common/utils/constants';
+import { CursorPaginationInputDto } from 'src/common/dtos/cursor-pagination';
+import { args, page } from 'src/common/utils/constants';
 import { UUID } from 'src/users/entities/users-profile.entity';
 import { CommentsService } from './comments.service';
+import { createCursor } from '../common/utils/paginationUtils';
 import {
   CreateCommentInputDto,
   CreateCommentOutputDto,
@@ -53,8 +55,13 @@ export class CommentsResolver {
   getCommentDetail(
     @AuthUser() user: UUID,
     @Args(args) args: GetCommentDetailInputDto,
+    @Args(page) page: CursorPaginationInputDto,
   ): Promise<GetCommentDetailOutputDto> {
-    return { ok: true };
+    return this.commentsService.getCommentDetail(
+      user,
+      args,
+      createCursor(page),
+    );
   }
   // 댓글 삭제
   @Mutation(() => DeleteCommentOutputDto)

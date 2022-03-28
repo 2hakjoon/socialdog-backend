@@ -5,9 +5,7 @@ import { UUID } from 'src/users/entities/users-profile.entity';
 import { Comments } from '../entities/comments.entity';
 
 @InputType()
-export class CreateReCommentInputDto extends PickType(Comments, [
-  'content',
-]) {
+export class CreateReCommentInputDto extends PickType(Comments, ['content']) {
   @Field(() => UUID)
   @IsString()
   parentCommentId: UUID;
