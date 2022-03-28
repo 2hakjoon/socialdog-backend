@@ -22,8 +22,8 @@ import { Subscribes } from './subscribes/entities/subscribes.entity';
 import { SubscribesModule } from './subscribes/subscribes.module';
 import { LikesModule } from './likes/likes.module';
 import { Likes } from './likes/entities/likes.entity';
-import { CommentModule } from './comment/comment.module';
-import { Comments } from './comment/entities/comment.entity';
+import { CommentsModule } from './comment/comments.module';
+import { Comments } from './comment/entities/comments.entity';
 
 @Module({
   imports: [
@@ -87,7 +87,7 @@ import { Comments } from './comment/entities/comment.entity';
     PostsModule,
     SubscribesModule,
     LikesModule,
-    CommentModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
