@@ -22,11 +22,11 @@ export class Comments extends CoreEntity {
 
   // relations
   @Field(() => Posts)
-  @ManyToOne(() => Posts, (posts) => posts.id)
+  @ManyToOne(() => Posts, (posts) => posts.id, { onDelete: 'CASCADE' })
   post: Posts;
 
   @Field(() => UserProfile)
-  @ManyToOne(() => UserProfile, (user) => user.id)
+  @ManyToOne(() => UserProfile, (user) => user.id, { onDelete: 'CASCADE' })
   user: UserProfile;
 
   @Field(() => Comments)
@@ -34,6 +34,8 @@ export class Comments extends CoreEntity {
   parentComment: Comments;
 
   @Field(() => Comments)
-  @OneToMany(() => Comments, (comment) => comment.parentComment)
+  @ManyToOne(() => Comments, (comment) => comment.parentComment, {
+    onDelete: 'CASCADE',
+  })
   childComment: Comments;
 }
