@@ -7,7 +7,6 @@ import { Comments } from '../entities/comments.entity';
 @InputType()
 export class CreateReCommentInputDto extends PickType(Comments, [
   'content',
-  'depth',
 ]) {
   @Field(() => UUID)
   @IsString()
