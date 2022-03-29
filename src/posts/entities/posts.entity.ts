@@ -1,5 +1,6 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
+import { Comments } from 'src/comments/entities/comments.entity';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Likes } from 'src/likes/entities/likes.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
@@ -31,6 +32,12 @@ export class Posts extends CoreEntity {
   @Column()
   contents: string;
 
+  @Field(() => String)
+  @RelationId((posts: Posts) => posts.user)
+  @Column()
+  userId: string;
+
+  // Relation
   @Field((type) => UserProfile)
   @ManyToOne(() => UserProfile, (userProfile) => userProfile.posts, {
     eager: true,
@@ -38,12 +45,11 @@ export class Posts extends CoreEntity {
   })
   user: UserProfile;
 
-  @Field(() => String)
-  @RelationId((posts: Posts) => posts.user)
-  @Column()
-  userId: string;
-
   @Field((type) => [Likes], { nullable: true })
   @OneToMany(() => Likes, (likes) => likes.post)
   likedUsers?: Likes[];
+
+  @Field((type) => Comments)
+  @OneToMany(() => Comments, (comments) => comments.post)
+  comment: Comments;
 }
