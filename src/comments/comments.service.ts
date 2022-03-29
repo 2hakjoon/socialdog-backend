@@ -154,11 +154,14 @@ export class CommentsService {
     }
   }
 
-  async getComment({ id }: GetCommentInputDto): Promise<GetCommentOutputDto> {
+  async getComment(
+    { userId }: UUID,
+    { id }: GetCommentInputDto,
+  ): Promise<GetCommentOutputDto> {
     try {
       const comment = await this.commentsRepository.findOne(
         { id },
-        { relations: ['user'] },
+        { relations: ['user', 'post'] },
       );
       if (!comment) {
         return {
@@ -166,6 +169,22 @@ export class CommentsService {
           error: '댓글이 존재하지 않습니다.',
         };
       }
+
+      //차단 여부, 구독여부 확인해서 클라이언트로 전송
+      const { blocking, subscribeRequest } =
+        await this.subscribeUtil.checkBlockingAndRequestState({
+          requestUser: userId,
+          targetUser: comment.post.id,
+        });
+
+      const rejectedMessage = this.subscribeUtil.returnBlockAndSubscribeMessage(
+        blocking,
+        subscribeRequest,
+      );
+      if (rejectedMessage) {
+        return rejectedMessage();
+      }
+
       return { ok: true, data: comment };
     } catch (e) {
       return { ok: false, error: '댓글 조회에 실패했습니다.' };
@@ -173,6 +192,7 @@ export class CommentsService {
   }
 
   async getReComments(
+    { userId }: UUID,
     { parentCommentId }: GetReCommentsInputDto,
     { take, cursor }: CursorPaginationArgs,
   ): Promise<GetReCommentsOutputDto> {
@@ -195,6 +215,25 @@ export class CommentsService {
         .limit(take)
         .getMany();
       // console.log(reComments);
+
+      //차단 여부, 구독여부 확인해서 클라이언트로 전송
+      if (reComments.length) {
+        const { blocking, subscribeRequest } =
+          await this.subscribeUtil.checkBlockingAndRequestState({
+            requestUser: userId,
+            targetUser: reComments[0].post.userId,
+          });
+
+        const rejectedMessage =
+          this.subscribeUtil.returnBlockAndSubscribeMessage(
+            blocking,
+            subscribeRequest,
+          );
+        if (rejectedMessage) {
+          return rejectedMessage();
+        }
+      }
+
       return { ok: true, data: reComments };
     } catch (e) {
       return { ok: false, error: '댓글 조회에 실패했습니다.' };

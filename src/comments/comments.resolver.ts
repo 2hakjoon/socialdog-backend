@@ -55,19 +55,21 @@ export class CommentsResolver {
   @Query(() => GetCommentOutputDto)
   @UseGuards(GqlAuthGuard)
   getComment(
+    @AuthUser() userId: UUID,
     @Args(args) args: GetCommentInputDto,
   ): Promise<GetCommentOutputDto> {
-    return this.commentsService.getComment(args);
+    return this.commentsService.getComment(userId, args);
   }
 
   // 대댓글들 보기
   @Query(() => GetReCommentsOutputDto)
   @UseGuards(GqlAuthGuard)
   getReComments(
+    @AuthUser() userId: UUID,
     @Args(args) args: GetReCommentsInputDto,
     @Args(page) page: CursorPaginationInputDto,
   ): Promise<GetReCommentsOutputDto> {
-    return this.commentsService.getReComments(args, createCursor(page));
+    return this.commentsService.getReComments(userId, args, createCursor(page));
   }
 
   // 댓글 삭제
