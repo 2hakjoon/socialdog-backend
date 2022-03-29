@@ -35,12 +35,12 @@ export class Comments extends CoreEntity {
   user: UserProfile;
 
   @Field(() => Comments)
-  @OneToMany(() => Comments, (comment) => comment.childComment)
+  @ManyToOne(() => Comments, (comment) => comment.childComment, {
+    onDelete: 'CASCADE',
+  })
   parentComment: Comments;
 
   @Field(() => [Comments])
-  @ManyToOne(() => Comments, (comment) => comment.parentComment, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Comments, (comment) => comment.parentComment)
   childComment: Comments[];
 }
