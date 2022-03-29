@@ -5,10 +5,6 @@ import { Posts } from '../entities/posts.entity';
 @InputType()
 export class GetPostDetailInputDto extends PickType(Posts, ['id']) {}
 
-
-
-
-
 @ObjectType()
 export class GetPostDetailOutputDto extends CoreOutputDto {
   @Field(() => PostAll)

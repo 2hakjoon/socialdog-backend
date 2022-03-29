@@ -78,6 +78,7 @@ export class CommentsService {
         await this.commentsRepository.create({
           user,
           post,
+          postId,
           content,
           depth: 0,
         }),
@@ -140,6 +141,7 @@ export class CommentsService {
           user,
           parentComment,
           parentCommentId: parentCommentId,
+          postId,
           post,
           content,
           depth: 1,
