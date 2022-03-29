@@ -11,6 +11,7 @@ export class SubscribesUtil {
     @InjectRepository(Subscribes)
     private subscribesRepository: Repository<Subscribes>,
   ) {}
+
   async checkBlockingAndRequestState({
     requestUser,
     targetUser,

@@ -25,6 +25,11 @@ export class Comments extends CoreEntity {
   @Column({ nullable: true })
   parentCommentId: string;
 
+  @Field((type) => String, { nullable: true })
+  @RelationId((comments: Comments) => comments.post)
+  @Column({ nullable: true })
+  postId: string;
+
   // relations
   @Field(() => Posts)
   @ManyToOne(() => Posts, (posts) => posts.id, { onDelete: 'CASCADE' })

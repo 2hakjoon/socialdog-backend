@@ -51,5 +51,5 @@ export class Posts extends CoreEntity {
 
   @Field((type) => Comments)
   @OneToMany(() => Comments, (comments) => comments.post)
-  comment: Comments;
+  comments: Comments;
 }

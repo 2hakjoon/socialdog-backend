@@ -32,6 +32,11 @@ import {
 import { GetMyLikedPostsOutputDto } from './dtos/get-my-liked-posts.dto';
 import { CursorPaginationArgs } from 'src/common/dtos/cursor-pagination';
 import { SubscribesUtil } from 'src/subscribes/subscribes.util';
+import {
+  GetPostDetailInputDto,
+  GetPostDetailOutputDto,
+} from './dtos/get-post-detail.dto';
+import { Comments } from 'src/comments/entities/comments.entity';
 
 @Injectable()
 export class PostsService {
@@ -44,6 +49,8 @@ export class PostsService {
     private subscribesRepository: Repository<Subscribes>,
     @InjectRepository(Likes)
     private likesRepository: Repository<Likes>,
+    @InjectRepository(Comments)
+    private commentsRepository: Repository<Comments>,
     private subscribesUtil: SubscribesUtil,
     private uploadService: UploadService,
   ) {}
@@ -485,6 +492,65 @@ export class PostsService {
       return {
         ok: false,
         error: '좋아요 누른 게시물 조회에 실패했습니다.',
+      };
+    }
+  }
+
+  async getPostDetail(
+    { userId }: UUID,
+    { id }: GetPostDetailInputDto,
+  ): Promise<GetPostDetailOutputDto> {
+    try {
+      const post = await this.postsRepository
+        .createQueryBuilder('posts')
+        .where('posts.id = :id', { id })
+        .leftJoinAndSelect('posts.user', 'user')
+        .loadAllRelationIds({ relations: ['comments'] })
+        .getOne();
+
+      console.log(post);
+      const postAuthor = post.user;
+
+      //차단 여부, 구독여부 확인해서 클라이언트로 전송
+      const { blocking, subscribeRequest } =
+        await this.subscribesUtil.checkBlockingAndRequestState({
+          requestUser: userId,
+          targetUser: postAuthor.id,
+        });
+
+      if (blocking === BlockState.BLOCKED) {
+        return {
+          ok: false,
+          error: '게시글을 확인 할 수 없습니다.',
+        };
+      }
+
+      if (blocking === BlockState.BLOCKING) {
+        return {
+          ok: false,
+          error: '차단한 유저입니다.',
+        };
+      }
+
+      if (
+        !postAuthor.profileOpen &&
+        subscribeRequest !== SubscribeRequestState.CONFIRMED
+      ) {
+        return {
+          ok: false,
+          error: '구독중인 사람의 게시물만 확인할 수 있습니다.',
+        };
+      }
+
+      return {
+        ok: true,
+        data: post,
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        ok: false,
+        error: '게시물 정보 조회에 실패했습니다.',
       };
     }
   }

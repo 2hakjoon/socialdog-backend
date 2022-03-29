@@ -46,6 +46,9 @@ export class PostAll extends Posts {
 
   @Field((type) => Boolean)
   liked?: boolean;
+
+  @Field((type) => Int)
+  commentCounts?: number;
 }
 
 @ObjectType()

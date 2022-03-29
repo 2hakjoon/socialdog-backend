@@ -27,6 +27,10 @@ import {
 import { GetMyLikedPostsOutputDto } from './dtos/get-my-liked-posts.dto';
 import { createCursor } from 'src/common/utils/paginationUtils';
 import { CursorPaginationInputDto } from 'src/common/dtos/cursor-pagination';
+import {
+  GetPostDetailInputDto,
+  GetPostDetailOutputDto,
+} from './dtos/get-post-detail.dto';
 
 @Resolver((of) => Posts)
 export class PostsResolver {
@@ -108,5 +112,14 @@ export class PostsResolver {
     @Args(page) page: CursorPaginationInputDto,
   ): Promise<GetMyLikedPostsOutputDto> {
     return this.postsService.getMyLikedPosts(userId, createCursor(page));
+  }
+
+  @Query((returns) => GetPostDetailOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getPostDetail(
+    @AuthUser() userId: UUID,
+    @Args(args) args: GetPostDetailInputDto,
+  ) {
+    return this.postsService.getPostDetail(userId, args);
   }
 }
