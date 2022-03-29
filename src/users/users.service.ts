@@ -35,6 +35,7 @@ import {
   CheckUsernameExistOutputDto,
 } from './dtos/check-username-exists.dto';
 import { GetProfileOpenUserOutputDto } from './dtos/get-profile-open-user.dto';
+import { SubscribesUtil } from 'src/subscribes/subscribes.util';
 
 @Injectable()
 export class UsersService {
@@ -45,7 +46,7 @@ export class UsersService {
     private authLoalRepository: Repository<AuthLocal>,
     @InjectRepository(Subscribes)
     private subscribesRepository: Repository<Subscribes>,
-    private subscribesService: SubscribesService,
+    private subscribesUtil: SubscribesUtil,
     private uploadService: UploadService,
     private mailService: MailService,
   ) {}
@@ -225,7 +226,7 @@ export class UsersService {
       }
 
       const { blocking, subscribeRequest } =
-        await this.subscribesService.checkBlockingAndRequestState({
+        await this.subscribesUtil.checkBlockingAndRequestState({
           requestUser: authUser,
           targetUser: userId,
         });

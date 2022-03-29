@@ -24,15 +24,14 @@ import {
   GetUserPostsInputDto,
   GetUserPostsOutputDto,
 } from './dtos/get-user-posts.dto';
-import { SubscribesService } from 'src/subscribes/subscribes.service';
 import { Likes } from 'src/likes/entities/likes.entity';
 import {
   GetPostsByAddressInputDto,
   getPostsByAddressOutputDto,
 } from './dtos/get-posts-by-address.dto';
 import { GetMyLikedPostsOutputDto } from './dtos/get-my-liked-posts.dto';
-import { PostAll } from 'src/common/dtos/core-output.dto';
 import { CursorPaginationArgs } from 'src/common/dtos/cursor-pagination';
+import { SubscribesUtil } from 'src/subscribes/subscribes.util';
 
 @Injectable()
 export class PostsService {
@@ -45,7 +44,7 @@ export class PostsService {
     private subscribesRepository: Repository<Subscribes>,
     @InjectRepository(Likes)
     private likesRepository: Repository<Likes>,
-    private subscribesService: SubscribesService,
+    private subscribesUtil: SubscribesUtil,
     private uploadService: UploadService,
   ) {}
 
@@ -231,7 +230,7 @@ export class PostsService {
       }
 
       const { blocking } =
-        await this.subscribesService.checkBlockingAndRequestState({
+        await this.subscribesUtil.checkBlockingAndRequestState({
           requestUser: authUserId,
           targetUser: userId,
         });

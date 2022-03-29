@@ -8,6 +8,10 @@ export class CreateReCommentInputDto extends PickType(Comments, ['content']) {
   @Field(() => String)
   @IsUUID()
   parentCommentId: string;
+
+  @Field(() => String)
+  @IsUUID()
+  postId: string;
 }
 
 @ObjectType()

@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CursorPaginationArgs } from 'src/common/dtos/cursor-pagination';
 import { Posts } from 'src/posts/entities/posts.entity';
 import { Subscribes } from 'src/subscribes/entities/subscribes.entity';
+import { SubscribesUtil } from 'src/subscribes/subscribes.util';
 import { UserProfile, UUID } from 'src/users/entities/users-profile.entity';
 import { Repository } from 'typeorm';
 import {
@@ -37,6 +38,7 @@ export class CommentsService {
     private subscribesRepository: Repository<Subscribes>,
     @InjectRepository(UserProfile)
     private userProfileRepository: Repository<UserProfile>,
+    private subscribeUtil: SubscribesUtil,
   ) {}
 
   async createComment(
@@ -60,12 +62,11 @@ export class CommentsService {
         };
       }
 
-      const isBlockRelation = await this.subscribesRepository.findOne({
-        where: [
-          { from: userId, to: post.userId, block: true },
-          { to: userId, from: post.userId, block: true },
-        ],
-      });
+      const isBlockRelation = await this.subscribeUtil.checkIsBlockRelation(
+        userId,
+        post.userId,
+      );
+
       if (isBlockRelation) {
         return {
           ok: false,
@@ -90,9 +91,64 @@ export class CommentsService {
   }
   async createReComment(
     { userId }: UUID,
-    { content, parentCommentId }: CreateReCommentInputDto,
+    { content, parentCommentId, postId }: CreateReCommentInputDto,
   ): Promise<CreateReCommentOutputDto> {
-    return { ok: true };
+    try {
+      const user = await this.userProfileRepository.findOne({ id: userId });
+      if (!user) {
+        return {
+          ok: false,
+          error: '사용자를 찾을 수 없습니다.',
+        };
+      }
+      const parentComment = await this.commentsRepository.findOne(
+        {
+          id: parentCommentId,
+        },
+        { relations: ['post'] },
+      );
+      // console.log(parentComment);
+      if (!parentComment) {
+        return {
+          ok: false,
+          error: '댓글이 존재하지 않습니다.',
+        };
+      }
+
+      const post = parentComment.post;
+
+      if (parentComment.post.id !== postId) {
+        return {
+          ok: false,
+          error: '해당 게시글에 달린 댓글이 아닙니다.',
+        };
+      }
+
+      const isBlockRelation = await this.subscribeUtil.checkIsBlockRelation(
+        userId,
+        post.userId,
+      );
+
+      if (isBlockRelation) {
+        return {
+          ok: false,
+          error: '대댓글을 작성할 수 없습니다.',
+        };
+      }
+      await this.commentsRepository.save(
+        await this.commentsRepository.create({
+          user,
+          parentComment,
+          post,
+          content,
+          depth: 1,
+        }),
+      );
+      return { ok: true };
+    } catch (e) {
+      console.log(e);
+      return { ok: false, error: '대댓글 작성에 실패했습니다.' };
+    }
   }
 
   async getCommentDetail(
