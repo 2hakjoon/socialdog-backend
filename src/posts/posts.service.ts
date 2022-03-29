@@ -525,7 +525,7 @@ export class PostsService {
             subscribeRequest,
           );
         if (rejectedMessage) {
-          return rejectedMessage();
+          return rejectedMessage;
         }
       }
 

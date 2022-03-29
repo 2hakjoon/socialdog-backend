@@ -93,29 +93,23 @@ export class SubscribesUtil {
     subscribeRequest: SubscribeRequestState,
   ) {
     if (blocking === BlockState.BLOCKED) {
-      return () => {
-        return {
-          ok: false,
-          error: '게시글을 확인 할 수 없습니다.',
-        };
+      return {
+        ok: false,
+        error: '게시글을 확인 할 수 없습니다.',
       };
     }
 
     if (blocking === BlockState.BLOCKING) {
-      return () => {
-        return {
-          ok: false,
-          error: '차단한 유저입니다.',
-        };
+      return {
+        ok: false,
+        error: '차단한 유저입니다.',
       };
     }
 
     if (subscribeRequest !== SubscribeRequestState.CONFIRMED) {
-      return () => {
-        return {
-          ok: false,
-          error: '아직 구독중이 아닙니다.',
-        };
+      return {
+        ok: false,
+        error: '아직 구독중이 아닙니다.',
       };
     }
   }

@@ -182,7 +182,7 @@ export class CommentsService {
         subscribeRequest,
       );
       if (rejectedMessage) {
-        return rejectedMessage();
+        return rejectedMessage;
       }
 
       return { ok: true, data: comment };
@@ -230,7 +230,7 @@ export class CommentsService {
             subscribeRequest,
           );
         if (rejectedMessage) {
-          return rejectedMessage();
+          return rejectedMessage;
         }
       }
 
