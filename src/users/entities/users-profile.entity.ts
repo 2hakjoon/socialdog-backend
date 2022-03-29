@@ -25,11 +25,11 @@ registerEnumType(LoginStrategy, {
 @InputType({ isAbstract: true })
 @ObjectType({ isAbstract: true })
 export class UserProfile extends CoreEntity {
-  @Field((type) => String, { nullable: true })
-  @Column({ nullable: true, unique: true })
+  @Field((type) => String)
+  @Column({ unique: true })
   @IsString()
-  @Length(0, 15)
-  username?: string;
+  @Length(2, 15)
+  username: string;
 
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
