@@ -38,9 +38,9 @@ export class Comments extends CoreEntity {
   @OneToMany(() => Comments, (comment) => comment.childComment)
   parentComment: Comments;
 
-  @Field(() => Comments)
+  @Field(() => [Comments])
   @ManyToOne(() => Comments, (comment) => comment.parentComment, {
     onDelete: 'CASCADE',
   })
-  childComment: Comments;
+  childComment: Comments[];
 }

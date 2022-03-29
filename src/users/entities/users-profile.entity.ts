@@ -5,6 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
+import { Comments } from 'src/comments/entities/comments.entity';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Likes } from 'src/likes/entities/likes.entity';
 import { Posts } from 'src/posts/entities/posts.entity';
@@ -72,6 +73,10 @@ export class UserProfile extends CoreEntity {
   @Field((type) => [Subscribes], { nullable: true })
   @OneToMany(() => Subscribes, (subscribes) => subscribes.to)
   subscribeUsers?: Subscribes[];
+
+  @Field((type) => [Comments], { nullable: true })
+  @OneToMany(() => Comments, (comments) => comments.id)
+  comments?: Comments[];
 }
 
 export class UUID {

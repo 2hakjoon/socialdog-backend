@@ -18,10 +18,6 @@ import {
   DeleteCommentOutputDto,
 } from './dtos/delete-comment.dto';
 import {
-  DeleteReCommentInputDto,
-  DeleteReCommentOutputDto,
-} from './dtos/delete-recomment.dto';
-import {
   GetCommentInputDto,
   GetCommentOutputDto,
 } from './dtos/get-comment.dto';
@@ -207,13 +203,30 @@ export class CommentsService {
     { userId }: UUID,
     { id }: DeleteCommentInputDto,
   ): Promise<DeleteCommentOutputDto> {
-    return { ok: true };
-  }
+    try {
+      const comment = await this.commentsRepository.findOne(
+        { id },
+        { relations: ['post', 'user'] },
+      );
+      if (!comment) {
+        return {
+          ok: false,
+          error: '댓글이 존재하지 않습니다.',
+        };
+      }
+      if (comment.post.userId !== userId && comment.user.id !== userId) {
+        return {
+          ok: false,
+          error: '댓글을 삭제할 권한이 없습니다.',
+        };
+      }
 
-  async deleteReComment(
-    { userId }: UUID,
-    { id }: DeleteReCommentInputDto,
-  ): Promise<DeleteReCommentOutputDto> {
-    return { ok: true };
+      await this.commentsRepository.delete({ id });
+
+      return { ok: true };
+    } catch (e) {
+      console.log(e);
+      return { ok: true, error: '댓글 삭제를 실패했습니다.' };
+    }
   }
 }

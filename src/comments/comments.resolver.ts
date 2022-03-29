@@ -19,10 +19,6 @@ import {
   DeleteCommentOutputDto,
 } from './dtos/delete-comment.dto';
 import {
-  DeleteReCommentInputDto,
-  DeleteReCommentOutputDto,
-} from './dtos/delete-recomment.dto';
-import {
   GetReCommentsInputDto,
   GetReCommentsOutputDto,
 } from './dtos/get-recomments.dto';
@@ -81,16 +77,6 @@ export class CommentsResolver {
     @AuthUser() user: UUID,
     @Args(args) args: DeleteCommentInputDto,
   ): Promise<DeleteCommentOutputDto> {
-    return this.deleteComment(user, args);
-  }
-
-  // 대댓글 삭제
-  @Mutation(() => DeleteReCommentOutputDto)
-  @UseGuards(GqlAuthGuard)
-  deleteReComment(
-    @AuthUser() user: UUID,
-    @Args(args) args: DeleteReCommentInputDto,
-  ): Promise<DeleteReCommentOutputDto> {
-    return this.deleteReComment(user, args);
+    return this.commentsService.deleteComment(user, args);
   }
 }
