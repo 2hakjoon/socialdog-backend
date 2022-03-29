@@ -518,28 +518,15 @@ export class PostsService {
           targetUser: postAuthor.id,
         });
 
-      if (blocking === BlockState.BLOCKED) {
-        return {
-          ok: false,
-          error: '게시글을 확인 할 수 없습니다.',
-        };
-      }
-
-      if (blocking === BlockState.BLOCKING) {
-        return {
-          ok: false,
-          error: '차단한 유저입니다.',
-        };
-      }
-
-      if (
-        !postAuthor.profileOpen &&
-        subscribeRequest !== SubscribeRequestState.CONFIRMED
-      ) {
-        return {
-          ok: false,
-          error: '구독중인 사람의 게시물만 확인할 수 있습니다.',
-        };
+      if (!postAuthor.profileOpen) {
+        const rejectedMessage =
+          this.subscribesUtil.returnBlockAndSubscribeMessage(
+            blocking,
+            subscribeRequest,
+          );
+        if (rejectedMessage) {
+          return rejectedMessage();
+        }
       }
 
       const commentCounts = await this.commentsRepository.find({
@@ -551,7 +538,7 @@ export class PostsService {
         data: { ...post, commentCounts: commentCounts.length },
       };
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return {
         ok: false,
         error: '게시물 정보 조회에 실패했습니다.',
