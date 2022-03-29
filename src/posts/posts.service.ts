@@ -518,15 +518,14 @@ export class PostsService {
           targetUser: postAuthor.id,
         });
 
-      if (!postAuthor.profileOpen) {
-        const rejectedMessage =
-          this.subscribesUtil.returnBlockAndSubscribeMessage(
-            blocking,
-            subscribeRequest,
-          );
-        if (rejectedMessage) {
-          return rejectedMessage;
-        }
+      const rejectedMessage =
+        this.subscribesUtil.returnBlockAndSubscribeMessage(
+          blocking,
+          subscribeRequest,
+          postAuthor.profileOpen,
+        );
+      if (rejectedMessage) {
+        return rejectedMessage;
       }
 
       const commentCounts = await this.commentsRepository.find({

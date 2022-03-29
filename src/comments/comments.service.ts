@@ -180,6 +180,7 @@ export class CommentsService {
       const rejectedMessage = this.subscribeUtil.returnBlockAndSubscribeMessage(
         blocking,
         subscribeRequest,
+        comment.user.profileOpen,
       );
       if (rejectedMessage) {
         return rejectedMessage;
@@ -229,6 +230,7 @@ export class CommentsService {
           this.subscribeUtil.returnBlockAndSubscribeMessage(
             blocking,
             subscribeRequest,
+            reComments[0].user.profileOpen,
           );
         if (rejectedMessage) {
           return rejectedMessage;

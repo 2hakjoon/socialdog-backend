@@ -91,6 +91,7 @@ export class SubscribesUtil {
   returnBlockAndSubscribeMessage(
     blocking: BlockState,
     subscribeRequest: SubscribeRequestState,
+    profileOpen: boolean,
   ) {
     if (blocking === BlockState.BLOCKED) {
       return {
@@ -106,7 +107,7 @@ export class SubscribesUtil {
       };
     }
 
-    if (subscribeRequest !== SubscribeRequestState.CONFIRMED) {
+    if (!profileOpen && subscribeRequest !== SubscribeRequestState.CONFIRMED) {
       return {
         ok: false,
         error: '아직 구독중이 아닙니다.',
