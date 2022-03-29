@@ -210,6 +210,7 @@ export class CommentsService {
           },
         )
         .leftJoinAndSelect('comments.user', 'users')
+        .leftJoinAndSelect('comments.post', 'posts')
         .orderBy('comments.createdAt', 'ASC')
         .addOrderBy('comments.id', 'DESC')
         .limit(take)
@@ -236,6 +237,7 @@ export class CommentsService {
 
       return { ok: true, data: reComments };
     } catch (e) {
+      console.log(e);
       return { ok: false, error: '댓글 조회에 실패했습니다.' };
     }
   }
