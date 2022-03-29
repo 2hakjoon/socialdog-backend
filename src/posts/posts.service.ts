@@ -542,9 +542,13 @@ export class PostsService {
         };
       }
 
+      const commentCounts = await this.commentsRepository.find({
+        postId: id,
+      });
+
       return {
         ok: true,
-        data: post,
+        data: { ...post, commentCounts: commentCounts.length },
       };
     } catch (e) {
       console.log(e);
