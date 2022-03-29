@@ -2,25 +2,15 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { IsNumber, IsString, IsUUID, Max } from 'class-validator';
 
 @InputType()
-class CursorInput {
-  @Field()
-  @IsUUID()
-  id: string;
-
-  @Field()
-  @IsString()
-  createdAt: string;
-}
-
 @ObjectType()
 export class CursorArgs {
-  @Field()
+  @Field(() => String, { nullable: true })
   @IsUUID()
-  id: string;
+  id?: string;
 
-  @Field()
+  @Field(() => String, { nullable: true })
   @IsString()
-  createdAt: string;
+  createdAt?: string;
 }
 
 @InputType()
@@ -30,8 +20,8 @@ export class CursorPaginationInputDto {
   @Max(20)
   take: number;
 
-  @Field(() => CursorInput, { nullable: true })
-  cursor?: CursorInput;
+  @Field(() => CursorArgs, { nullable: true })
+  cursor?: CursorArgs;
 }
 
 @InputType()

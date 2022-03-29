@@ -21,11 +21,15 @@ import {
   DeleteReCommentInputDto,
   DeleteReCommentOutputDto,
 } from './dtos/delete-recomment.dto';
+import {
+  GetCommentInputDto,
+  GetCommentOutputDto,
+} from './dtos/get-comment.dto';
 
 import {
-  GetCommentDetailInputDto,
-  GetCommentDetailOutputDto,
-} from './dtos/get-comment-detail.dto';
+  GetReCommentsInputDto,
+  GetReCommentsOutputDto,
+} from './dtos/get-recomments.dto';
 import { Comments } from './entities/comments.entity';
 
 export class CommentsService {
@@ -139,6 +143,7 @@ export class CommentsService {
         await this.commentsRepository.create({
           user,
           parentComment,
+          parentCommentId: parentCommentId,
           post,
           content,
           depth: 1,
@@ -151,12 +156,51 @@ export class CommentsService {
     }
   }
 
-  async getCommentDetail(
-    { userId }: UUID,
-    { id }: GetCommentDetailInputDto,
+  async getComment({ id }: GetCommentInputDto): Promise<GetCommentOutputDto> {
+    try {
+      const comment = await this.commentsRepository.findOne(
+        { id },
+        { relations: ['user'] },
+      );
+      if (!comment) {
+        return {
+          ok: true,
+          error: '댓글이 존재하지 않습니다.',
+        };
+      }
+      return { ok: true, data: comment };
+    } catch (e) {
+      return { ok: false, error: '댓글 조회에 실패했습니다.' };
+    }
+  }
+
+  async getReComments(
+    { parentCommentId }: GetReCommentsInputDto,
     { take, cursor }: CursorPaginationArgs,
-  ): Promise<GetCommentDetailOutputDto> {
-    return { ok: true };
+  ): Promise<GetReCommentsOutputDto> {
+    try {
+      const reComments = await this.commentsRepository
+        .createQueryBuilder('comments')
+        .where('comments.parentCommentId = :commentId', {
+          commentId: parentCommentId,
+        })
+        .andWhere(
+          '((comments.createdAt > :createdAt) OR (comments.createdAt = :createdAt AND comments.id < :id))',
+          {
+            createdAt: cursor.createdAt,
+            id: cursor.id,
+          },
+        )
+        .leftJoinAndSelect('comments.user', 'users')
+        .orderBy('comments.createdAt', 'ASC')
+        .addOrderBy('comments.id', 'DESC')
+        .limit(take)
+        .getMany();
+      // console.log(reComments);
+      return { ok: true, data: reComments };
+    } catch (e) {
+      return { ok: false, error: '댓글 조회에 실패했습니다.' };
+    }
   }
 
   async deleteComment(

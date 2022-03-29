@@ -23,9 +23,13 @@ import {
   DeleteReCommentOutputDto,
 } from './dtos/delete-recomment.dto';
 import {
-  GetCommentDetailInputDto,
-  GetCommentDetailOutputDto,
-} from './dtos/get-comment-detail.dto';
+  GetReCommentsInputDto,
+  GetReCommentsOutputDto,
+} from './dtos/get-recomments.dto';
+import {
+  GetCommentInputDto,
+  GetCommentOutputDto,
+} from './dtos/get-comment.dto';
 
 @Resolver()
 export class CommentsResolver {
@@ -40,6 +44,7 @@ export class CommentsResolver {
   ): Promise<CreateCommentOutputDto> {
     return this.commentsService.createComment(user, args);
   }
+
   // 대댓글 생성
   @Mutation(() => CreateReCommentOutputDto)
   @UseGuards(GqlAuthGuard)
@@ -49,20 +54,26 @@ export class CommentsResolver {
   ): Promise<CreateReCommentOutputDto> {
     return this.commentsService.createReComment(user, args);
   }
-  // 댓글 상세보기
-  @Query(() => GetCommentDetailOutputDto)
+
+  // 댓글 보기
+  @Query(() => GetCommentOutputDto)
   @UseGuards(GqlAuthGuard)
-  getCommentDetail(
-    @AuthUser() user: UUID,
-    @Args(args) args: GetCommentDetailInputDto,
-    @Args(page) page: CursorPaginationInputDto,
-  ): Promise<GetCommentDetailOutputDto> {
-    return this.commentsService.getCommentDetail(
-      user,
-      args,
-      createCursor(page),
-    );
+  getComment(
+    @Args(args) args: GetCommentInputDto,
+  ): Promise<GetCommentOutputDto> {
+    return this.commentsService.getComment(args);
   }
+
+  // 대댓글들 보기
+  @Query(() => GetReCommentsOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getReComments(
+    @Args(args) args: GetReCommentsInputDto,
+    @Args(page) page: CursorPaginationInputDto,
+  ): Promise<GetReCommentsOutputDto> {
+    return this.commentsService.getReComments(args, createCursor(page));
+  }
+
   // 댓글 삭제
   @Mutation(() => DeleteCommentOutputDto)
   @UseGuards(GqlAuthGuard)
@@ -72,6 +83,7 @@ export class CommentsResolver {
   ): Promise<DeleteCommentOutputDto> {
     return this.deleteComment(user, args);
   }
+
   // 대댓글 삭제
   @Mutation(() => DeleteReCommentOutputDto)
   @UseGuards(GqlAuthGuard)

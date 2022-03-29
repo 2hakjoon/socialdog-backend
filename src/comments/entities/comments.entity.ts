@@ -3,7 +3,7 @@ import { IsNumber, IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Posts } from 'src/posts/entities/posts.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 
 @Entity()
 @InputType({ isAbstract: true })
@@ -19,6 +19,11 @@ export class Comments extends CoreEntity {
   @IsNumber()
   @Column()
   depth: number;
+
+  @Field((type) => String, { nullable: true })
+  @RelationId((comments: Comments) => comments.parentComment)
+  @Column({ nullable: true })
+  parentCommentId: string;
 
   // relations
   @Field(() => Posts)
