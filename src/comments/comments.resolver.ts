@@ -30,6 +30,10 @@ import {
   EditCommentInputDto,
   EditCommentOutputDto,
 } from './dtos/edit-comment-dto';
+import {
+  GetCommentsInputDto,
+  GetCommentsOutputDto,
+} from './dtos/get-comments.dto';
 
 @Resolver()
 export class CommentsResolver {
@@ -73,6 +77,17 @@ export class CommentsResolver {
     @Args(args) args: GetCommentInputDto,
   ): Promise<GetCommentOutputDto> {
     return this.commentsService.getComment(userId, args);
+  }
+
+  // 댓글 보기
+  @Query(() => GetCommentsOutputDto)
+  @UseGuards(GqlAuthGuard)
+  getComments(
+    @AuthUser() userId: UUID,
+    @Args(args) args: GetCommentsInputDto,
+    @Args(page) page: CursorPaginationInputDto,
+  ): Promise<GetCommentsOutputDto> {
+    return this.commentsService.getComments(userId, args, createCursor(page));
   }
 
   // 대댓글들 보기

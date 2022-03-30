@@ -25,6 +25,10 @@ import {
   GetCommentInputDto,
   GetCommentOutputDto,
 } from './dtos/get-comment.dto';
+import {
+  GetCommentsInputDto,
+  GetCommentsOutputDto,
+} from './dtos/get-comments.dto';
 
 import {
   GetReCommentsInputDto,
@@ -315,6 +319,58 @@ export class CommentsService {
     } catch (e) {
       console.log(e);
       return { ok: true, error: '댓글 삭제를 실패했습니다.' };
+    }
+  }
+
+  async getComments(
+    { userId }: UUID,
+    { postId }: GetCommentsInputDto,
+    { take, cursor }: CursorPaginationArgs,
+  ): Promise<GetCommentsOutputDto> {
+    try {
+      const comments = await this.commentsRepository
+        .createQueryBuilder('comments')
+        .where('comments.postId = :postId', { postId })
+        .andWhere(
+          '((commments.createdAt > :createdAt) OR (comments.createdAt = :createdAt AND comments.id<:id))',
+          {
+            createdAt: cursor.createdAt,
+            id: cursor.id,
+          },
+        )
+        .take(take)
+        .orderBy('comments.createdAt', 'ASC')
+        .addOrderBy('comments.id', 'DESC')
+        .getMany();
+
+      //차단 여부, 구독여부 확인해서 클라이언트로 전송
+      if (comments.length) {
+        const { blocking, subscribeRequest } =
+          await this.subscribeUtil.checkBlockingAndRequestState({
+            requestUser: userId,
+            targetUser: comments[0].post.userId,
+          });
+
+        const rejectedMessage =
+          this.subscribeUtil.returnBlockAndSubscribeMessage(
+            blocking,
+            subscribeRequest,
+            comments[0].user.profileOpen,
+          );
+        if (rejectedMessage) {
+          return rejectedMessage;
+        }
+      }
+
+      return {
+        ok: true,
+        data: comments,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '댓글목록을 불러오는데 실패했습니다.',
+      };
     }
   }
 }
