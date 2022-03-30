@@ -18,6 +18,10 @@ import {
   DeleteCommentOutputDto,
 } from './dtos/delete-comment.dto';
 import {
+  EditCommentInputDto,
+  EditCommentOutputDto,
+} from './dtos/edit-comment-dto';
+import {
   GetCommentInputDto,
   GetCommentOutputDto,
 } from './dtos/get-comment.dto';
@@ -151,6 +155,45 @@ export class CommentsService {
     } catch (e) {
       console.log(e);
       return { ok: false, error: '대댓글 작성에 실패했습니다.' };
+    }
+  }
+
+  async editComment(
+    { userId }: UUID,
+    { content, id }: EditCommentInputDto,
+  ): Promise<EditCommentOutputDto> {
+    try {
+      const comment = await this.commentsRepository.findOne(
+        { id },
+        { relations: ['user'] },
+      );
+      if (!comment) {
+        return {
+          ok: false,
+          error: '댓글이 존재하지 않습니다.',
+        };
+      }
+      if (comment.user.id !== userId) {
+        return {
+          ok: false,
+          error: '다른사람의 댓글은 수정할 수 없습니다.',
+        };
+      }
+      await this.commentsRepository.update(
+        { id },
+        {
+          ...comment,
+          content,
+        },
+      );
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '댓글 수정에 실패했습니다.',
+      };
     }
   }
 

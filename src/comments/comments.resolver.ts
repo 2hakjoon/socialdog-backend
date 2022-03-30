@@ -26,6 +26,10 @@ import {
   GetCommentInputDto,
   GetCommentOutputDto,
 } from './dtos/get-comment.dto';
+import {
+  EditCommentInputDto,
+  EditCommentOutputDto,
+} from './dtos/edit-comment-dto';
 
 @Resolver()
 export class CommentsResolver {
@@ -49,6 +53,16 @@ export class CommentsResolver {
     @Args(args) args: CreateReCommentInputDto,
   ): Promise<CreateReCommentOutputDto> {
     return this.commentsService.createReComment(user, args);
+  }
+
+  // 댓글 수정
+  @Mutation(() => EditCommentOutputDto)
+  @UseGuards(GqlAuthGuard)
+  editComment(
+    @AuthUser() userId: UUID,
+    @Args(args) args: EditCommentInputDto,
+  ): Promise<EditCommentOutputDto> {
+    return this.commentsService.editComment(userId, args);
   }
 
   // 댓글 보기
