@@ -531,10 +531,18 @@ export class PostsService {
       const commentCounts = await this.commentsRepository.find({
         postId: id,
       });
+      const like = await this.likesRepository.findOne({
+        userId,
+        postId: id,
+      });
 
       return {
         ok: true,
-        data: { ...post, commentCounts: commentCounts.length },
+        data: {
+          ...post,
+          commentCounts: commentCounts.length,
+          liked: Boolean(like),
+        },
       };
     } catch (e) {
       // console.log(e);
