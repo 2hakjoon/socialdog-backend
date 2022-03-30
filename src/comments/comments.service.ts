@@ -332,16 +332,20 @@ export class CommentsService {
         .createQueryBuilder('comments')
         .where('comments.postId = :postId', { postId })
         .andWhere(
-          '((commments.createdAt > :createdAt) OR (comments.createdAt = :createdAt AND comments.id<:id))',
+          '((comments.createdAt > :createdAt) OR (comments.createdAt = :createdAt AND comments.id < :id))',
           {
             createdAt: cursor.createdAt,
             id: cursor.id,
           },
         )
+        .leftJoinAndSelect('comments.post', 'post')
+        .leftJoinAndSelect('comments.user', 'user')
         .take(take)
         .orderBy('comments.createdAt', 'ASC')
         .addOrderBy('comments.id', 'DESC')
         .getMany();
+
+      console.log(comments);
 
       //차단 여부, 구독여부 확인해서 클라이언트로 전송
       if (comments.length) {
@@ -367,6 +371,7 @@ export class CommentsService {
         data: comments,
       };
     } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: '댓글목록을 불러오는데 실패했습니다.',

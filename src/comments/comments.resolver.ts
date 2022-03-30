@@ -69,7 +69,7 @@ export class CommentsResolver {
     return this.commentsService.editComment(userId, args);
   }
 
-  // 댓글 보기
+  // 댓글상세 보기
   @Query(() => GetCommentOutputDto)
   @UseGuards(GqlAuthGuard)
   getComment(
@@ -79,7 +79,7 @@ export class CommentsResolver {
     return this.commentsService.getComment(userId, args);
   }
 
-  // 댓글 보기
+  // 댓글들 보기
   @Query(() => GetCommentsOutputDto)
   @UseGuards(GqlAuthGuard)
   getComments(

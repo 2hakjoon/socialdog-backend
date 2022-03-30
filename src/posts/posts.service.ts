@@ -508,7 +508,7 @@ export class PostsService {
         .loadAllRelationIds({ relations: ['comments'] })
         .getOne();
 
-      console.log(post);
+      // console.log(post);
       const postAuthor = post.user;
 
       //차단 여부, 구독여부 확인해서 클라이언트로 전송
