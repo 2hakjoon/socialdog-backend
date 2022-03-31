@@ -331,6 +331,7 @@ export class CommentsService {
       const comments = await this.commentsRepository
         .createQueryBuilder('comments')
         .where('comments.postId = :postId', { postId })
+        .andWhere('comments.depth = 0')
         .andWhere(
           '((comments.createdAt > :createdAt) OR (comments.createdAt = :createdAt AND comments.id < :id))',
           {
@@ -345,7 +346,7 @@ export class CommentsService {
         .addOrderBy('comments.id', 'DESC')
         .getMany();
 
-      console.log(comments);
+      // console.log(comments);
 
       //차단 여부, 구독여부 확인해서 클라이언트로 전송
       if (comments.length) {

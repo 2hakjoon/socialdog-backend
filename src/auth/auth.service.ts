@@ -129,13 +129,14 @@ export class AuthService {
       if (!authKakaoUser) {
         const user = await this.userProfileRepository.save(
           await this.userProfileRepository.create({
+            loginStrategy: LoginStrategy.KAKAO,
             username: `사용자-${Math.round(Math.random() * 100000000)}`,
           }),
         );
         // console.log(user);
         const access_token = this.jwtService.sign({
-          id: user.id,
           loginStrategy: LoginStrategy.KAKAO,
+          id: user.id,
         });
         const refresh_token = this.jwtService.sign(
           {},
