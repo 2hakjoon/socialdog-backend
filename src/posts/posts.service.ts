@@ -315,6 +315,12 @@ export class PostsService {
           'posts.comments',
           'commentCounts',
         )
+        .loadRelationCountAndMap(
+          'posts.liked',
+          'posts.likedUsers',
+          'like',
+          (qb) => qb.where('like.userId = :id', { id: userId }),
+        )
         .where(
           '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
           {
@@ -330,36 +336,10 @@ export class PostsService {
         .addOrderBy('posts.id', 'DESC')
         .take(take)
         .getMany();
-      // console.log(subscribingPosts);
 
-      const postIds = subscribingPosts.map((post) => post.id);
-      const myLikes = await this.likesRepository
-        .createQueryBuilder('like')
-        .select(['like.like', 'like.userId', 'like.postId'])
-        .where('like.postId IN (:...postIds)', {
-          postIds: postIds.length
-            ? postIds
-            : ['00000000-0000-0000-0000-000000000000'],
-        })
-        .getMany();
-
-      // console.log(myLikes);
-      const subscribingPostsWithLike = subscribingPosts.map((post) => {
-        if (
-          myLikes.filter((like) => {
-            return like.postId === post.id && like.userId === userId;
-          }).length
-        ) {
-          return { ...post, liked: true };
-        }
-        return { ...post, liked: false };
-      });
-
-      // console.log(postsWithLike);
-      // console.log(subscribingPosts.length);
       return {
         ok: true,
-        data: subscribingPostsWithLike,
+        data: subscribingPosts,
         length: subscribingPosts.length,
       };
     } catch (e) {
@@ -407,6 +387,12 @@ export class PostsService {
           'posts.comments',
           'commentCounts',
         )
+        .loadRelationCountAndMap(
+          'posts.liked',
+          'posts.likedUsers',
+          'like',
+          (qb) => qb.where('like.userId = :id', { id: userId }),
+        )
         .where(
           '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
           {
@@ -428,33 +414,10 @@ export class PostsService {
         .getMany();
       // console.log(posts);
 
-      const postIds = posts.map((post) => post.id);
-      const myLikes = await this.likesRepository
-        .createQueryBuilder('like')
-        .select(['like.like', 'like.userId', 'like.postId'])
-        .where('like.postId IN (:...postIds)', {
-          postIds: postIds.length
-            ? postIds
-            : ['00000000-0000-0000-0000-000000000000'],
-        })
-        .getMany();
-
-      // console.log(myLikes);
-      const postsWithLike = posts.map((post) => {
-        if (
-          myLikes.filter((like) => {
-            return like.postId === post.id && like.userId === userId;
-          }).length
-        ) {
-          return { ...post, liked: true };
-        }
-        return { ...post, liked: false };
-      });
-
       return {
         ok: true,
-        data: postsWithLike,
-        length: postsWithLike.length,
+        data: posts,
+        length: posts.length,
       };
     } catch (e) {
       console.log(e);
@@ -519,10 +482,16 @@ export class PostsService {
           'posts.comments',
           'commentCounts',
         )
+        .loadRelationCountAndMap(
+          'posts.liked',
+          'posts.likedUsers',
+          'like',
+          (qb) => qb.where('like.userId = :id', { id: userId }),
+        )
         .leftJoinAndSelect('posts.user', 'user')
         .getOne();
 
-      // console.log(post);
+      console.log(post);
       const postAuthor = post.user;
 
       //차단 여부, 구독여부 확인해서 클라이언트로 전송
@@ -541,16 +510,11 @@ export class PostsService {
       if (rejectedMessage) {
         return rejectedMessage;
       }
-      const like = await this.likesRepository.findOne({
-        userId,
-        postId: id,
-      });
 
       return {
         ok: true,
         data: {
           ...post,
-          liked: Boolean(like),
         },
       };
     } catch (e) {
