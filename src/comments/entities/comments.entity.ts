@@ -1,5 +1,6 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { IsNumber, IsString, Length } from 'class-validator';
+import { number } from 'joi';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { Posts } from 'src/posts/entities/posts.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
@@ -29,6 +30,9 @@ export class Comments extends CoreEntity {
   @RelationId((comments: Comments) => comments.post)
   @Column({ nullable: true })
   postId: string;
+
+  @Field(() => Int, { nullable: true })
+  reCommentCounts: number;
 
   // relations
   @Field(() => Posts)

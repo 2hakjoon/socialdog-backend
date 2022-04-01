@@ -330,6 +330,13 @@ export class CommentsService {
     try {
       const comments = await this.commentsRepository
         .createQueryBuilder('comments')
+        .leftJoinAndSelect('comments.post', 'post')
+        .leftJoinAndSelect('comments.user', 'user')
+        .loadRelationCountAndMap(
+          'comments.reCommentCounts',
+          'comments.childComment',
+          'reCommentCounts',
+        )
         .where('comments.postId = :postId', { postId })
         .andWhere('comments.depth = 0')
         .andWhere(
@@ -339,8 +346,6 @@ export class CommentsService {
             id: cursor.id,
           },
         )
-        .leftJoinAndSelect('comments.post', 'post')
-        .leftJoinAndSelect('comments.user', 'user')
         .take(take)
         .orderBy('comments.createdAt', 'ASC')
         .addOrderBy('comments.id', 'DESC')
