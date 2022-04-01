@@ -37,6 +37,16 @@ export class Posts extends CoreEntity {
   @Column()
   userId: string;
 
+  // Virtual Column
+  @Field(() => Int, { nullable: true })
+  commentCounts?: number;
+
+  @Field((type) => Int)
+  likes?: number;
+
+  @Field((type) => Boolean)
+  liked?: boolean;
+
   // Relation
   @Field((type) => UserProfile)
   @ManyToOne(() => UserProfile, (userProfile) => userProfile.posts, {
@@ -49,7 +59,7 @@ export class Posts extends CoreEntity {
   @OneToMany(() => Likes, (likes) => likes.post)
   likedUsers?: Likes[];
 
-  @Field((type) => Comments)
+  @Field((type) => [Comments], { nullable: true })
   @OneToMany(() => Comments, (comments) => comments.post)
-  comments: Comments;
+  comments?: Comments[];
 }

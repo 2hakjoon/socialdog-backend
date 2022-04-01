@@ -40,21 +40,9 @@ export class UserProfileCard extends PickType(UserProfile, [
 //posts
 
 @ObjectType()
-export class PostAll extends Posts {
-  @Field((type) => Int)
-  likes?: number;
-
-  @Field((type) => Boolean)
-  liked?: boolean;
-
-  @Field((type) => Int)
-  commentCounts?: number;
-}
-
-@ObjectType()
 export class CorePostsOutputDto extends CoreOutputDto {
-  @Field(() => [PostAll])
-  data?: PostAll[];
+  @Field(() => [Posts])
+  data?: Posts[];
 
   @Field(() => Int)
   length?: number;
@@ -62,8 +50,8 @@ export class CorePostsOutputDto extends CoreOutputDto {
 
 @ObjectType()
 export class CorePostOutputDto extends CoreOutputDto {
-  @Field(() => PostAll)
-  data?: PostAll;
+  @Field(() => Posts)
+  data?: Posts;
 }
 
 //walks

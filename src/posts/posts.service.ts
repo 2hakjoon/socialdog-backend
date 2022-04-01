@@ -504,6 +504,11 @@ export class PostsService {
       const post = await this.postsRepository
         .createQueryBuilder('posts')
         .where('posts.id = :id', { id })
+        .loadRelationCountAndMap(
+          'posts.commentCounts',
+          'posts.comments',
+          'commentCounts',
+        )
         .leftJoinAndSelect('posts.user', 'user')
         .loadAllRelationIds({ relations: ['comments'] })
         .getOne();
@@ -527,10 +532,6 @@ export class PostsService {
       if (rejectedMessage) {
         return rejectedMessage;
       }
-
-      const commentCounts = await this.commentsRepository.find({
-        postId: id,
-      });
       const like = await this.likesRepository.findOne({
         userId,
         postId: id,
@@ -540,12 +541,11 @@ export class PostsService {
         ok: true,
         data: {
           ...post,
-          commentCounts: commentCounts.length,
           liked: Boolean(like),
         },
       };
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       return {
         ok: false,
         error: '게시물 정보 조회에 실패했습니다.',
