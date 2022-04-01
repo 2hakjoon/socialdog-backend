@@ -310,6 +310,11 @@ export class PostsService {
       const subscribingPosts = await this.postsRepository
         .createQueryBuilder('posts')
         .select(['posts', 'user.photo', 'user.id', 'user.username'])
+        .loadRelationCountAndMap(
+          'posts.commentCounts',
+          'posts.comments',
+          'commentCounts',
+        )
         .where(
           '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
           {
@@ -397,6 +402,11 @@ export class PostsService {
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
         .innerJoinAndSelect('posts.user', 'user')
+        .loadRelationCountAndMap(
+          'posts.commentCounts',
+          'posts.comments',
+          'commentCounts',
+        )
         .where(
           '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
           {
@@ -510,7 +520,6 @@ export class PostsService {
           'commentCounts',
         )
         .leftJoinAndSelect('posts.user', 'user')
-        .loadAllRelationIds({ relations: ['comments'] })
         .getOne();
 
       // console.log(post);
