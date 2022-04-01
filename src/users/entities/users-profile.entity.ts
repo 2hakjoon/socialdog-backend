@@ -1,6 +1,7 @@
 import {
   Field,
   InputType,
+  Int,
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
@@ -63,6 +64,15 @@ export class UserProfile extends CoreEntity {
   @Field((type) => [Likes], { nullable: true })
   @OneToMany(() => Likes, (likes) => likes.user)
   liked?: Likes[];
+
+  // Virtual Coulmn
+  //내가 구독하는 사람들
+  @Field((type) => Int)
+  subscribings?: number;
+
+  //나를 구독하는 사람들
+  @Field((type) => Int)
+  subscribers?: number;
 
   //내가 구독하는 사람들
   @Field((type) => [Subscribes], { nullable: true })

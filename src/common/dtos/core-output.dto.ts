@@ -11,23 +11,10 @@ export class CoreOutputDto {
   error?: string;
 }
 
-//users
-
-@ObjectType()
-export class UserProfileAll extends UserProfile {
-  //내가 구독하는 사람들
-  @Field((type) => Int)
-  subscribings?: number;
-
-  //나를 구독하는 사람들
-  @Field((type) => Int)
-  subscribers?: number;
-}
-
 @ObjectType()
 export class CoreUserOutputDto extends CoreOutputDto {
-  @Field(() => UserProfileAll, { nullable: true })
-  data?: UserProfileAll;
+  @Field(() => UserProfile, { nullable: true })
+  data?: UserProfile;
 }
 
 @ObjectType()

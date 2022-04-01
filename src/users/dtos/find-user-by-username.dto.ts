@@ -1,7 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
-import { CoreOutputDto, UserProfileAll } from 'src/common/dtos/core-output.dto';
-import { BlockState } from '../../subscribes/entities/subscribes.entity';
+import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
+import { UserProfile } from '../entities/users-profile.entity';
 
 @InputType()
 export class FindUserByUsernameInputDto {
@@ -13,6 +13,6 @@ export class FindUserByUsernameInputDto {
 
 @ObjectType()
 export class FindUserByUsernameOutputDto extends CoreOutputDto {
-  @Field(() => [UserProfileAll], { nullable: true })
-  data?: UserProfileAll[];
+  @Field(() => [UserProfile], { nullable: true })
+  data?: UserProfile[];
 }
