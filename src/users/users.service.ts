@@ -176,11 +176,11 @@ export class UsersService {
     { username }: GetUserInputDto,
   ): Promise<GetUserOutputDto> {
     try {
-      const { id: userId } = await this.usersProfileRepository.findOne({
+      const user = await this.usersProfileRepository.findOne({
         username,
       });
 
-      if (!userId) {
+      if (!user) {
         return {
           ok: false,
           error: '사용자가 존재하지 않습니다.',
@@ -189,7 +189,7 @@ export class UsersService {
 
       const userInfo = await this.usersProfileRepository
         .createQueryBuilder('user')
-        .where('id = :userId', { userId })
+        .where('id = :userId', { userId: user.id })
         .loadRelationCountAndMap(
           'user.subscribings',
           'user.subscribingUsers',
@@ -228,7 +228,7 @@ export class UsersService {
       const { blocking, subscribeRequest } =
         await this.subscribesUtil.checkBlockingAndRequestState({
           requestUser: authUser,
-          targetUser: userId,
+          targetUser: user.id,
         });
       if (blocking === BlockState.BLOCKING) {
         return {
@@ -287,59 +287,7 @@ export class UsersService {
       };
     }
   }
-  /*
-  async getMyProfile({ userId }: UUID): Promise<CoreUserOutputDto> {
-    try {
-      const user = await this.usersProfileRepository
-        .createQueryBuilder('user')
-        .where('id = :userId', { userId })
-        .loadRelationCountAndMap(
-          'user.subscribings',
-          'user.subscribingUsers',
-          'subscribings',
-          (qb) =>
-            qb.where(
-              'subscribings.subscribeRequest = :subscribe AND subscribings.block = :block',
-              {
-                subscribe: SubscribeRequestState.CONFIRMED,
-                block: false,
-              },
-            ),
-        )
-        .loadRelationCountAndMap(
-          'user.subscribers',
-          'user.subscribeUsers',
-          'subscribers',
-          (qb) =>
-            qb.where(
-              'subscribers.subscribeRequest = :value AND subscribings.block = :block',
-              {
-                value: SubscribeRequestState.CONFIRMED,
-                block: false,
-              },
-            ),
-        )
-        .getOne();
-      // console.log(user);
-      if (!user) {
-        return {
-          ok: false,
-          error: '사용자가 존재하지 않습니다.',
-        };
-      }
-      return {
-        ok: true,
-        data: user,
-      };
-    } catch (e) {
-      console.log(e);
-      return {
-        ok: false,
-        error: '사용자정보 조회에 실패했습니다.',
-      };
-    }
-  }
-*/
+
   async me({ userId }: UUID): Promise<CoreUserOutputDto> {
     try {
       const user = await this.usersProfileRepository
