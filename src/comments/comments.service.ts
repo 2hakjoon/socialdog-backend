@@ -266,7 +266,7 @@ export class CommentsService {
       // console.log(reComments);
 
       //차단 여부, 구독여부 확인해서 클라이언트로 전송
-      if (reComments.length) {
+      if (reComments.length && userId !== reComments[0].post.userId) {
         const { blocking, subscribeRequest } =
           await this.subscribeUtil.checkBlockingAndRequestState({
             requestUser: userId,
@@ -349,7 +349,7 @@ export class CommentsService {
       // console.log(comments);
 
       //차단 여부, 구독여부 확인해서 클라이언트로 전송
-      if (comments.length) {
+      if (comments.length && userId !== comments[0].post.userId) {
         const { blocking, subscribeRequest } =
           await this.subscribeUtil.checkBlockingAndRequestState({
             requestUser: userId,
@@ -363,6 +363,7 @@ export class CommentsService {
             comments[0].user.profileOpen,
           );
         if (rejectedMessage) {
+          console.log(rejectedMessage);
           return rejectedMessage;
         }
       }

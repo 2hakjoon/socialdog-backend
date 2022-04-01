@@ -67,10 +67,12 @@ export class SubscribesUtil {
           subscribeRequest: checkSubscribeRequested,
         };
       }
-      return {
-        blocking: BlockState.NONE,
-        subscribeRequest: checkSubscribeRequested,
-      };
+      if (!blocked.length && !blocking.length) {
+        return {
+          blocking: BlockState.NONE,
+          subscribeRequest: checkSubscribeRequested,
+        };
+      }
     } catch (e) {
       console.log(e);
       throw new Error('차단 상태 확인 오류');
