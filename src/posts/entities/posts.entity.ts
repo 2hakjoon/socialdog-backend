@@ -41,10 +41,10 @@ export class Posts extends CoreEntity {
   @Field(() => Int, { nullable: true })
   commentCounts?: number;
 
-  @Field((type) => Int)
+  @Field((type) => Int, { nullable: true })
   likes?: number;
 
-  @Field((type) => Boolean)
+  @Field((type) => Boolean, { nullable: true })
   liked?: boolean;
 
   // Relation

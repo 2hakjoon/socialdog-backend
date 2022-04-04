@@ -7,6 +7,6 @@ export class GetPostDetailInputDto extends PickType(Posts, ['id']) {}
 
 @ObjectType()
 export class GetPostDetailOutputDto extends CoreOutputDto {
-  @Field(() => Posts)
+  @Field(() => Posts, { nullable: true })
   data?: Posts;
 }
