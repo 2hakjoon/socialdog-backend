@@ -251,7 +251,7 @@ export class CommentsService {
           commentId: parentCommentId,
         })
         .andWhere(
-          '((comments.createdAt > :createdAt) OR (comments.createdAt = :createdAt AND comments.id < :id))',
+          '((comments.createdAt < :createdAt) OR (comments.createdAt = :createdAt AND comments.id < :id))',
           {
             createdAt: cursor.createdAt,
             id: cursor.id,
@@ -259,7 +259,7 @@ export class CommentsService {
         )
         .leftJoinAndSelect('comments.user', 'users')
         .leftJoinAndSelect('comments.post', 'posts')
-        .orderBy('comments.createdAt', 'ASC')
+        .orderBy('comments.createdAt', 'DESC')
         .addOrderBy('comments.id', 'DESC')
         .limit(take)
         .getMany();
@@ -340,14 +340,14 @@ export class CommentsService {
         .where('comments.postId = :postId', { postId })
         .andWhere('comments.depth = 0')
         .andWhere(
-          '((comments.createdAt > :createdAt) OR (comments.createdAt = :createdAt AND comments.id < :id))',
+          '((comments.createdAt < :createdAt) OR (comments.createdAt = :createdAt AND comments.id < :id))',
           {
             createdAt: cursor.createdAt,
             id: cursor.id,
           },
         )
         .take(take)
-        .orderBy('comments.createdAt', 'ASC')
+        .orderBy('comments.createdAt', 'DESC')
         .addOrderBy('comments.id', 'DESC')
         .getMany();
 
