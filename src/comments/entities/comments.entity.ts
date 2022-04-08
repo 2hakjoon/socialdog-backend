@@ -31,7 +31,7 @@ export class Comments extends CoreEntity {
   @Column({ nullable: true })
   postId: string;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int)
   reCommentCounts: number;
 
   // relations

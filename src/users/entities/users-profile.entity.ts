@@ -68,12 +68,13 @@ export class UserProfile extends CoreEntity {
   // Virtual Coulmn
   //내가 구독하는 사람들
   @Field((type) => Int)
-  subscribings?: number;
+  subscribings: number;
 
   //나를 구독하는 사람들
   @Field((type) => Int)
-  subscribers?: number;
+  subscribers: number;
 
+  // Realtions
   //내가 구독하는 사람들
   @Field((type) => [Subscribes], { nullable: true })
   @OneToMany(() => Subscribes, (subscribes) => subscribes.from)

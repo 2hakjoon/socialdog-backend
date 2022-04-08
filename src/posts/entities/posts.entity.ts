@@ -38,14 +38,14 @@ export class Posts extends CoreEntity {
   userId: string;
 
   // Virtual Column
-  @Field(() => Int, { nullable: true })
-  commentCounts?: number;
+  @Field(() => Int)
+  commentCounts: number;
 
-  @Field((type) => Int, { nullable: true })
-  likes?: number;
+  @Field((type) => Int)
+  likes: number;
 
-  @Field((type) => Boolean, { nullable: true })
-  liked?: boolean;
+  @Field((type) => Boolean)
+  liked: boolean;
 
   // Relation
   @Field((type) => UserProfile)
