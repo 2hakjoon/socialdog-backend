@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  postgresql:
+    image: postgres:latest
+    restart: always
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+    ports:
+      - 6453:5432
+    environment:
+      POSTGRES_PASSWORD: "12345"
+      TZ: "Asia/Seoul"
+  node:
+    image: node:16
+    working_dir: /usr/src/app
+    environment:
+      - NODE_ENV=prod
+    volumes:
+      - ./src:/usr/src/app
+    ports:
+      - 3000:3000
+    command: bash -c "npm install && npm run build && node dist/main.js"
