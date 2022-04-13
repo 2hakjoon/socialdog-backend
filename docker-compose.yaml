@@ -6,17 +6,13 @@ services:
     volumes:
       - ./postgresql/data:/var/lib/postgresql/data
     ports:
-      - 6453:5432
+      - 6543:5432
     environment:
       POSTGRES_PASSWORD: "12345"
+      POSTGRES_USER: "postgres"
+      POSTGRES_NAME: "postgresql"
       TZ: "Asia/Seoul"
-  node:
-    image: node:16
-    working_dir: /usr/src/app
-    environment:
-      - NODE_ENV=prod
-    volumes:
-      - ./src:/usr/src/app
+  server:
+    build: .
     ports:
-      - 3000:3000
-    command: bash -c "npm install && npm run build && node dist/main.js"
+      - 4000:4000
