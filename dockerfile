@@ -1,10 +1,10 @@
 FROM node:16
 RUN npm install -g npm@8.6.0
 WORKDIR /usr/src/socialdog-backend
-COPY package.json .
+COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
 
-EXPOSE 4000
+EXPOSE 3000
 
-CMD node dist/main.js
+CMD npm run start:dev

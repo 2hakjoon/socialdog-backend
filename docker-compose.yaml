@@ -14,5 +14,7 @@ services:
       TZ: "Asia/Seoul"
   server:
     build: .
+    volumes:
+      - ./src:/usr/src/socialdog-backend/src
     ports:
-      - 4000:4000
+      - 3000:3000
