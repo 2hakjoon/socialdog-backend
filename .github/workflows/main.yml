@@ -11,13 +11,13 @@ jobs:
       uses: actions/checkout@master
       with:
         path: 'static-site-generator'
+        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: git config
       env:
         USER_NAME: ${{ github.event.pusher.name }}
         USER_EMAIL: ${{ github.event.pusher.email }}
       run: |
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
         git config --global user.email "$USER_EMAIL"
         git config --global user.name "$USER_NAME"
 
