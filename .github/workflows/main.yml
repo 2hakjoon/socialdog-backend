@@ -10,7 +10,6 @@ jobs:
     - name: clone socialdog
       uses: actions/checkout@master
       with:
-        ssh-key: '/home/ec2-user/.ssh/id_rsa.pub'
         path: 'static-site-generator'
 
     - name: git config
