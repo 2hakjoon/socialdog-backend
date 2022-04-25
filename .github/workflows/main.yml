@@ -1,56 +1,40 @@
-name: CI/CD Docker
+name: Socialdog Deployment
 
-on:
-  push:
-    branches: [ master ]
-
-env:
-  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/trading
-  VERSION: ${{ github.sha }}
-  NAME: go_cicd
+on: [push]
 
 jobs:
   build:
-    name: Build
+    name: build
     runs-on: ubuntu-latest
     steps:
-      - name: Check out source code
-        uses: actions/checkout@v2
-      - name: Set up docker buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Cache docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ env.VERSION }} # runner 설정에서 읽어들일거에요.
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-      - name: Login to ghcr
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: ${{ env.DOCKER_IMAGE }}:latest
+    - name: clone gatsby-blog
+      uses: actions/checkout@master
+      with:
+        path: 'static-site-generator'
 
-  deploy:
-    needs: build
-    name: Deploy
-    runs-on: [ self-hosted, label-go ]
-    steps:
-      - name: Login to ghcr
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
-      - name: Docker run
-        run: |
-          echo deploying........
+    - name: git config
+      env:
+        USER_NAME: ${{ github.event.pusher.name }}
+        USER_EMAIL: ${{ github.event.pusher.email }}
+      run: |
+        git config --global user.email "$USER_EMAIL"
+        git config --global user.name "$USER_NAME"
+
+    - name: make deploy keys
+      env:
+        GH_ACTION_DEPLOY_KEY: ${{ secrets.GH_ACTION_DEPLOY_KEY }}
+      run: |
+        mkdir -p ~/.ssh/
+        echo "$GH_ACTION_DEPLOY_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: clone static_site_repo
+      run: |
+        cd ..
+        git clone git@github.com:HAKJOON0223/socialdog-backend.git
+
+    - name: install dependencies & build
+      run: |
+        npm install
+        npm run build
