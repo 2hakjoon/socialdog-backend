@@ -10,6 +10,7 @@ jobs:
     - name: clone gatsby-blog
       uses: actions/checkout@master
       with:
+        ssh-key: '/home/ec2-user/.ssh/id_rsa'
         path: 'static-site-generator'
 
     - name: git config
