@@ -19,4 +19,5 @@ jobs:
     - name: install dependencies & build
       run: |
         cd ../
-        sudo cp -r socialdog-backend/ /home/ec2-user/socialdog
+        cd /home/ec2-user/socialdog
+        ls
