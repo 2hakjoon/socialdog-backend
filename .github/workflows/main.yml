@@ -7,11 +7,17 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     steps:
+
+    - uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        name: id_rsa
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+        
     - name: clone socialdog
       uses: actions/checkout@master
       with:
         path: 'static-site-generator'
-        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: git config
       env:
