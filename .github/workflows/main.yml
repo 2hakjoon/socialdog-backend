@@ -15,14 +15,8 @@ jobs:
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
     
     - uses: actions/checkout@v2
-      with:
-        run: |
-          ls -la
-
 
     - name: install dependencies & build
       run: |
-        ls -la
+        cd ../
         ls
-        npm install
-        npm run build
