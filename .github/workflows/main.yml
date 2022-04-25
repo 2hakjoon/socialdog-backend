@@ -24,7 +24,7 @@ jobs:
 
     - name: clone static_site_repo
       run: |
-        sudo git clone git@github.com:HAKJOON0223/socialdog-backend.git
+        git clone git@github.com:HAKJOON0223/socialdog-backend.git
 
     - name: install dependencies & build
       run: |
