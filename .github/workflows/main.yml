@@ -19,5 +19,5 @@ jobs:
     - name: install dependencies & build
       run: |
         cd ../
-        cd /home/ec2-user/socialdog
+        cd /
         ls
