@@ -22,5 +22,7 @@ jobs:
 
     - name: install dependencies & build
       run: |
+        ls -la
+        ls
         npm install
         npm run build
