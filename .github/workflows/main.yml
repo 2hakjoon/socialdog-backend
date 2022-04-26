@@ -7,18 +7,14 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     steps:
+      - name: show env file
+        run: |
+          echo "${{ secrets.ENV_VARS }}"
 
-    - uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        name: id_rsa
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
-    
-    - uses: actions/checkout@v2
-
-    - name: install dependencies & build
-      run: |
-        cd ../
-        cd /
-        cd home
-        ls
+      - name: create remote directory
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_REMOTE_IP }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: ls
