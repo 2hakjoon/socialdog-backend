@@ -7,15 +7,14 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     steps:
-    
       - name: checkout
         uses: actions/checkout@master
 
-      - name: copy source via ssh key 
-      uses: burnett01/rsync-deployments@4.1
-      with:
-        switches: -avzr --delete
-        remote_path: /socialdog
-        remote_host: ${{ secrets.EC2_REMOTE_IP }}
-        remote_user: ${{ secrets.EC2_USERNAME }}
-        remote_key: ${{ secrets.EC2_PRIVATE_KEY }}
+      - name: copy source via ssh key
+        uses: burnett01/rsync-deployments@4.1
+        with:
+          switches: -avzr --delete
+          remote_path: /socialdog
+          remote_host: ${{ secrets.EC2_REMOTE_IP }}
+          remote_user: ${{ secrets.EC2_USERNAME }}
+          remote_key: ${{ secrets.EC2_PRIVATE_KEY }}
