@@ -50,16 +50,18 @@ import { Comments } from './comments/entities/comments.entity';
       autoSchemaFile: true,
     }),
     TypeOrmModule.forRoot({
+      type: 'postgres',
       ...(process.env.DATABASE_URL
         ? { url: process.env.DATABASE_URL }
-        : {type: 'postgres',
-      host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      synchronize: true,
-      logging: true,}),
+        : {
+            host: process.env.DB_HOST,
+            port: +process.env.DB_PORT,
+            username: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            synchronize: true,
+            logging: true,
+          }),
       entities: [
         UserProfile,
         AuthLocal,
