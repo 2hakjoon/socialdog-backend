@@ -65,9 +65,10 @@ import { Comments } from './comments/entities/comments.entity';
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
-            synchronize: true,
-            logging: true,
           }),
+
+      synchronize: true,
+      logging: true,
       entities: [
         UserProfile,
         AuthLocal,
