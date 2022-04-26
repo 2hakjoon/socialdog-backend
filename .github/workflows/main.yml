@@ -13,8 +13,9 @@ jobs:
       - name: copy source via ssh key
         uses: burnett01/rsync-deployments@4.1
         with:
+          rsh: 'sudo'
           switches: -avzr --delete
-          remote_path: /home/${{ secrets.EC2_USERNAME }}/sociadog/test
+          remote_path: /home/${{ secrets.EC2_USERNAME }}/socialdog/test
           remote_host: ${{ secrets.EC2_REMOTE_IP }}
           remote_user: ${{ secrets.EC2_USERNAME }}
           remote_key: ${{ secrets.EC2_PRIVATE_KEY }}
