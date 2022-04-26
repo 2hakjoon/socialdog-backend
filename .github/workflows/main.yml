@@ -7,8 +7,7 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     steps:
-
-      - name: copy source via ssh key # ssh key를 이용해 현재 푸시된 소스를 서버에 복사한다.
+      - name: copy source via ssh key 
       uses: burnett01/rsync-deployments@4.1
       with:
         switches: -avzr --delete
