@@ -494,6 +494,16 @@ export class PostsService {
       // console.log(post);
       const postAuthor = post.user;
 
+      // 내 게시글은 바로 보여줌
+      if (userId === postAuthor.id) {
+        return {
+          ok: true,
+          data: {
+            ...post,
+          },
+        };
+      }
+
       //차단 여부, 구독여부 확인해서 클라이언트로 전송
       const { blocking, subscribeRequest } =
         await this.subscribesUtil.checkBlockingAndRequestState({

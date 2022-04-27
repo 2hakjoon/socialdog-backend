@@ -42,7 +42,6 @@ export class SubscribesUtil {
           return true;
         }
       });
-
       const requestState = subscribes.filter((subs) => {
         if (subs.to === targetUser) {
           return true;
@@ -108,7 +107,6 @@ export class SubscribesUtil {
         error: '차단한 유저입니다.',
       };
     }
-
     if (!profileOpen && subscribeRequest !== SubscribeRequestState.CONFIRMED) {
       return {
         ok: false,
