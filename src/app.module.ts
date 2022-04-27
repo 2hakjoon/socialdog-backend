@@ -51,14 +51,16 @@ import { Comments } from './comments/entities/comments.entity';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      ssl: true,
-      extra: {
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      },
       ...(process.env.DATABASE_URL
-        ? { url: process.env.DATABASE_URL }
+        ? {
+            url: process.env.DATABASE_URL,
+            ssl: true,
+            extra: {
+              ssl: {
+                rejectUnauthorized: false,
+              },
+            },
+          }
         : {
             host: process.env.DB_HOST,
             port: +process.env.DB_PORT,
