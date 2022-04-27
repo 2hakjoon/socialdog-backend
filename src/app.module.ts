@@ -46,7 +46,7 @@ import { Comments } from './comments/entities/comments.entity';
     }),
     GraphQLModule.forRoot({
       debug: false,
-      playground: true,
+      playground: false,
       autoSchemaFile: true,
     }),
     TypeOrmModule.forRoot({

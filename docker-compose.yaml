@@ -1,17 +1,5 @@
 version: "3.9"
 services:
-  postgresql:
-    image: postgres:latest
-    restart: always
-    volumes:
-      - ../postgresql/data:/var/lib/postgresql/data
-    ports:
-      - 6543:5432
-    environment:
-      POSTGRES_PASSWORD: "12345"
-      POSTGRES_USER: "postgres"
-      POSTGRES_NAME: "postgresql"
-      TZ: "Asia/Seoul"
   server:
     build: .
     volumes:
