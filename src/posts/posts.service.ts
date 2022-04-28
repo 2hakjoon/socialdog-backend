@@ -356,28 +356,50 @@ export class PostsService {
     { take, cursor }: CursorPaginationArgs,
   ): Promise<getPostsByAddressOutputDto> {
     try {
-      const execptUsers = await this.subscribesRepository
+      // console.log(execptUserIds);
+
+      const relatedUsers = await this.subscribesRepository
         .createQueryBuilder('subs')
-        .where(
-          '(subs.to = :userId OR subs.from = :userId) AND subs.block = :block',
-          {
-            userId,
-            block: true,
-          },
-        )
         .loadAllRelationIds({ relations: ['to', 'from'] })
+        .where('subs.from = :userId AND subs.subscribeRequest = :request', {
+          userId,
+          request: SubscribeRequestState.CONFIRMED,
+        })
+        .andWhere('subs.from = :userId', { userId })
         .getMany();
 
-      // console.log(execptUsers);
+      console.log(relatedUsers);
 
-      const execptUserIds = execptUsers.map((execptUser) => {
-        if (execptUser.to !== userId) {
-          return execptUser.to;
-        }
-        return execptUser.from;
-      });
+      let subscribingUsers = relatedUsers
+        .map((relatedUser) => {
+          if (relatedUser.block) {
+            return null;
+          }
+          return relatedUser.to;
+        })
+        .filter((data) => data);
 
-      // console.log(execptUserIds);
+      subscribingUsers = [...subscribingUsers, userId];
+
+      console.log('subscribingUsers', subscribingUsers);
+
+      let execptUserIds = relatedUsers
+        .map((relatedUser) => {
+          if (relatedUser.block) {
+            if (relatedUser.to !== userId) {
+              return relatedUser.to;
+            }
+            return relatedUser.from;
+          }
+          return null;
+        })
+        .filter((data) => data);
+
+      //빈 array를 집어넣으면 에러가 나므로, 0000인 UUID를 기본값으로 넣어줌
+      execptUserIds = execptUserIds.length
+        ? execptUserIds
+        : ['00000000-0000-0000-0000-000000000000'];
+      console.log('execptUserIds', execptUserIds);
 
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
@@ -400,12 +422,15 @@ export class PostsService {
             postId: cursor.id,
           },
         )
-        .andWhere(`user.profileOpen = :open`, { open: true })
-        //빈 array를 집어넣으면 에러가 나므로, 0000인 UUID를 기본값으로 넣어줌
-        .andWhere('user.id NOT IN (:...userIds)', {
-          userIds: execptUserIds.length
-            ? execptUserIds
-            : ['00000000-0000-0000-0000-000000000000'],
+        .andWhere(
+          `user.profileOpen = :open OR user.id In (:...subscribingUsers)`,
+          {
+            open: true,
+            subscribingUsers,
+          },
+        )
+        .andWhere('user.id NOT IN (:...execptUserIds)', {
+          execptUserIds,
         })
         .andWhere('posts.address LIKE :q', { q: `%${address}%` })
         .orderBy('posts.createdAt', 'DESC')
