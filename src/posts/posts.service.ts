@@ -381,7 +381,7 @@ export class PostsService {
 
       subscribingUsers = [...subscribingUsers, userId];
 
-      console.log('subscribingUsers', subscribingUsers);
+      // console.log('subscribingUsers', subscribingUsers);
 
       let execptUserIds = relatedUsers
         .map((relatedUser) => {
@@ -399,7 +399,7 @@ export class PostsService {
       execptUserIds = execptUserIds.length
         ? execptUserIds
         : ['00000000-0000-0000-0000-000000000000'];
-      console.log('execptUserIds', execptUserIds);
+      // console.log('execptUserIds', execptUserIds);
 
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
