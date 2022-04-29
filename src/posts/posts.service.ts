@@ -80,6 +80,7 @@ export class PostsService {
         ok: true,
       };
     } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: '게시물 생성에 실패하였습니다.',
