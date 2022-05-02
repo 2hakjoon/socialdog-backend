@@ -403,7 +403,7 @@ export class PostsService {
       execptUserIds = execptUserIds.length
         ? execptUserIds
         : ['00000000-0000-0000-0000-000000000000'];
-      console.log('execptUserIds', execptUserIds);
+      // console.log('execptUserIds', execptUserIds);
 
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
@@ -422,21 +422,21 @@ export class PostsService {
         .where('user.id NOT IN (:...execptUserIds)', {
           execptUserIds,
         })
-        .andWhere(
+        .where(
           `user.profileOpen = :open OR user.id In (:...subscribingUsers)`,
           {
             open: true,
             subscribingUsers,
           },
         )
-        .andWhere(
+        .where(
           '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
           {
             createdAt: cursor.createdAt,
             postId: cursor.id,
           },
         )
-        .andWhere('posts.address LIKE :q', { q: `${address}` })
+        .andWhere('posts.address LIKE :q', { q: `%${address}%` })
         .orderBy('posts.createdAt', 'DESC')
         .addOrderBy('posts.id', 'DESC')
         .take(take)
