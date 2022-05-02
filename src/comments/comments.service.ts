@@ -353,25 +353,25 @@ export class CommentsService {
 
       // console.log(comments);
 
-      //차단 여부, 구독여부 확인해서 클라이언트로 전송
-      if (comments.length && userId !== comments[0].post.userId) {
-        const { blocking, subscribeRequest } =
-          await this.subscribeUtil.checkBlockingAndRequestState({
-            requestUser: userId,
-            targetUser: comments[0].post.userId,
-          });
+      // //차단 여부, 구독여부 확인해서 클라이언트로 전송
+      // if (comments.length && userId !== comments[0].post.userId) {
+      //   const { blocking, subscribeRequest } =
+      //     await this.subscribeUtil.checkBlockingAndRequestState({
+      //       requestUser: userId,
+      //       targetUser: comments[0].post.userId,
+      //     });
 
-        const rejectedMessage =
-          this.subscribeUtil.returnBlockAndSubscribeMessage(
-            blocking,
-            subscribeRequest,
-            comments[0].user.profileOpen,
-          );
-        if (rejectedMessage) {
-          console.log(rejectedMessage);
-          return rejectedMessage;
-        }
-      }
+      //   const rejectedMessage =
+      //     this.subscribeUtil.returnBlockAndSubscribeMessage(
+      //       blocking,
+      //       subscribeRequest,
+      //       comments[0].user.profileOpen,
+      //     );
+      //   if (rejectedMessage) {
+      //     console.log('L:371', rejectedMessage);
+      //     return rejectedMessage;
+      //   }
+      // }
 
       return {
         ok: true,
