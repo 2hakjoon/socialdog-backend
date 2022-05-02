@@ -362,14 +362,17 @@ export class PostsService {
       const relatedUsers = await this.subscribesRepository
         .createQueryBuilder('subs')
         .loadAllRelationIds({ relations: ['to', 'from'] })
-        .where('subs.from = :userId AND subs.subscribeRequest = :request', {
-          userId,
-          request: SubscribeRequestState.CONFIRMED,
-        })
-        .andWhere('subs.from = :userId', { userId })
+        .where(
+          'subs.from = :userId AND subs.subscribeRequest = :request AND subs.from = :userId',
+          {
+            userId,
+            request: SubscribeRequestState.CONFIRMED,
+          },
+        )
+        .orWhere('subs.block = true')
         .getMany();
 
-      console.log(relatedUsers);
+      // console.log(relatedUsers);
 
       let subscribingUsers = relatedUsers
         .map((relatedUser) => {
@@ -400,7 +403,7 @@ export class PostsService {
       execptUserIds = execptUserIds.length
         ? execptUserIds
         : ['00000000-0000-0000-0000-000000000000'];
-      // console.log('execptUserIds', execptUserIds);
+      console.log('execptUserIds', execptUserIds);
 
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
@@ -416,13 +419,9 @@ export class PostsService {
           'like',
           (qb) => qb.where('like.userId = :id', { id: userId }),
         )
-        .where(
-          '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
-          {
-            createdAt: cursor.createdAt,
-            postId: cursor.id,
-          },
-        )
+        .where('user.id NOT IN (:...execptUserIds)', {
+          execptUserIds,
+        })
         .andWhere(
           `user.profileOpen = :open OR user.id In (:...subscribingUsers)`,
           {
@@ -430,10 +429,14 @@ export class PostsService {
             subscribingUsers,
           },
         )
-        .andWhere('user.id NOT IN (:...execptUserIds)', {
-          execptUserIds,
-        })
-        .andWhere('posts.address LIKE :q', { q: `%${address}%` })
+        .andWhere(
+          '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
+          {
+            createdAt: cursor.createdAt,
+            postId: cursor.id,
+          },
+        )
+        .andWhere('posts.address LIKE :q', { q: `${address}` })
         .orderBy('posts.createdAt', 'DESC')
         .addOrderBy('posts.id', 'DESC')
         .take(take)
