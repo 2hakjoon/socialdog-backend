@@ -24,6 +24,8 @@ import { LikesModule } from './likes/likes.module';
 import { Likes } from './likes/entities/likes.entity';
 import { CommentsModule } from './comments/comments.module';
 import { Comments } from './comments/entities/comments.entity';
+import { DogsModule } from './dogs/dogs.module';
+import { Dogs } from './dogs/entities/dogs.entity';
 
 @Module({
   imports: [
@@ -81,6 +83,7 @@ import { Comments } from './comments/entities/comments.entity';
         Subscribes,
         Likes,
         Comments,
+        Dogs,
       ],
     }),
     UploadModule.forRoot({
@@ -101,6 +104,7 @@ import { Comments } from './comments/entities/comments.entity';
     SubscribesModule,
     LikesModule,
     CommentsModule,
+    DogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
