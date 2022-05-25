@@ -12,9 +12,7 @@ import { UserProfile } from '../entities/users-profile.entity';
 
 @InputType()
 export class EditProfileInputDto extends IntersectionType(
-  PartialType(
-    PickType(UserProfile, ['username', 'dogname', 'photo', 'profileOpen']),
-  ),
+  PartialType(PickType(UserProfile, ['username', 'photo', 'profileOpen'])),
   PartialType(PickType(AuthLocal, ['password'])),
 ) {}
 

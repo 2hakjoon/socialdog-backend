@@ -8,6 +8,7 @@ import {
 import { IsString, Length } from 'class-validator';
 import { Comments } from 'src/comments/entities/comments.entity';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
+import { Dogs } from 'src/dogs/entities/dogs.entity';
 import { Likes } from 'src/likes/entities/likes.entity';
 import { Posts } from 'src/posts/entities/posts.entity';
 import { Walks } from 'src/walks/entities/walks.entity';
@@ -35,12 +36,6 @@ export class UserProfile extends CoreEntity {
 
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
-  @IsString()
-  @Length(0, 15)
-  dogname?: string;
-
-  @Field((type) => String, { nullable: true })
-  @Column({ nullable: true })
   photo?: string;
 
   @Field((type) => LoginStrategy)
@@ -52,6 +47,10 @@ export class UserProfile extends CoreEntity {
   profileOpen: boolean;
 
   //Relations
+
+  @Field((type) => [Dogs], { nullable: true })
+  @OneToMany(() => Dogs, (dogs) => dogs.user)
+  dogs?: Dogs[];
 
   @Field((type) => [Walks], { nullable: true })
   @OneToMany(() => Walks, (walk) => walk.user)
