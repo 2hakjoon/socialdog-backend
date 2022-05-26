@@ -3,6 +3,7 @@ import {
   CoreOutputDto,
   CoreWalksOutputDto,
 } from 'src/common/dtos/core-output.dto';
+import { Dogs } from 'src/dogs/entities/dogs.entity';
 import { UserProfile, UUID } from 'src/users/entities/users-profile.entity';
 import { Repository } from 'typeorm';
 import {
@@ -19,22 +20,31 @@ export class WalksService {
     private walksRepository: Repository<Walks>,
     @InjectRepository(UserProfile)
     private userProfileRepository: Repository<UserProfile>,
+    @InjectRepository(Dogs)
+    private dogsRepository: Repository<Dogs>,
   ) {}
 
   async createWalk(
     { userId }: UUID,
-    args: CreateWalkInputDto,
+    { dogId, ...rest }: CreateWalkInputDto,
   ): Promise<CreateWalkOutputDto> {
     try {
       const user = await this.userProfileRepository.findOne({ id: userId });
       if (!user) {
         return {
           ok: false,
-          error: '사용자정보를 찾을 수 없습니다.',
+          error: '사용자 정보를 찾을 수 없습니다.',
         };
       }
+      const dog = await this.dogsRepository.findOne({ id: dogId });
       await this.walksRepository.save(
-        this.walksRepository.create({ ...args, userId: userId, user: user }),
+        this.walksRepository.create({
+          ...rest,
+          userId,
+          user,
+          dogId,
+          dog,
+        }),
       );
       return {
         ok: true,

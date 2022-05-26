@@ -8,6 +8,7 @@ export class CreateWalkInputDto extends PickType(Walks, [
   'startTime',
   'finishTime',
   'walkRecord',
+  'dogId',
 ]) {}
 
 @ObjectType()

@@ -2,7 +2,7 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
-import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 
 @Entity()
 @InputType({ isAbstract: true })
@@ -35,4 +35,8 @@ export class Dogs extends CoreEntity {
     onDelete: 'CASCADE',
   })
   user: UserProfile;
+
+  @Field((type) => [UserProfile])
+  @OneToMany(() => UserProfile, (userProfile) => userProfile.dogs)
+  walk: UserProfile;
 }
