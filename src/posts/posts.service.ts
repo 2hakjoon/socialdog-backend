@@ -359,21 +359,20 @@ export class PostsService {
     try {
       // console.log(execptUserIds);
 
+      // 구독중인 유저 및 차단한 유저 목록 전부를 가져옴
       const relatedUsers = await this.subscribesRepository
         .createQueryBuilder('subs')
         .loadAllRelationIds({ relations: ['to', 'from'] })
-        .where(
-          'subs.from = :userId AND subs.subscribeRequest = :request AND subs.from = :userId',
-          {
-            userId,
-            request: SubscribeRequestState.CONFIRMED,
-          },
-        )
+        .where('subs.from = :userId AND subs.subscribeRequest = :request', {
+          userId,
+          request: SubscribeRequestState.CONFIRMED,
+        })
         .orWhere('subs.block = true')
         .getMany();
 
       // console.log(relatedUsers);
 
+      //차단한 유저는 제외.
       let subscribingUsers = relatedUsers
         .map((relatedUser) => {
           if (relatedUser.block) {
@@ -403,7 +402,7 @@ export class PostsService {
       execptUserIds = execptUserIds.length
         ? execptUserIds
         : ['00000000-0000-0000-0000-000000000000'];
-      // console.log('execptUserIds', execptUserIds);
+      console.log('execptUserIds', execptUserIds);
 
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
@@ -419,24 +418,39 @@ export class PostsService {
           'like',
           (qb) => qb.where('like.userId = :id', { id: userId }),
         )
-        .where('user.id NOT IN (:...execptUserIds)', {
-          execptUserIds,
-        })
         .where(
-          `user.profileOpen = :open OR user.id In (:...subscribingUsers)`,
+          `(user.id NOT IN (:...execptUserIds))
+          AND (user.profileOpen = :open OR user.id In (:...subscribingUsers))
+          AND (posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))
+          AND (posts.address LIKE :q)
+          `,
           {
+            execptUserIds,
             open: true,
             subscribingUsers,
-          },
-        )
-        .where(
-          '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
-          {
             createdAt: cursor.createdAt,
             postId: cursor.id,
+            q: `%${address}%`,
           },
         )
-        .andWhere('posts.address LIKE :q', { q: `%${address}%` })
+        // .where('user.id NOT IN (:...execptUserIds)', {
+        //   execptUserIds,
+        // })
+        // .where(
+        //   `user.profileOpen = :open OR user.id In (:...subscribingUsers)`,
+        //   {
+        //     open: true,
+        //     subscribingUsers,
+        //   },
+        // )
+        // .where(
+        //   '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
+        //   {
+        //     createdAt: cursor.createdAt,
+        //     postId: cursor.id,
+        //   },
+        // )
+        // .andWhere('posts.address LIKE :q', { q: `%${address}%` })
         .orderBy('posts.createdAt', 'DESC')
         .addOrderBy('posts.id', 'DESC')
         .take(take)
