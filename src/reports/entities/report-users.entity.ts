@@ -23,7 +23,7 @@ registerEnumType(ReportUsersType, {
 
 @Entity()
 @ObjectType({ isAbstract: true })
-@InputType()
+@InputType({ isAbstract: true })
 export class ReportUsers extends CoreEntity {
   @Field(() => String)
   @IsEnum(ReportUsersType)

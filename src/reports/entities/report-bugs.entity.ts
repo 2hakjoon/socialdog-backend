@@ -5,7 +5,7 @@ import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
 @Entity()
 @ObjectType({ isAbstract: true })
-@InputType()
+@InputType({ isAbstract: true })
 export class ReportBugs extends CoreEntity {
   @Field(() => String)
   @IsString()
