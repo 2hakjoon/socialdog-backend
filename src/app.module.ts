@@ -27,6 +27,10 @@ import { Comments } from './comments/entities/comments.entity';
 import { DogsModule } from './dogs/dogs.module';
 import { Dogs } from './dogs/entities/dogs.entity';
 import { ReportsModule } from './reports/reports.module';
+import { ReportPosts } from './reports/entities/report-posts.entity';
+import { ReportBugs } from './reports/entities/report-bugs.entity';
+import { ReportUsers } from './reports/entities/report-users.entity';
+import { ReportComments } from './reports/entities/report-comments.entity';
 
 @Module({
   imports: [
@@ -85,6 +89,10 @@ import { ReportsModule } from './reports/reports.module';
         Likes,
         Comments,
         Dogs,
+        ReportPosts,
+        ReportBugs,
+        ReportUsers,
+        ReportComments,
       ],
     }),
     UploadModule.forRoot({

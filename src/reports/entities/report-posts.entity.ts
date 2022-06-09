@@ -36,13 +36,13 @@ export class ReportPosts extends CoreEntity {
   @Column()
   comment: string;
 
-  @RelationId((userProfile: UserProfile) => userProfile.id)
+  @RelationId((reportPosts: ReportPosts) => reportPosts.reportUserProfile)
   @Field(() => String)
   @IsUUID()
   @Column()
   reportUserId: string;
 
-  @RelationId((posts: Posts) => posts.id)
+  @RelationId((reportPosts: ReportPosts) => reportPosts.reportedPosts)
   @Field(() => String)
   @IsUUID()
   @Column()

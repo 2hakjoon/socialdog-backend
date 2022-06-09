@@ -6,7 +6,7 @@ import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 @Entity()
 @ObjectType({ isAbstract: true })
 @InputType()
-export class ReportPosts extends CoreEntity {
+export class ReportBugs extends CoreEntity {
   @Field(() => String)
   @IsString()
   @Column()

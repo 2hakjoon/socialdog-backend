@@ -7,7 +7,6 @@ import {
 import { IsEnum, IsString, IsUUID } from 'class-validator';
 import { Comments } from 'src/comments/entities/comments.entity';
 import { CoreEntity } from 'src/common/entity/core-entity.entity';
-import { Posts } from 'src/posts/entities/posts.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
@@ -26,7 +25,7 @@ registerEnumType(ReportPostsType, {
 @Entity()
 @ObjectType({ isAbstract: true })
 @InputType()
-export class ReportPosts extends CoreEntity {
+export class ReportComments extends CoreEntity {
   @Field(() => String)
   @IsEnum(ReportPostsType)
   @Column()
@@ -37,13 +36,17 @@ export class ReportPosts extends CoreEntity {
   @Column()
   comment: string;
 
-  @RelationId((userProfile: UserProfile) => userProfile.id)
+  @RelationId(
+    (reportComments: ReportComments) => reportComments.reportUserProfile,
+  )
   @Field(() => String)
   @IsUUID()
   @Column()
   reportUserId: string;
 
-  @RelationId((comments: Comments) => comments.id)
+  @RelationId(
+    (reportComments: ReportComments) => reportComments.reportedComments,
+  )
   @Field(() => String)
   @IsUUID()
   @Column()
