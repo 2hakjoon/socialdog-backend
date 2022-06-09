@@ -37,6 +37,7 @@ import {
   GetPostDetailOutputDto,
 } from './dtos/get-post-detail.dto';
 import { Comments } from 'src/comments/entities/comments.entity';
+import { ReportPosts } from 'src/reports/entities/report-posts.entity';
 
 @Injectable()
 export class PostsService {
@@ -51,6 +52,8 @@ export class PostsService {
     private likesRepository: Repository<Likes>,
     @InjectRepository(Comments)
     private commentsRepository: Repository<Comments>,
+    @InjectRepository(ReportPosts)
+    private reportPostsRepository: Repository<ReportPosts>,
     private subscribesUtil: SubscribesUtil,
     private uploadService: UploadService,
   ) {}
@@ -283,7 +286,7 @@ export class PostsService {
   ): Promise<GetSubscribingPostsOutputDto> {
     try {
       // console.log(take, cursor);
-      const mySubscibes = await this.subscribesRepository
+      const mySubscribes = await this.subscribesRepository
         .createQueryBuilder('subs')
         .where('subs.to = :userId AND subs.from = :userId', { userId })
         .where('subs.to = :userId AND block = :blockstate', {
@@ -304,9 +307,21 @@ export class PostsService {
 
       // console.log(mySubscibes);
       const subscribeIds = [
-        ...mySubscibes.map((subscribe) => subscribe.to?.['id']),
+        ...mySubscribes.map((subscribe) => subscribe.to?.['id']),
         userId,
       ];
+
+      // 신고한 게시물은 보이지 않게 함.
+      const reportedPost = await this.reportPostsRepository.find({
+        select: ['reportedPostId'],
+        where: {
+          reportUserId: userId,
+        },
+      });
+      const reportedPostId = reportedPost.length
+        ? reportedPost.map((val) => val.reportedPostId)
+        : ['00000000-0000-0000-0000-000000000000'];
+      // console.log(reportedPostId);
 
       const subscribingPosts = await this.postsRepository
         .createQueryBuilder('posts')
@@ -323,15 +338,17 @@ export class PostsService {
           (qb) => qb.where('like.userId = :id', { id: userId }),
         )
         .where(
-          '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
+          `(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))
+          AND (posts.id NOT IN(:...reportedPostId))
+          AND (posts.userId IN (:...userIds))
+          `,
           {
+            reportedPostId,
             createdAt: cursor.createdAt,
             postId: cursor.id,
+            userIds: subscribeIds,
           },
         )
-        .andWhere('posts.userId IN (:...userIds)', {
-          userIds: subscribeIds,
-        })
         .innerJoin('posts.user', 'user')
         .orderBy('posts.createdAt', 'DESC')
         .addOrderBy('posts.id', 'DESC')
@@ -397,12 +414,23 @@ export class PostsService {
           return null;
         })
         .filter((data) => data);
-
       //빈 array를 집어넣으면 에러가 나므로, 0000인 UUID를 기본값으로 넣어줌
       execptUserIds = execptUserIds.length
         ? execptUserIds
         : ['00000000-0000-0000-0000-000000000000'];
-      console.log('execptUserIds', execptUserIds);
+      // console.log('execptUserIds', execptUserIds);
+
+      // 신고한 게시물은 보이지 않게 함.
+      const reportedPost = await this.reportPostsRepository.find({
+        select: ['reportedPostId'],
+        where: {
+          reportUserId: userId,
+        },
+      });
+      const reportedPostId = reportedPost.length
+        ? reportedPost.map((val) => val.reportedPostId)
+        : ['00000000-0000-0000-0000-000000000000'];
+      // console.log(reportedPostId);
 
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
@@ -419,13 +447,16 @@ export class PostsService {
           (qb) => qb.where('like.userId = :id', { id: userId }),
         )
         .where(
-          `(user.id NOT IN (:...execptUserIds))
+          `
+          (user.id NOT IN (:...execptUserIds))
+          AND (posts.id NOT IN(:...reportedPostId))
           AND (user.profileOpen = :open OR user.id In (:...subscribingUsers))
           AND (posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))
           AND (posts.address LIKE :q)
           `,
           {
             execptUserIds,
+            reportedPostId,
             open: true,
             subscribingUsers,
             createdAt: cursor.createdAt,
