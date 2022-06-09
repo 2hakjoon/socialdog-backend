@@ -85,10 +85,7 @@ export class ReportsResolver {
 
   @Query(() => GetReportBugsOutputDto)
   @UseGuards(GqlAuthGuard)
-  getReportBugs(
-    @AuthUser() { userId }: UUID,
-    @Args(args) args,
-  ): Promise<GetReportBugsOutputDto> {
+  getReportBugs(): Promise<GetReportBugsOutputDto> {
     return this.reportsService.getReportBugs();
   }
 }
