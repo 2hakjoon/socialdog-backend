@@ -26,6 +26,7 @@ import { CommentsModule } from './comments/comments.module';
 import { Comments } from './comments/entities/comments.entity';
 import { DogsModule } from './dogs/dogs.module';
 import { Dogs } from './dogs/entities/dogs.entity';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -105,6 +106,7 @@ import { Dogs } from './dogs/entities/dogs.entity';
     LikesModule,
     CommentsModule,
     DogsModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
