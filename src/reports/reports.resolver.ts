@@ -38,11 +38,12 @@ export class ReportsResolver {
     return this.reportsService.createReportUser(userId, args);
   }
 
-  @Query(() => GetReportUsersOutputDto)
-  @UseGuards(GqlAuthGuard)
-  getReportUsers(): Promise<GetReportUsersOutputDto> {
-    return this.reportsService.getReportUsers();
-  }
+  // // Todo 관리자 계정
+  // @Query(() => GetReportUsersOutputDto)
+  // @UseGuards(GqlAuthGuard)
+  // getReportUsers(): Promise<GetReportUsersOutputDto> {
+  //   return this.reportsService.getReportUsers();
+  // }
 
   @Mutation(() => CreateReportPostOutputDto)
   @UseGuards(GqlAuthGuard)
@@ -53,11 +54,12 @@ export class ReportsResolver {
     return this.reportsService.createReportPost(userId, args);
   }
 
-  @Query(() => GetReportPostsOutputDto)
-  @UseGuards(GqlAuthGuard)
-  getReportPosts(): Promise<GetReportPostsOutputDto> {
-    return this.reportsService.getReportPosts();
-  }
+  // // Todo 관리자 계정
+  // @Query(() => GetReportPostsOutputDto)
+  // @UseGuards(GqlAuthGuard)
+  // getReportPosts(): Promise<GetReportPostsOutputDto> {
+  //   return this.reportsService.getReportPosts();
+  // }
 
   @Mutation(() => CreateReportCommentOutputDto)
   @UseGuards(GqlAuthGuard)
@@ -68,11 +70,12 @@ export class ReportsResolver {
     return this.reportsService.createReportComment(userId, args);
   }
 
-  @Query(() => GetReportCommentsOutputDto)
-  @UseGuards(GqlAuthGuard)
-  getReportComments(): Promise<GetReportCommentsOutputDto> {
-    return this.reportsService.getReportComments();
-  }
+  // // Todo 관리자 계정
+  // @Query(() => GetReportCommentsOutputDto)
+  // @UseGuards(GqlAuthGuard)
+  // getReportComments(): Promise<GetReportCommentsOutputDto> {
+  //   return this.reportsService.getReportComments();
+  // }
 
   @Mutation(() => CreateReportBugOutputDto)
   @UseGuards(GqlAuthGuard)
@@ -83,9 +86,10 @@ export class ReportsResolver {
     return this.reportsService.createReportBug(userId, args);
   }
 
-  @Query(() => GetReportBugsOutputDto)
-  @UseGuards(GqlAuthGuard)
-  getReportBugs(): Promise<GetReportBugsOutputDto> {
-    return this.reportsService.getReportBugs();
-  }
+  // // Todo 관리자 계정
+  // @Query(() => GetReportBugsOutputDto)
+  // @UseGuards(GqlAuthGuard)
+  // getReportBugs(): Promise<GetReportBugsOutputDto> {
+  //   return this.reportsService.getReportBugs();
+  // }
 }
