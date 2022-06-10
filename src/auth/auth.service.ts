@@ -15,8 +15,15 @@ import { AuthKakao } from './entities/auth-kakao.entity';
 import {
   LoginStrategy,
   UserProfile,
+  UUID,
 } from 'src/users/entities/users-profile.entity';
 import { CONFIG_OPTIONS } from 'src/common/utils/constants';
+import {
+  UpdateAuthKakaoAcceptTermInputDto,
+  UpdateAuthKakaoAcceptTermOutputDto,
+  UpdateAuthLocalAcceptTermInputDto,
+  UpdateAuthLocalAcceptTermOutputDto,
+} from './dtos/update-accept-term.dto';
 
 interface IKakaoLoginResponse {
   data: {
@@ -49,6 +56,7 @@ export class AuthService {
   async localLogin({
     email,
     password,
+    acceptTerms,
   }: LoginInputDto): Promise<LoginOutputDto> {
     try {
       const authLocal = await this.AuthLoalRepository.findOne(
@@ -74,6 +82,10 @@ export class AuthService {
           error: '로그인 정보가 잘못되었습니다.',
         };
       }
+      //약관에 동의 가 안되어있다면,
+      if (!authLocal.acceptTerms && acceptTerms === false) {
+        return { ok: true, acceptTerms: false };
+      }
       const access_token = this.jwtService.sign({
         id: authLocal.user,
         loginStrategy: LoginStrategy.LOCAL,
@@ -87,6 +99,7 @@ export class AuthService {
       await this.AuthLoalRepository.update(authLocal.id, {
         ...authLocal,
         refreshToken: refresh_token,
+        acceptTerms: authLocal.acceptTerms || acceptTerms,
       });
       return {
         ok: true,
@@ -102,12 +115,15 @@ export class AuthService {
     }
   }
 
-  async kakaoLogin(kakaoTokens: KakaoLoginInputDto): Promise<LoginOutputDto> {
+  async kakaoLogin({
+    acceptTerms,
+    accessToken,
+  }: KakaoLoginInputDto): Promise<LoginOutputDto> {
     // console.log(kakaoTokens);
     try {
       const { data: kakaoResponse }: IKakaoLoginResponse = await axios(
         'https://kapi.kakao.com/v1/user/access_token_info',
-        { headers: { Authorization: `Bearer ${kakaoTokens.accessToken}` } },
+        { headers: { Authorization: `Bearer ${accessToken}` } },
       );
       if (!kakaoResponse.id) {
         return {
@@ -125,18 +141,24 @@ export class AuthService {
       );
       // console.log(authKakaoUser);
 
-      //로그인 한 적이 없을때
+      //최초 로그인상태, 회원가입을 의미함
       if (!authKakaoUser) {
+        //약관에 동의를 안했다면 얼리리턴, acceptTerms:false,
+        if (!acceptTerms) {
+          return {
+            ok: true,
+            acceptTerms: false,
+          };
+        }
         const user = await this.userProfileRepository.save(
           await this.userProfileRepository.create({
             loginStrategy: LoginStrategy.KAKAO,
             username: `사용자-${Math.round(Math.random() * 100000000)}`,
           }),
         );
-        // console.log(user);
         const access_token = this.jwtService.sign({
-          loginStrategy: LoginStrategy.KAKAO,
           id: user.id,
+          loginStrategy: LoginStrategy.KAKAO,
         });
         const refresh_token = this.jwtService.sign(
           {},
@@ -149,15 +171,24 @@ export class AuthService {
             kakaoId: kakaoResponse.id,
             user: user,
             refreshToken: refresh_token,
+            acceptTerms,
           }),
         );
         return {
           ok: true,
           accessToken: access_token,
           refreshToken: refresh_token,
-          isJoin: true,
         };
       }
+
+      //계정이 있는데, 약관동의가 안되어있고, 로그인시 약관동의를 안했을경우.
+      if (authKakaoUser.acceptTerms === false && acceptTerms === false) {
+        return {
+          ok: true,
+          acceptTerms: false,
+        };
+      }
+
       const access_token = this.jwtService.sign({
         id: authKakaoUser.user,
         loginStrategy: LoginStrategy.KAKAO,
@@ -170,12 +201,12 @@ export class AuthService {
       );
       await this.AuthKakaoRepository.update(authKakaoUser.id, {
         refreshToken: refresh_token,
+        acceptTerms: authKakaoUser.acceptTerms || acceptTerms,
       });
       return {
         ok: true,
         accessToken: access_token,
         refreshToken: refresh_token,
-        isJoin: false,
       };
     } catch (e) {
       console.log(e);
@@ -253,5 +284,30 @@ export class AuthService {
       );
     }
     return undefined;
+  }
+
+  async updateAuthKakaoAcceptTerm(
+    { userId }: UUID,
+    { acceptTerms }: UpdateAuthKakaoAcceptTermInputDto,
+  ): Promise<UpdateAuthKakaoAcceptTermOutputDto> {
+    try {
+      await this.AuthKakaoRepository.update({ id: userId }, { acceptTerms });
+      return { ok: true };
+    } catch (e) {
+      //console.log(e)
+      return { ok: false, error: '약관 동의 중 오류가 발생했습니다.' };
+    }
+  }
+  async updateAuthLocalAcceptTerm(
+    { userId }: UUID,
+    { acceptTerms }: UpdateAuthLocalAcceptTermInputDto,
+  ): Promise<UpdateAuthLocalAcceptTermOutputDto> {
+    try {
+      await this.AuthLoalRepository.update({ id: userId }, { acceptTerms });
+      return { ok: true };
+    } catch (e) {
+      //console.log(e)
+      return { ok: false, error: '약관 동의 중 오류가 발생했습니다.' };
+    }
   }
 }

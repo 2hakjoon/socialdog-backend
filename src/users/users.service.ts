@@ -55,6 +55,7 @@ export class UsersService {
     email,
     password,
     code,
+    acceptTerms,
   }: CreateAccountInputDto): Promise<CreateAccountOutputDto> {
     try {
       const isUserExists = await this.authLoalRepository.findOne({
@@ -87,6 +88,7 @@ export class UsersService {
           email,
           password: hashedPassword,
           user: user.id,
+          acceptTerms,
         }),
       );
 

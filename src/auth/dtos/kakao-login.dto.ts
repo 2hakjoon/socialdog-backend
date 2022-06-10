@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 import { Column } from 'typeorm';
 import { AuthKakao } from '../entities/auth-kakao.entity';
 
@@ -24,4 +24,9 @@ export class KakaoLoginInputDto {
   @Field(() => String, { nullable: true })
   @IsString()
   scopes?: string;
+
+  @Field(() => Boolean)
+  @Column({ default: false })
+  @IsBoolean()
+  acceptTerms: boolean;
 }

@@ -3,7 +3,11 @@ import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 import { AuthLocal } from '../entities/auth-local.entity';
 
 @InputType()
-export class LoginInputDto extends PickType(AuthLocal, ['email', 'password']) {}
+export class LoginInputDto extends PickType(AuthLocal, [
+  'email',
+  'password',
+  'acceptTerms',
+]) {}
 
 @ObjectType()
 export class LoginOutputDto extends CoreOutputDto {
@@ -14,5 +18,5 @@ export class LoginOutputDto extends CoreOutputDto {
   refreshToken?: string;
 
   @Field(() => Boolean, { nullable: true })
-  isJoin?: boolean;
+  acceptTerms?: boolean;
 }

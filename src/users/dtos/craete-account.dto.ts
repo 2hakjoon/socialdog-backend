@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 import { AuthLocal } from 'src/auth/entities/auth-local.entity';
 import { CoreOutputDto } from 'src/common/dtos/core-output.dto';
 
@@ -11,6 +11,10 @@ export class CreateAccountInputDto extends PickType(AuthLocal, [
   @Field(() => String)
   @IsString()
   code: string;
+
+  @Field(() => Boolean)
+  @IsBoolean()
+  acceptTerms?: boolean;
 }
 
 @ObjectType()
