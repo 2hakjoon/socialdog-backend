@@ -10,26 +10,26 @@ import { CoreEntity } from 'src/common/entity/core-entity.entity';
 import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
-export enum ReportPostsType {
-  ADVERTISMENT = 'ADVERTISEMENT', // 광고용 계정, 지나친 홍보행위
+export enum ReportCommentsType {
+  ADVERTISMENT = 'ADVERTISEMENT', // 광고행위
   NEGATIVE_POST = 'NEGATIVE_POST', // 욕설/비방/혐오 등 부정적인 게시물
   SEXUAL_CONTENTS = 'SEXUAL_CONTENTS', // 성적인 콘텐츠
   OTHER = 'OTHER', // 기타
 }
 
-registerEnumType(ReportPostsType, {
-  name: 'ReportUsersType',
-  description: 'ReportUsersType',
+registerEnumType(ReportCommentsType, {
+  name: 'ReportCommentsType',
+  description: 'ReportCommentsType',
 });
 
 @Entity()
 @InputType({ isAbstract: true })
 @ObjectType()
 export class ReportComments extends CoreEntity {
-  @Field(() => String)
-  @IsEnum(ReportPostsType)
+  @Field(() => ReportCommentsType)
+  @IsEnum(ReportCommentsType)
   @Column()
-  reportType: ReportPostsType;
+  reportType: ReportCommentsType;
 
   @Field(() => String)
   @IsString()

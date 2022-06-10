@@ -11,22 +11,22 @@ import { UserProfile } from 'src/users/entities/users-profile.entity';
 import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
 export enum ReportPostsType {
-  ADVERTISMENT = 'ADVERTISEMENT', // 광고용 계정, 지나친 홍보행위
+  ADVERTISMENT = 'ADVERTISEMENT', // 광고행위
   NEGATIVE_POST = 'NEGATIVE_POST', // 욕설/비방/혐오 등 부정적인 게시물
   SEXUAL_CONTENTS = 'SEXUAL_CONTENTS', // 성적인 콘텐츠
   OTHER = 'OTHER', // 기타
 }
 
 registerEnumType(ReportPostsType, {
-  name: 'ReportUsersType',
-  description: 'ReportUsersType',
+  name: 'ReportPostsType',
+  description: 'ReportPostsType',
 });
 
 @Entity()
 @InputType({ isAbstract: true })
 @ObjectType()
 export class ReportPosts extends CoreEntity {
-  @Field(() => String)
+  @Field(() => ReportPostsType)
   @IsEnum(ReportPostsType)
   @Column()
   reportType: ReportPostsType;
