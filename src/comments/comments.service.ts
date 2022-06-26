@@ -266,23 +266,23 @@ export class CommentsService {
       // console.log(reComments);
 
       //차단 여부, 구독여부 확인해서 클라이언트로 전송
-      if (reComments.length && userId !== reComments[0].post.userId) {
-        const { blocking, subscribeRequest } =
-          await this.subscribeUtil.checkBlockingAndRequestState({
-            requestUser: userId,
-            targetUser: reComments[0].post.userId,
-          });
+      // if (reComments.length && userId !== reComments[0].post.userId) {
+      //   const { blocking, subscribeRequest } =
+      //     await this.subscribeUtil.checkBlockingAndRequestState({
+      //       requestUser: userId,
+      //       targetUser: reComments[0].post.userId,
+      //     });
 
-        const rejectedMessage =
-          this.subscribeUtil.returnBlockAndSubscribeMessage(
-            blocking,
-            subscribeRequest,
-            reComments[0].user.profileOpen,
-          );
-        if (rejectedMessage) {
-          return rejectedMessage;
-        }
-      }
+      //   const rejectedMessage =
+      //     this.subscribeUtil.returnBlockAndSubscribeMessage(
+      //       blocking,
+      //       subscribeRequest,
+      //       reComments[0].user.profileOpen,
+      //     );
+      //   if (rejectedMessage) {
+      //     return rejectedMessage;
+      //   }
+      // }
 
       return { ok: true, data: reComments };
     } catch (e) {
