@@ -7,7 +7,7 @@ async function bootstrap() {
     'http://121.154.94.120:4000',
     'http://localhost:3000',
   ];
-  const prodAllowOrigon = ['https://oursocialdog.com'];
+  const prodAllowOrigon = ['https://www.oursocialdog.com'];
 
   const app = await NestFactory.create(AppModule, {
     cors: {
