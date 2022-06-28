@@ -337,6 +337,7 @@ export class PostsService {
           'like',
           (qb) => qb.where('like.userId = :id', { id: userId }),
         )
+        .loadRelationCountAndMap('posts.likes', 'posts.likedUsers')
         .where(
           `(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))
           AND (posts.id NOT IN(:...reportedPostId))
@@ -446,6 +447,7 @@ export class PostsService {
           'like',
           (qb) => qb.where('like.userId = :id', { id: userId }),
         )
+        .loadRelationCountAndMap('posts.likes', 'posts.likedUsers')
         .where(
           `
           (user.id NOT IN (:...execptUserIds))
@@ -464,24 +466,7 @@ export class PostsService {
             q: `%${address}%`,
           },
         )
-        // .where('user.id NOT IN (:...execptUserIds)', {
-        //   execptUserIds,
-        // })
-        // .where(
-        //   `user.profileOpen = :open OR user.id In (:...subscribingUsers)`,
-        //   {
-        //     open: true,
-        //     subscribingUsers,
-        //   },
-        // )
-        // .where(
-        //   '(posts.createdAt < :createdAt OR (posts.createdAt = :createdAt AND posts.id < :postId))',
-        //   {
-        //     createdAt: cursor.createdAt,
-        //     postId: cursor.id,
-        //   },
-        // )
-        // .andWhere('posts.address LIKE :q', { q: `%${address}%` })
+
         .orderBy('posts.createdAt', 'DESC')
         .addOrderBy('posts.id', 'DESC')
         .take(take)
@@ -562,6 +547,7 @@ export class PostsService {
           'like',
           (qb) => qb.where('like.userId = :id', { id: userId }),
         )
+        .loadRelationCountAndMap('posts.likes', 'posts.likedUsers')
         .leftJoinAndSelect('posts.user', 'user')
         .getOne();
 
