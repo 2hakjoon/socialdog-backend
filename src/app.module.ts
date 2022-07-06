@@ -37,10 +37,10 @@ import { ReportComments } from './reports/entities/report-comments.entity';
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('dev', 'prod', 'test').optional(),
-        DB_HOST: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_PORT: Joi.number().required(),
+        DB_HOST: Joi.string().optional(),
+        DB_NAME: Joi.string().optional(),
+        DB_PASSWORD: Joi.string().optional(),
+        DB_PORT: Joi.number().optional(),
         SENDGRID_KEY: Joi.string().required(),
         JWT_SECRET_KEY: Joi.string().required(),
         AWS_S3_ACCESS_ID: Joi.string().required(),
